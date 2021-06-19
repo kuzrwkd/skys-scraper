@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AppController } from '@/Driver/Web/app.controller';
+import { AppController } from '@/Adapter/Controller/app.controller';
 import { AppService } from '@/Driver/Web/app.service';
 
 @Module({
