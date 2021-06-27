@@ -1,9 +1,9 @@
 import { injectable } from 'tsyringe'
 
-import { INewsFeedInputPort, InputData } from '@/UseCase/NewsFeed/Interface'
+import { InputData } from '@/UseCase/NewsFeed/Interface'
 
 @injectable()
-export class NewsFeedInputPort implements INewsFeedInputPort {
+export class NewsFeedInputPort {
   private name: string
   private category: string
   private tags: string

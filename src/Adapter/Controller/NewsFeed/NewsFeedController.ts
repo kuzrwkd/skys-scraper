@@ -11,10 +11,8 @@ import {
   InputData,
 } from '@/UseCase/NewsFeed/Interface'
 
-import { INewsFeedController } from '@/Adapter/Controller/NewsFeed/INewsFeedController'
-
 @injectable()
-export class NewsFeedController implements INewsFeedController {
+export class NewsFeedController {
   data: InputData
 
   constructor(

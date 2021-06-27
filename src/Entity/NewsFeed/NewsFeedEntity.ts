@@ -1,8 +1,8 @@
 import { injectable } from 'tsyringe'
-import { INewsFeedEntity } from '@/Entity/NewsFeed/INewsFeedEntity'
+import { Entity } from '@/Entity/NewsFeed/INewsFeedEntity'
 
 @injectable()
-export class NewsFeedEntity implements INewsFeedEntity {
+export class NewsFeedEntity {
   private title: string
   private url: string
   private image: string
@@ -13,7 +13,14 @@ export class NewsFeedEntity implements INewsFeedEntity {
   private createdAt: string
   private updatedAt: string
 
-  newsFeedEntity({ title, url, image, organization, createdAt, updatedAt }) {
+  set setNewsFeedEntity({
+    title,
+    url,
+    image,
+    organization,
+    createdAt,
+    updatedAt,
+  }: Entity) {
     this.title = title
     this.url = url
     this.image = image
@@ -22,7 +29,7 @@ export class NewsFeedEntity implements INewsFeedEntity {
     this.updatedAt = updatedAt
   }
 
-  getNewsFeed() {
+  get getNewsFeedEntity(): Entity {
     return {
       title: this.title,
       url: this.url,

@@ -1,14 +1,8 @@
-/**
- * NewsFeedEntityのinterface
- */
 export interface INewsFeedEntity {
-  newsFeedEntity(Entity): void
-  getNewsFeed(): Entity
+  set setNewsFeedEntity(Entity: Entity)
+  get getNewsFeedEntity(): Entity
 }
 
-/**
- * interfaceで利用するtype
- */
 export type Entity = {
   title: string
   url: string

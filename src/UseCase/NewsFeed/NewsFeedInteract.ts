@@ -3,11 +3,11 @@ import { injectable, inject } from 'tsyringe'
 
 // type
 import { INewsFeedEntity } from '@/Entity/NewsFeed/INewsFeedEntity'
-import { INewsFeedInteract, InputData } from '@/UseCase/NewsFeed/Interface'
+import { InputData } from '@/UseCase/NewsFeed/Interface'
 import { INewsFeedRepository } from '@/Adapter/Repository/Crawler/INewsFeedRepository'
 
 @injectable()
-export class NewsFeedInteract implements INewsFeedInteract {
+export class NewsFeedInteract {
   constructor(
     @inject('NewsFeedEntity') private newsFeed: INewsFeedEntity,
     @inject('NikkeiCrawler') private nikkeiCrawler: INewsFeedRepository,
@@ -18,7 +18,19 @@ export class NewsFeedInteract implements INewsFeedInteract {
     console.log(name)
     const crawler = this.nikkeiCrawler.crawler()
     console.log(crawler)
-    this.newsFeed.getNewsFeed()
-    return 'getTest'
+    this.newsFeed.setNewsFeedEntity = {
+      title: '',
+      url: '',
+      image: '',
+      organization: {
+        logo: '',
+        name: '',
+      },
+      createdAt: '',
+      updatedAt: '',
+    }
+    const test = this.newsFeed.getNewsFeedEntity
+    console.log(JSON.stringify(test))
+    return JSON.stringify(test)
   }
 }
