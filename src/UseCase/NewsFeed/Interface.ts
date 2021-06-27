@@ -3,10 +3,10 @@ export interface INewsFeedInteract {
 }
 
 export interface INewsFeedInputPort {
-  inputData(InputData: InputData): void
-  getName(): string
-  getCategory(): string
-  getTags(): string
+  set inputData(InputData: InputData)
+  get getName(): string
+  get getCategory(): string
+  get getTags(): string
 }
 
 export type InputData = {

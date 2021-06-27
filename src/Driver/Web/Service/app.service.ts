@@ -14,8 +14,8 @@ export class AppService {
     return 'Hello World!'
   }
 
-  dispatchData(data) {
-    this.newsFeedController.dispatchData(data)
+  dispatch(data) {
+    this.newsFeedController.dispatch(data)
   }
 
   handle() {

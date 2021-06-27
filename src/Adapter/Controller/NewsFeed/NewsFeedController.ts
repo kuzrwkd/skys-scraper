@@ -16,29 +16,25 @@ export class NewsFeedController {
   data: InputData
 
   constructor(
-    @inject('NewsFeedInputPort') private inputData: INewsFeedInputPort,
+    @inject('NewsFeedInputPort') private inputPort: INewsFeedInputPort,
     @inject('NewsFeedInteract') private useCase: INewsFeedInteract,
   ) {}
 
-  test() {
-    return 'test'
-  }
-
-  dispatchData(data: InputData) {
+  dispatch(data: InputData) {
     this.data = data
   }
 
   handle() {
-    this.inputData.inputData({
+    this.inputPort.inputData = {
       name: this.data.name,
       category: this.data.category,
       tags: this.data.tags,
-    })
+    }
 
     const inputData = {
-      name: this.inputData.getName(),
-      category: this.inputData.getCategory(),
-      tags: this.inputData.getTags(),
+      name: this.inputPort.getName,
+      category: this.inputPort.getCategory,
+      tags: this.inputPort.getTags,
     }
 
     return this.useCase.handle(inputData)

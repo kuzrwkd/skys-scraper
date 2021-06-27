@@ -1,6 +1,6 @@
 export interface INewsFeedEntity {
-  set setNewsFeedEntity(Entity: Entity)
-  get getNewsFeedEntity(): Entity
+  set setNewsFeed(Entity: Entity)
+  get getNewsFeed(): Entity
 }
 
 export type Entity = {

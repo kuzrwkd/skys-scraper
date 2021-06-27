@@ -13,7 +13,7 @@ export class NewsFeedEntity {
   private createdAt: string
   private updatedAt: string
 
-  set setNewsFeedEntity({
+  set setNewsFeed({
     title,
     url,
     image,
@@ -29,7 +29,7 @@ export class NewsFeedEntity {
     this.updatedAt = updatedAt
   }
 
-  get getNewsFeedEntity(): Entity {
+  get getNewsFeed(): Entity {
     return {
       title: this.title,
       url: this.url,

@@ -8,21 +8,21 @@ export class NewsFeedInputPort {
   private category: string
   private tags: string
 
-  inputData({ name, category, tags }: InputData) {
+  set inputData({ name, category, tags }: InputData) {
     this.name = name
     this.category = category
     this.tags = tags
   }
 
-  getName() {
+  get getName() {
     return this.name
   }
 
-  getCategory() {
+  get getCategory() {
     return this.category
   }
 
-  getTags() {
+  get getTags() {
     return this.tags
   }
 }

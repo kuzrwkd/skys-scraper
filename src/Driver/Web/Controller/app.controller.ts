@@ -7,10 +7,10 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    this.appService.dispatchData({
-      name: '',
-      category: '',
-      tags: '',
+    this.appService.dispatch({
+      name: 'hiroki',
+      category: 'masudaya.inc',
+      tags: 'oil',
     })
     return this.appService.handle()
   }
