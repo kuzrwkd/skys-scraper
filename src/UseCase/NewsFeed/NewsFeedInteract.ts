@@ -3,8 +3,8 @@ import { injectable, inject } from 'tsyringe'
 
 // type
 import { INewsFeedEntity } from '@/Entity/NewsFeed/INewsFeedEntity'
-import { InputData } from '@/UseCase/NewsFeed/Interface'
-import { INikkeiCrawlerRepository } from '@/Adapter/Repository/Crawler/INikkeiCrawlerRepository'
+import { InputData } from '@/UseCase/NewsFeed/INewsFeedUseCase'
+import { INikkeiCrawlerRepository } from '@/Adapter/Gateway/Crawler/INikkeiCrawlerRepository'
 
 @injectable()
 export class NewsFeedInteract {

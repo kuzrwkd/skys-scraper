@@ -1,6 +1,6 @@
 import { injectable } from 'tsyringe'
 
-import { InputData } from '@/UseCase/NewsFeed/Interface'
+import { InputData } from '@/UseCase/NewsFeed/INewsFeedUseCase'
 
 @injectable()
 export class NewsFeedInputPort {

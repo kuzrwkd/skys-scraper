@@ -9,7 +9,7 @@ import {
   INewsFeedInputPort,
   INewsFeedInteract,
   InputData,
-} from '@/UseCase/NewsFeed/Interface'
+} from '@/UseCase/NewsFeed/INewsFeedUseCase'
 
 @injectable()
 export class NewsFeedController {
