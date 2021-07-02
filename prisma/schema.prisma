@@ -1,19 +1,18 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+generator client {
+  provider = "prisma-client-js"
+}
 
 datasource db {
   provider = "mysql"
   url      = env("PRISMA_DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
-model User {
+model NewsFeed {
   id Int @id @default(autoincrement())
-  registeredAt DateTime?
+  url String?
+  title String?
+  articleCreatedAt String?
+  articleUpdatedAt String?
+  createdAt DateTime?
   updatedAt DateTime?
-  email String?
-  name String
 }

@@ -4,31 +4,39 @@ import { injectable, inject } from 'tsyringe'
 // type
 import { INewsFeedEntity } from '@/Entity/NewsFeed/INewsFeedEntity'
 import { InputData } from '@/UseCase/NewsFeed/INewsFeedUseCase'
-import { INikkeiCrawlerRepository } from '@/Adapter/Gateway/Crawler/INikkeiCrawlerRepository'
+import { INikkeiPreliminaryReportCrawlerRepository } from '@/Adapter/Gateway/Crawler/Nikkei/INikkeiPreliminaryReportCrawlerRepository'
+import { INewsFeedRepository } from '@/Adapter/Gateway/DB/INewsFeedRepository'
 
 @injectable()
 export class NewsFeedInteract {
   constructor(
     @inject('NewsFeedEntity') private newsFeed: INewsFeedEntity,
-    @inject('NikkeiCrawler') private nikkeiCrawler: INikkeiCrawlerRepository,
+    @inject('NikkeiPreliminaryReportCrawlerRepository')
+    private nikkeiPreliminaryReportCrawlerRepository: INikkeiPreliminaryReportCrawlerRepository,
+    @inject('NewsFeedRepository') private newsFeedRepository: INewsFeedRepository,
   ) {}
 
-  handle(inputData: InputData) {
-    const name = inputData.name
-    console.log(name)
-    const crawler = this.nikkeiCrawler.crawler()
-    console.log(crawler)
-    this.newsFeed.setNewsFeed = {
-      title: crawler,
-      url: '',
-      image: '',
-      organization: {
-        logo: '',
-        name: name,
-      },
-      createdAt: '',
-      updatedAt: '',
+  async handle(inputData: InputData) {
+    try {
+      const name = inputData.name
+      const crawler = this.nikkeiPreliminaryReportCrawlerRepository.crawler()
+
+      await crawler.then((data) => {
+        if (data != null) {
+          this.newsFeed.setNewsFeed = data.map((item) => {
+            return {
+              ...item,
+              organizationName: name,
+            }
+          })
+        }
+      })
+
+      const data = this.newsFeed.getNewsFeed
+      await this.newsFeedRepository.create(data)
+      return 'success'
+    } catch (e) {
+      return 'failed'
     }
-    return this.newsFeed.getNewsFeed
   }
 }

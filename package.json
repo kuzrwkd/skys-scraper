@@ -19,13 +19,15 @@
     "test:watch": "node_modules/.bin/jest --watch",
     "test:cov": "node_modules/.bin/jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "node_modules/.bin/jest --config ./test/jest-e2e.json"
+    "test:e2e": "node_modules/.bin/jest --config ./test/jest-e2e.json",
+    "logs": "kubectl logs skys-scraper-app-pod -f"
   },
   "dependencies": {
     "@nestjs/common": "^7.6.18",
     "@nestjs/core": "^7.6.18",
     "@nestjs/platform-express": "^7.6.18",
     "@prisma/client": "^2.25.0",
+    "dayjs": "^1.10.5",
     "puppeteer": "^10.0.0",
     "rimraf": "^3.0.2",
     "rxjs": "^7.1.0",

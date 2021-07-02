@@ -1,16 +1,12 @@
 export interface INewsFeedEntity {
-  set setNewsFeed(Entity: Entity)
-  get getNewsFeed(): Entity
+  set setNewsFeed(Entity: Entity[])
+  get getNewsFeed(): Entity[]
 }
 
 export type Entity = {
   title: string
   url: string
-  image: string
-  organization: {
-    logo: string
-    name: string
-  }
-  createdAt: string
-  updatedAt: string
+  organizationName?: string
+  articleCreatedAt: string
+  articleUpdatedAt: string | null
 }
