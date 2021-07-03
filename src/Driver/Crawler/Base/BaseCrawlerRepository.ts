@@ -1,5 +1,3 @@
-import { Options } from '@/Adapter/CrawlerGateway/Base/IBaseCrawlerRepository'
-
 export class BaseCrawlerRepository {
   private args: string[]
   private headless: boolean
@@ -9,14 +7,14 @@ export class BaseCrawlerRepository {
     this.headless = true
   }
 
-  get getOptions(): Options {
+  get getOptions(): CrawlerBase.CrawlerOptions {
     return {
       args: this.args,
       headless: this.headless,
     }
   }
 
-  set setOptions(options: Options) {
+  set setOptions(options: CrawlerBase.CrawlerOptions) {
     this.args = options.args ?? this.args
     this.headless = options.headless ?? this.headless
   }

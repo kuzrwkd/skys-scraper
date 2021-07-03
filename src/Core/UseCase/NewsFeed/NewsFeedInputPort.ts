@@ -1,14 +1,12 @@
 import { injectable } from 'tsyringe'
 
-import { InputData } from '@/Core/UseCase/NewsFeed/INewsFeedUseCase'
-
 @injectable()
 export class NewsFeedInputPort {
   private name: string
   private category: string
   private tags: string
 
-  set inputData({ name, category, tags }: InputData) {
+  set inputData({ name, category, tags }: NewsFeed.InputData) {
     this.name = name
     this.category = category
     this.tags = tags

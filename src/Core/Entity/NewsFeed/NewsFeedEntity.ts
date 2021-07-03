@@ -1,22 +1,21 @@
 import { injectable } from 'tsyringe'
-import { Entity } from '@/Core/Entity/NewsFeed/INewsFeedEntity'
 
 @injectable()
 export class NewsFeedEntity {
-  private entity: Entity[]
+  private entity: NewsFeed.Entity[]
 
   /**
    * newsFeedのsetter
-   * @param data - The first input Entity[]
+   * @param data - The first input NewsFeed.Entity[]
    */
-  set setNewsFeed(data: Entity[]) {
+  set setNewsFeed(data: NewsFeed.Entity[]) {
     this.entity = data
   }
 
   /**
    * newsFeedのgetter
    */
-  get getNewsFeed(): Entity[] {
+  get getNewsFeed(): NewsFeed.Entity[] {
     return this.entity
   }
 }

@@ -1,12 +1,10 @@
 import { inject, injectable } from 'tsyringe'
 import puppeteer from 'puppeteer'
-import { CrawlingError } from '@/Driver/Crawler/Exception/CrawlingError'
-import { IBaseCrawlerRepository } from '@/Adapter/CrawlerGateway/Base/IBaseCrawlerRepository'
-import { PreliminaryReport } from '@/Adapter/CrawlerGateway/Nikkei/INikkeiPreliminaryReportCrawlerRepository'
+import { CrawlingError } from '@/Driver/Crawler/Base/Exception/CrawlingError'
 
 @injectable()
 export class NikkeiPreliminaryReportCrawlerRepository {
-  constructor(@inject('BaseCrawlerRepository') private baseCrawlerRepository: IBaseCrawlerRepository) {}
+  constructor(@inject('BaseCrawlerRepository') private baseCrawlerRepository: CrawlerBase.IBaseCrawlerRepository) {}
 
   /**
    * 日経速報のクローラー
@@ -16,7 +14,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
     try {
       const options = this.baseCrawlerRepository.getOptions
 
-      const data: PreliminaryReport[] = []
+      const data: NewsFeed.Entity[] = []
       const browser = await puppeteer.launch(options)
       const page = await browser.newPage()
       await page.goto('https://www.nikkei.com/news/category/')
@@ -25,14 +23,13 @@ export class NikkeiPreliminaryReportCrawlerRepository {
 
       const preliminaryReportUrl = []
       for (const link of preliminaryReportLinkList) {
-        if (link == null) {
-          throw new CrawlingError('日経速報のクローリングに失敗しました')
-        }
+        if (link == null) return console.log('要素の取得に失敗')
 
         const url: string = await (await link.getProperty('href')).jsonValue()
         await preliminaryReportUrl.push(url)
       }
 
+      // 各記事ページのタイトル投稿日時、更新日時を取得
       const crawlingData = (
         await Promise.allSettled(
           preliminaryReportUrl.map(async (url: string) => {

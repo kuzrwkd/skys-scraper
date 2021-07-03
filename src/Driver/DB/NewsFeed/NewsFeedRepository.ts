@@ -1,15 +1,11 @@
 // lib
 import { inject, injectable } from 'tsyringe'
 
-// type
-import { IBaseDBRepository } from '@/Adapter/DBGateway/Base/IBaseDBRepository'
-import { Entity } from '@/Core/Entity/NewsFeed/INewsFeedEntity'
-
 @injectable()
 export class NewsFeedRepository {
-  constructor(@inject('BaseDBRepository') private baseDBRepository: IBaseDBRepository) {}
+  constructor(@inject('BaseDBRepository') private baseDBRepository: DBBase.IBaseDBRepository) {}
 
-  async create(entityData: Entity[]) {
+  async create(entityData: NewsFeed.Entity[]) {
     const prisma = this.baseDBRepository.getClient()
     try {
       for (const item of entityData) {
@@ -39,7 +35,7 @@ export class NewsFeedRepository {
     } catch (e) {}
   }
 
-  async update(entityData: Entity) {
+  async update(entityData: NewsFeed.Entity) {
     const prisma = this.baseDBRepository.getClient()
     try {
       await prisma.newsFeed.update({

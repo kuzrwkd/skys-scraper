@@ -4,7 +4,7 @@ export class BaseDBRepository {
   /**
    * ormのclient生成関数
    */
-  getClient(): PrismaClient {
+  getClient() {
     return new PrismaClient()
   }
 }

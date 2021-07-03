@@ -1,22 +1,15 @@
-/**
- * Controller
- */
-// lib
 import { inject, injectable } from 'tsyringe'
-
-// type
-import { INewsFeedInputPort, INewsFeedInteract, InputData } from '@/Core/UseCase/NewsFeed/INewsFeedUseCase'
 
 @injectable()
 export class NewsFeedController {
-  data: InputData
+  data: NewsFeed.InputData
 
   constructor(
-    @inject('NewsFeedInputPort') private inputPort: INewsFeedInputPort,
-    @inject('NewsFeedInteract') private useCase: INewsFeedInteract,
+    @inject('NewsFeedInputPort') private inputPort: NewsFeed.INewsFeedInputPort,
+    @inject('NewsFeedInteract') private useCase: NewsFeed.INewsFeedInteract,
   ) {}
 
-  dispatch(data: InputData) {
+  dispatch(data: NewsFeed.InputData) {
     this.data = data
   }
 

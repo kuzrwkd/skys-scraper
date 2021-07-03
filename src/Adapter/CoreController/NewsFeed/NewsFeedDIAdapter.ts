@@ -1,23 +1,33 @@
 import { container } from 'tsyringe'
 
-// Entity
+/**
+ * Entity
+ */
 import { NewsFeedEntity } from '@/Core/Entity/NewsFeed/NewsFeedEntity'
 
-// UseCase
+/**
+ * UseCase
+ */
 import { NewsFeedInteract } from '@/Core/UseCase/NewsFeed/NewsFeedInteract'
 import { NewsFeedInputPort } from '@/Core/UseCase/NewsFeed/NewsFeedInputPort'
 import { NewsFeedOutputPort } from '@/Core/UseCase/NewsFeed/NewsFeedOutputPort'
 
-// Repository
+/**
+ * Repository
+ */
 import { BaseCrawlerRepository } from '@/Driver/Crawler/Base/BaseCrawlerRepository'
 import { NikkeiPreliminaryReportCrawlerRepository } from '@/Driver/Crawler/Nikkei/NikkeiPreliminaryReportCrawlerRepository'
 import { BaseDBRepository } from '@/Driver/DB/Base/BaseDBRepository'
 import { NewsFeedRepository } from '@/Driver/DB/NewsFeed/NewsFeedRepository'
 
-// Controller
+/**
+ * Controller
+ */
 import { NewsFeedController } from '@/Adapter/CoreController/NewsFeed/NewsFeedController'
 
-// Inject
+/**
+ * Inject
+ */
 container.register('NewsFeedEntity', { useClass: NewsFeedEntity })
 container.register('NewsFeedInteract', { useClass: NewsFeedInteract })
 container.register('NewsFeedInputPort', { useClass: NewsFeedInputPort })

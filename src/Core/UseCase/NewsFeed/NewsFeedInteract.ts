@@ -1,32 +1,25 @@
-// lib
 import { injectable, inject } from 'tsyringe'
-
-// type
-import { INewsFeedEntity, Entity } from '@/Core/Entity/NewsFeed/INewsFeedEntity'
-import { InputData } from '@/Core/UseCase/NewsFeed/INewsFeedUseCase'
-import { INikkeiPreliminaryReportCrawlerRepository } from '@/Adapter/CrawlerGateway/Nikkei/INikkeiPreliminaryReportCrawlerRepository'
-import { INewsFeedRepository } from '@/Adapter/DBGateway/INewsFeedRepository'
 
 @injectable()
 export class NewsFeedInteract {
   constructor(
-    @inject('NewsFeedEntity') private newsFeed: INewsFeedEntity,
+    @inject('NewsFeedEntity') private newsFeed: NewsFeed.INewsFeedEntity,
     @inject('NikkeiPreliminaryReportCrawlerRepository')
-    private nikkeiPreliminaryReportCrawlerRepository: INikkeiPreliminaryReportCrawlerRepository,
-    @inject('NewsFeedRepository') private newsFeedRepository: INewsFeedRepository,
+    private nikkeiPreliminaryReportCrawlerRepository: NewsFeed.INikkeiPreliminaryReportCrawlerRepository,
+    @inject('NewsFeedRepository') private newsFeedRepository: NewsFeed.INewsFeedDBRepository,
   ) {}
 
   /**
    * newsFeedのUseCase
    * @param inputData
    */
-  async handle(inputData: InputData) {
+  async handle(inputData: NewsFeed.InputData) {
     try {
       const name = inputData.name
       const crawler = this.nikkeiPreliminaryReportCrawlerRepository.crawler()
 
       await crawler.then(async (crawlingData) => {
-        const data: Entity[] = []
+        const data: NewsFeed.Entity[] = []
         if (crawlingData != null) {
           for (const item of crawlingData) {
             const existsRecord = (await this.newsFeedRepository.read(item.url)) ?? null
@@ -40,7 +33,7 @@ export class NewsFeedInteract {
               })
             }
 
-            // レコードが存在する且つ、articleUpdateAtがnullの場合レコードを更新する
+            // レコードが存在する且つ、articleUpdateAtがnullの場合はレコードを更新する
             if (existsRecord != null && existsRecord.articleUpdatedAt == null) {
               await this.newsFeedRepository.update(item)
             }
