@@ -1,12 +1,12 @@
 import { container } from 'tsyringe'
 
 // Entity
-import { NewsFeedEntity } from '@/Entity/NewsFeed/NewsFeedEntity'
+import { NewsFeedEntity } from '@/Core/Entity/NewsFeed/NewsFeedEntity'
 
 // UseCase
-import { NewsFeedInteract } from '@/UseCase/NewsFeed/NewsFeedInteract'
-import { NewsFeedInputPort } from '@/UseCase/NewsFeed/NewsFeedInputPort'
-import { NewsFeedOutputPort } from '@/UseCase/NewsFeed/NewsFeedOutputPort'
+import { NewsFeedInteract } from '@/Core/UseCase/NewsFeed/NewsFeedInteract'
+import { NewsFeedInputPort } from '@/Core/UseCase/NewsFeed/NewsFeedInputPort'
+import { NewsFeedOutputPort } from '@/Core/UseCase/NewsFeed/NewsFeedOutputPort'
 
 // Repository
 import { BaseCrawlerRepository } from '@/Driver/Crawler/Base/BaseCrawlerRepository'
@@ -15,7 +15,7 @@ import { BaseDBRepository } from '@/Driver/DB/Base/BaseDBRepository'
 import { NewsFeedRepository } from '@/Driver/DB/NewsFeed/NewsFeedRepository'
 
 // Controller
-import { NewsFeedController } from '@/Adapter/Controller/NewsFeed/NewsFeedController'
+import { NewsFeedController } from '@/Adapter/CoreController/NewsFeed/NewsFeedController'
 
 // Inject
 container.register('NewsFeedEntity', { useClass: NewsFeedEntity })

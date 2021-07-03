@@ -1,4 +1,4 @@
-import { Options } from '@/Adapter/Gateway/Crawler/Base/IBaseCrawlerRepository'
+import { Options } from '@/Adapter/CrawlerGateway/Base/IBaseCrawlerRepository'
 
 export class BaseCrawlerRepository {
   private args: string[]

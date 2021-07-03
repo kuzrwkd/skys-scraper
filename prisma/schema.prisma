@@ -9,10 +9,10 @@ datasource db {
 
 model NewsFeed {
   id Int @id @default(autoincrement())
-  url String?
-  title String?
-  articleCreatedAt String?
+  url String @unique
+  title String
+  articleCreatedAt String
   articleUpdatedAt String?
-  createdAt DateTime?
-  updatedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -5,7 +5,7 @@
 import { inject, injectable } from 'tsyringe'
 
 // type
-import { INewsFeedInputPort, INewsFeedInteract, InputData } from '@/UseCase/NewsFeed/INewsFeedUseCase'
+import { INewsFeedInputPort, INewsFeedInteract, InputData } from '@/Core/UseCase/NewsFeed/INewsFeedUseCase'
 
 @injectable()
 export class NewsFeedController {

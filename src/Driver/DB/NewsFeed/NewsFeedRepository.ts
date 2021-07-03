@@ -2,8 +2,8 @@
 import { inject, injectable } from 'tsyringe'
 
 // type
-import { IBaseDBRepository } from '@/Adapter/Gateway/DB/Base/IBaseDBRepository'
-import { Entity } from '@/Entity/NewsFeed/INewsFeedEntity'
+import { IBaseDBRepository } from '@/Adapter/DBGateway/Base/IBaseDBRepository'
+import { Entity } from '@/Core/Entity/NewsFeed/INewsFeedEntity'
 
 @injectable()
 export class NewsFeedRepository {
@@ -23,7 +23,37 @@ export class NewsFeedRepository {
         })
       }
     } catch (e) {}
+    await prisma.$disconnect()
+  }
 
+  async read(url: string) {
+    const prisma = this.baseDBRepository.getClient()
+    try {
+      const record = await prisma.newsFeed.findFirst({
+        where: {
+          url,
+        },
+      })
+      await prisma.$disconnect()
+      return record
+    } catch (e) {}
+  }
+
+  async update(entityData: Entity) {
+    const prisma = this.baseDBRepository.getClient()
+    try {
+      await prisma.newsFeed.update({
+        where: {
+          // TODO: 後で直す
+          // @ts-ignore
+          url: entityData.url,
+        },
+        data: {
+          title: entityData.title,
+          articleUpdatedAt: entityData.articleUpdatedAt,
+        },
+      })
+    } catch (e) {}
     await prisma.$disconnect()
   }
 }

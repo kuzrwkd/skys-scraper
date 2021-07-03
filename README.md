@@ -26,3 +26,7 @@ npm install
 ```
 npm install --legacy-peer-deps
 ```
+
+### コーディング規約
+
+`Driver` → `Adapter` → `Core/UseCase` → `Core/Entity` の依存関係を厳守する
