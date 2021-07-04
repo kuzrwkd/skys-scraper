@@ -1,14 +1,14 @@
-import { injectable } from 'tsyringe'
+import { injectable } from 'tsyringe';
 
 @injectable()
 export class NewsFeedOutputPort {
-  private result: string
+  private result: string;
 
   set setResult(result: string) {
-    this.result = result ?? 'failed'
+    this.result = result ?? 'failed';
   }
 
   get getResult() {
-    return this.result ?? 'failed'
+    return this.result ?? 'failed';
   }
 }

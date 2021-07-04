@@ -1,12 +1,12 @@
-import { injectable } from 'tsyringe'
+import { injectable } from 'tsyringe';
 
 @injectable()
 export class MockNewsFeedInteract {
   async handle() {
     try {
-      return 'success'
+      return 'success';
     } catch (e) {
-      return 'failed'
+      return 'failed';
     }
   }
 }

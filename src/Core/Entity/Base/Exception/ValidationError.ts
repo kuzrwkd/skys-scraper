@@ -4,7 +4,7 @@ export class ValidationError extends Error {
    * @param message - string
    */
   constructor(message) {
-    super(message)
-    this.name = 'ValidationError'
+    super(message);
+    this.name = 'ValidationError';
   }
 }

@@ -4,7 +4,7 @@ export class CrawlingError extends Error {
    * @param message
    */
   constructor(message?) {
-    super(message)
-    this.name = 'CrawlingError'
+    super(message);
+    this.name = 'CrawlingError';
   }
 }
