@@ -12,19 +12,29 @@ import { INikkeiPreliminaryReportCrawlerRepository as _INikkeiPreliminaryReportC
 import {
   INewsFeedInteract as _INewsFeedInteract,
   INewsFeedInputPort as _INewsFeedInputPort,
+  INewsFeedOutputPort as _INewsFeedOutputPort,
   InputData as _InputData,
 } from './Core/UseCase/NewsFeed'
 
 declare global {
+  /**
+   * DB Base
+   */
   namespace DBBase {
     export type IBaseDBRepository = _IBaseDBRepository
   }
 
+  /**
+   * CrawlerBase
+   */
   namespace CrawlerBase {
     export type IBaseCrawlerRepository = _IBaseCrawlerRepository
     export type CrawlerOptions = _CrawlerOptions
   }
 
+  /**
+   * NewsFeed
+   */
   namespace NewsFeed {
     export type Entity = _Entity
     export type INewsFeedDBRepository = _INewsFeedDBRepository
@@ -32,6 +42,7 @@ declare global {
     export type INikkeiPreliminaryReportCrawlerRepository = _INikkeiPreliminaryReportCrawlerRepository
     export type INewsFeedInteract = _INewsFeedInteract
     export type INewsFeedInputPort = _INewsFeedInputPort
+    export type INewsFeedOutputPort = _INewsFeedOutputPort
     export type InputData = _InputData
   }
 }

@@ -1,5 +1,5 @@
 export interface INewsFeedInteract {
-  handle(NewsFeedInputData: InputData): string
+  handle(NewsFeedInputData: InputData): Promise<string>
 }
 
 export interface INewsFeedInputPort {
@@ -7,6 +7,11 @@ export interface INewsFeedInputPort {
   get getName(): string
   get getCategory(): string
   get getTags(): string
+}
+
+export interface INewsFeedOutputPort {
+  set setResult(result: string)
+  get getResult(): string
 }
 
 export type InputData = {

@@ -10,15 +10,7 @@ export class AppService {
     this.newsFeedController = container.resolve('NewsFeedController')
   }
 
-  getHello(): string {
-    return 'Hello World!'
-  }
-
-  dispatch(data) {
-    this.newsFeedController.dispatch(data)
-  }
-
-  handle() {
-    return this.newsFeedController.handle()
+  handle(data): Promise<string> {
+    return this.newsFeedController.handle(data)
   }
 }

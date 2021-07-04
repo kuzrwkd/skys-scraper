@@ -23,7 +23,9 @@ export class NikkeiPreliminaryReportCrawlerRepository {
 
       const preliminaryReportUrl = []
       for (const link of preliminaryReportLinkList) {
-        if (link == null) return console.log('要素の取得に失敗')
+        if (link == null) {
+          this.sendCrawlingErrorMessage('日経速報のクローリングに失敗しました')
+        }
 
         const url: string = await (await link.getProperty('href')).jsonValue()
         await preliminaryReportUrl.push(url)
@@ -71,5 +73,9 @@ export class NikkeiPreliminaryReportCrawlerRepository {
       }
       return null
     }
+  }
+
+  sendCrawlingErrorMessage(msg: string) {
+    throw new CrawlingError(msg)
   }
 }

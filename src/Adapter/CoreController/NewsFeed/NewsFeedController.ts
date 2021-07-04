@@ -2,30 +2,27 @@ import { inject, injectable } from 'tsyringe'
 
 @injectable()
 export class NewsFeedController {
-  data: NewsFeed.InputData
-
   constructor(
     @inject('NewsFeedInputPort') private inputPort: NewsFeed.INewsFeedInputPort,
+    @inject('NewsFeedOutputPort') private outputPort: NewsFeed.INewsFeedOutputPort,
     @inject('NewsFeedInteract') private useCase: NewsFeed.INewsFeedInteract,
   ) {}
 
-  dispatch(data: NewsFeed.InputData) {
-    this.data = data
-  }
-
-  handle() {
+  async handle(inputData: NewsFeed.InputData) {
     this.inputPort.inputData = {
-      name: this.data.name,
-      category: this.data.category,
-      tags: this.data.tags,
+      name: inputData.name,
+      category: inputData.category,
+      tags: inputData.tags,
     }
 
-    const inputData = {
+    const data = {
       name: this.inputPort.getName,
       category: this.inputPort.getCategory,
       tags: this.inputPort.getTags,
     }
 
-    return this.useCase.handle(inputData)
+    this.outputPort.setResult = await this.useCase.handle(data)
+
+    return this.outputPort.getResult
   }
 }
