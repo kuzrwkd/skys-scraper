@@ -9,9 +9,8 @@ export class AppController {
   @Get()
   async getHello(): Promise<string> {
     return this.appService.handle({
-      name: 'hiroki',
-      category: 'masudaya.inc',
-      tags: 'oil',
+      name: 'nikkei',
+      tags: 'preliminaryReport',
     })
   }
 }

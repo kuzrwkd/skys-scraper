@@ -11,6 +11,7 @@ import { Entity as _Entity, INewsFeedEntity as _INewsFeedEntity } from './Core/E
 import { INikkeiPreliminaryReportCrawlerRepository as _INikkeiPreliminaryReportCrawlerRepository } from './Driver/CrawlerRepository/NewsFeed'
 import {
   INewsFeedInteract as _INewsFeedInteract,
+  IMockNewsFeedInteract as _IMockNewsFeedInteract,
   INewsFeedInputPort as _INewsFeedInputPort,
   INewsFeedOutputPort as _INewsFeedOutputPort,
   InputData as _InputData,
@@ -41,6 +42,7 @@ declare global {
     export type INewsFeedEntity = _INewsFeedEntity
     export type INikkeiPreliminaryReportCrawlerRepository = _INikkeiPreliminaryReportCrawlerRepository
     export type INewsFeedInteract = _INewsFeedInteract
+    export type IMockNewsFeedInteract = _IMockNewsFeedInteract
     export type INewsFeedInputPort = _INewsFeedInputPort
     export type INewsFeedOutputPort = _INewsFeedOutputPort
     export type InputData = _InputData

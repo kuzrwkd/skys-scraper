@@ -7,15 +7,16 @@ export class NewsFeedInteract {
     @inject('NikkeiPreliminaryReportCrawlerRepository')
     private nikkeiPreliminaryReportCrawlerRepository: NewsFeed.INikkeiPreliminaryReportCrawlerRepository,
     @inject('NewsFeedRepository') private newsFeedRepository: NewsFeed.INewsFeedDBRepository,
+    @inject('NewsFeedOutputPort') private newsFeedOutputPort: NewsFeed.INewsFeedOutputPort,
+    @inject('NewsFeedInputPort') private newsFeedInputPort: NewsFeed.INewsFeedInputPort,
   ) {}
 
   /**
    * newsFeedのUseCase
-   * @param inputData
    */
-  async handle(inputData: NewsFeed.InputData) {
+  async handle() {
     try {
-      const name = inputData.name
+      const name = this.newsFeedInputPort.getName
       const crawler = this.nikkeiPreliminaryReportCrawlerRepository.crawler()
 
       await crawler.then(async (crawlingData) => {
@@ -45,9 +46,10 @@ export class NewsFeedInteract {
       const insertData = this.newsFeed.getNewsFeed
 
       await this.newsFeedRepository.create(insertData)
-      return 'success'
+
+      this.newsFeedOutputPort.setResult = 'result'
     } catch (e) {
-      return 'failed'
+      this.newsFeedOutputPort.setResult = 'failed'
     }
   }
 }

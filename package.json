@@ -75,6 +75,7 @@
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/$1"
     },
+    "setupFilesAfterEnv": ["../jest.setup.ts"],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }
