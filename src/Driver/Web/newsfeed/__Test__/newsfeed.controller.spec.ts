@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NewsFeedController } from '../newsfeed.controller';
+import { NewsFeedController } from '@/Driver/Web/newsfeed/newsfeed.controller';
 
 describe('NewsfeedController', () => {
   let controller: NewsFeedController;

@@ -1,11 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { NewsFeedController } from './newsfeed/newsfeed.controller';
-import { NewsFeedService } from './newsfeed/newsfeed.service';
+import { NewsFeedController } from '@/Driver/Web/newsfeed/newsfeed.controller';
+import { NewsFeedService } from '@/Driver/Web/newsfeed/newsfeed.service';
 
 @Module({
-  controllers: [AppController, NewsFeedController],
-  providers: [AppService, NewsFeedService],
+  controllers: [NewsFeedController],
+  providers: [NewsFeedService],
 })
 export class AppModule {}
