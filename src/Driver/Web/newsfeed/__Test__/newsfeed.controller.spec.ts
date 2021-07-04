@@ -13,6 +13,6 @@ describe('NewsfeedController', () => {
   });
 
   it.skip('should be defined', () => {
-    expect(controller).toBeDefined();
+    expect(controller.get()).toBe('failed');
   });
 });

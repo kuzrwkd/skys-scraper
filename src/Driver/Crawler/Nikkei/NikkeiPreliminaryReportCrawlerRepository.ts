@@ -14,7 +14,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
     try {
       const options = this.baseCrawlerRepository.getOptions;
 
-      const data: NewsFeed.Entity[] = [];
+      const data: NewsFeed.PreliminaryReport[] = [];
       const browser = await puppeteer.launch(options);
       const page = await browser.newPage();
       await page.goto('https://www.nikkei.com/news/category/');

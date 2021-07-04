@@ -10,12 +10,12 @@ export class NewsFeedController {
 
   async handle(inputData: NewsFeed.InputData) {
     this.newsFeedInputPort.inputData = {
-      name: inputData.name,
+      organizationId: inputData.organizationId,
       tags: inputData.tags,
     };
 
     const data = {
-      name: this.newsFeedInputPort.getName,
+      organizationId: this.newsFeedInputPort.getOrganizationId,
       tags: this.newsFeedInputPort.getTags,
     };
 

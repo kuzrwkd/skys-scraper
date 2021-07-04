@@ -1,12 +1,12 @@
 export type Entity = {
-  title: string
-  url: string
-  organizationName?: string
-  articleCreatedAt: string
-  articleUpdatedAt: string | null
-}
+  title: string;
+  url: string;
+  organizationId: number;
+  articleCreatedAt: string;
+  articleUpdatedAt: string | null;
+};
 
 export interface INewsFeedEntity {
-  set setNewsFeed(Entity: Entity[])
-  get getNewsFeed(): Entity[]
+  set setNewsFeed(Entity: Entity[]);
+  get getNewsFeed(): Entity[];
 }

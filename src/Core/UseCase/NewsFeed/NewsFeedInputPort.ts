@@ -2,16 +2,16 @@ import { injectable } from 'tsyringe';
 
 @injectable()
 export class NewsFeedInputPort {
-  private name: string;
-  private tags: string;
+  private organizationId;
+  private tags;
 
-  set inputData({ name, tags }: NewsFeed.InputData) {
-    this.name = name;
+  set inputData({ organizationId, tags }: NewsFeed.InputData) {
+    this.organizationId = organizationId;
     this.tags = tags;
   }
 
-  get getName() {
-    return this.name;
+  get getOrganizationId() {
+    return this.organizationId;
   }
 
   get getTags() {

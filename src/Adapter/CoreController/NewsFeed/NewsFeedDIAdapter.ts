@@ -22,7 +22,6 @@ import { MockNewsFeedInteract } from '@/Core/UseCase/NewsFeed/__Mock__/MockNewsF
 
 // Base
 import { BaseCrawlerRepository } from '@/Driver/Crawler/Base/BaseCrawlerRepository';
-import { BaseDBRepository } from '@/Driver/DB/Base/BaseDBRepository';
 // Logic
 import { NikkeiPreliminaryReportCrawlerRepository } from '@/Driver/Crawler/Nikkei/NikkeiPreliminaryReportCrawlerRepository';
 import { NewsFeedRepository } from '@/Driver/DB/NewsFeed/NewsFeedRepository';
@@ -49,7 +48,6 @@ container.register('BaseCrawlerRepository', { useClass: BaseCrawlerRepository })
 container.register('NikkeiPreliminaryReportCrawlerRepository', {
   useClass: NikkeiPreliminaryReportCrawlerRepository,
 });
-container.register('BaseDBRepository', { useClass: BaseDBRepository });
 container.register('NewsFeedRepository', { useClass: NewsFeedRepository });
 container.register('NewsFeedController', { useClass: NewsFeedController });
 container.register('NewsFeedPresenter', { useClass: NewsFeedPresenter });

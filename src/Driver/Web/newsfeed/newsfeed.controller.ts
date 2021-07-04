@@ -8,7 +8,7 @@ export class NewsFeedController {
   @Get()
   async get(): Promise<string> {
     return this.newsFeedService.handle({
-      name: 'nikkei',
+      organizationId: 1,
       tags: 'preliminaryReport',
     });
   }

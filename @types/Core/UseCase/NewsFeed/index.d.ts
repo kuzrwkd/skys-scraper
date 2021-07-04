@@ -17,7 +17,7 @@ export interface IMockNewsFeedInteract {
  */
 export interface INewsFeedInputPort {
   set inputData(InputData: InputData);
-  get getName(): string;
+  get getOrganizationId(): number;
   get getTags(): string;
 }
 
@@ -33,6 +33,6 @@ export interface INewsFeedOutputPort {
  * その他
  */
 export type InputData = {
-  name: string;
+  organizationId: number;
   tags: string;
 };

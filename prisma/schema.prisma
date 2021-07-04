@@ -13,6 +13,14 @@ model NewsFeed {
   title String
   articleCreatedAt String
   articleUpdatedAt String?
+  organizationId Int
+  organizationMaster OrganizationMaster @relation(fields: [organizationId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model OrganizationMaster {
+  id Int @id @default(autoincrement())
+  name String
+  newsFeed NewsFeed[]
 }

@@ -15,7 +15,7 @@ export class NewsFeedInteract {
    */
   async handle(inputData: NewsFeed.InputData) {
     try {
-      const name = inputData.name;
+      const organizationId = inputData.organizationId;
       const crawler = this.nikkeiPreliminaryReportCrawlerRepository.crawler();
 
       await crawler.then(async (crawlingData) => {
@@ -27,7 +27,7 @@ export class NewsFeedInteract {
             if (existsRecord == null) {
               data.push({
                 ...item,
-                organizationName: name,
+                organizationId,
                 articleCreatedAt: item.articleCreatedAt,
                 articleUpdatedAt: item.articleUpdatedAt,
               });
@@ -35,7 +35,8 @@ export class NewsFeedInteract {
 
             // レコードが存在する且つ、articleUpdateAtがnullの場合はレコードを更新する
             if (existsRecord != null && existsRecord.articleUpdatedAt == null) {
-              await this.newsFeedRepository.update(item);
+              Object.assign(item, { organizationId });
+              await this.newsFeedRepository.update(item as NewsFeed.Entity);
             }
           }
           this.newsFeed.setNewsFeed = data;
