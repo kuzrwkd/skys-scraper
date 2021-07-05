@@ -13,7 +13,9 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "typeRoots" : ["./node_modules/@types","./@types"],
+    "typeRoots" : ["./node_modules/@types",
+      "./src/Tools/@types"
+    ],
     "incremental": true,
     "esModuleInterop": true
   }
