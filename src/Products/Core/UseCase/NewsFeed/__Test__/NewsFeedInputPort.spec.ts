@@ -4,13 +4,13 @@ const newsFeedInputPort: NewsFeed.INewsFeedInputPort = container.resolve('NewsFe
 
 describe('setterで代入した値がgetterで取得できる', () => {
   newsFeedInputPort.inputData = {
-    name: 'nikkei',
+    organizationId: 1,
     tags: 'preliminaryReport',
   };
 
   it('nameの取得', () => {
-    const name = newsFeedInputPort.getName;
-    expect(name).toBe('nikkei');
+    const name = newsFeedInputPort.getOrganizationId;
+    expect(name).toBe(1);
   });
 
   it('tagの取得', () => {
