@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { NewsFeedController } from '@/Products/Adapter/CoreController/NewsFeed/NewsFeedController';
+import { NewsFeedController } from '@/Products/Adapter/Controller/NewsFeed/NewsFeedController';
 import { NewsFeedPresenter } from '@/Products/Adapter/Presenter/NewsFeed/NewsFeedPresenter';
-import { container } from '@/Products/Adapter/CoreController/NewsFeed/NewsFeedDIAdapter';
+import { container } from '@/Tools/Containers/Products/NewsFeed';
 
 @Injectable()
 export class NewsFeedService {
@@ -9,8 +9,8 @@ export class NewsFeedService {
   newsFeedPresenter: NewsFeedPresenter;
 
   constructor() {
-    this.newsFeedController = container.resolve('NewsFeedController');
-    this.newsFeedPresenter = container.resolve('NewsFeedPresenter');
+    this.newsFeedController = container.resolve<NewsFeedController>('NewsFeedController');
+    this.newsFeedPresenter = container.resolve<NewsFeedPresenter>('NewsFeedPresenter');
   }
 
   async handle(data): Promise<string> {

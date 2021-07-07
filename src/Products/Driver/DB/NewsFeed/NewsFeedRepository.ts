@@ -1,5 +1,5 @@
 // lib
-import prisma from '@/Products/Driver/DB/Client';
+import { prisma } from '@/Products/Driver/DB/config';
 import { injectable } from 'tsyringe';
 
 @injectable()

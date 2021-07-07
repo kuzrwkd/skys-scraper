@@ -1,4 +1,4 @@
-import { container } from '@/Products/Adapter/CoreController/NewsFeed/NewsFeedDIAdapter';
+import { container } from '@/DIContainer/Products/NewsFeed/NewsFeedDIAdapter';
 
 const newsFeedInputPort: NewsFeed.INewsFeedInputPort = container.resolve('NewsFeedInputPort');
 
