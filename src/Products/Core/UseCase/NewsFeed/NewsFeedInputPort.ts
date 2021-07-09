@@ -3,18 +3,18 @@ import { injectable } from 'tsyringe';
 @injectable()
 export class NewsFeedInputPort {
   private organizationId;
-  private tags;
+  private url;
 
-  set inputData({ organizationId, tags }: NewsFeed.InputData) {
+  set setInputData({ organizationId, url }: NewsFeed.InputData) {
     this.organizationId = organizationId;
-    this.tags = tags;
+    this.url = url;
   }
 
   get getOrganizationId() {
     return this.organizationId;
   }
 
-  get getTags() {
-    return this.tags;
+  get getUrls() {
+    return this.url;
   }
 }

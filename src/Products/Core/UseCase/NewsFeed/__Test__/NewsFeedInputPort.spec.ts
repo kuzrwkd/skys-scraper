@@ -1,20 +1,27 @@
-import { container } from '@/DIContainer/Products/NewsFeed/NewsFeedDIAdapter';
+import { container } from '@/Tools/Containers/Products/Adapter/NewsFeed';
 
-const newsFeedInputPort: NewsFeed.INewsFeedInputPort = container.resolve('NewsFeedInputPort');
+describe('NewsFeedInputPortのテスト', () => {
+  const newsFeedInputPort: NewsFeed.INewsFeedInputPort = container.resolve('NewsFeedInputPort');
+  const mockOrganizationId = 1;
+  const mockUrl = [
+    'https://www.nikkei.com/news/category/financial/',
+    'https://www.nikkei.com/news/category/markets/',
+    'https://www.nikkei.com/news/category/technology/',
+    'https://www.nikkei.com/news/category/international/',
+  ];
 
-describe('setterで代入した値がgetterで取得できる', () => {
-  newsFeedInputPort.inputData = {
-    organizationId: 1,
-    tags: 'preliminaryReport',
+  newsFeedInputPort.setInputData = {
+    organizationId: mockOrganizationId,
+    url: mockUrl,
   };
 
-  it('nameの取得', () => {
-    const name = newsFeedInputPort.getOrganizationId;
-    expect(name).toBe(1);
+  it('organizationIdの取得', () => {
+    const organizationId = newsFeedInputPort.getOrganizationId;
+    expect(organizationId).toBe(mockOrganizationId);
   });
 
-  it('tagの取得', () => {
-    const tags = newsFeedInputPort.getTags;
-    expect(tags).toBe('preliminaryReport');
+  it('urlの取得', () => {
+    const url = newsFeedInputPort.getUrls;
+    expect(url).toStrictEqual(mockUrl);
   });
 });

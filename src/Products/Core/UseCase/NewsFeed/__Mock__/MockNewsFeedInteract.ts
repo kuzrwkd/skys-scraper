@@ -4,9 +4,9 @@ import { injectable } from 'tsyringe';
 export class MockNewsFeedInteract {
   async handle() {
     try {
-      return 'success';
+      return true;
     } catch (e) {
-      return 'failed';
+      return true;
     }
   }
 }

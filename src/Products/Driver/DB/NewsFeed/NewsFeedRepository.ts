@@ -17,7 +17,10 @@ export class NewsFeedRepository {
           },
         });
       }
-    } catch (e) {}
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   async read(url: string) {
@@ -27,7 +30,9 @@ export class NewsFeedRepository {
           url,
         },
       });
-    } catch (e) {}
+    } catch (e) {
+      return false;
+    }
   }
 
   async update(entityData: NewsFeed.Entity) {
@@ -43,6 +48,9 @@ export class NewsFeedRepository {
           articleUpdatedAt: entityData.articleUpdatedAt,
         },
       });
-    } catch (e) {}
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

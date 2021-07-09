@@ -1,6 +1,5 @@
 export interface INikkeiPreliminaryReportCrawlerRepository {
-  crawler(): Promise<PreliminaryReport[] | null>;
-  sendCrawlingErrorMessage(msg: string): void;
+  crawler(url: string): Promise<PreliminaryReport[] | null>;
 }
 
 export interface PreliminaryReport {

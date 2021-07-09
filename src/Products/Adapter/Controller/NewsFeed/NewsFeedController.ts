@@ -9,14 +9,14 @@ export class NewsFeedController {
   ) {}
 
   async handle(inputData: NewsFeed.InputData) {
-    this.newsFeedInputPort.inputData = {
+    this.newsFeedInputPort.setInputData = {
       organizationId: inputData.organizationId,
-      tags: inputData.tags,
+      url: inputData.url,
     };
 
     const data = {
       organizationId: this.newsFeedInputPort.getOrganizationId,
-      tags: this.newsFeedInputPort.getTags,
+      url: this.newsFeedInputPort.getUrls,
     };
 
     this.newsFeedOutputPort.setResult = await this.newsFeedInteract.handle(data);

@@ -1,12 +1,13 @@
-import { container } from '@/DIContainer/Products/NewsFeed/NewsFeedDIAdapter';
+import { container } from '@/Tools/Containers/Products/Adapter/NewsFeed';
 
-const newsFeedOutputPort: NewsFeed.INewsFeedOutputPort = container.resolve('NewsFeedOutputPort');
+describe('NewsFeedOutputPortのテスト', () => {
+  const newsFeedOutputPort: NewsFeed.INewsFeedOutputPort = container.resolve('NewsFeedOutputPort');
+  const mockResult = true;
 
-describe('setterで代入した値がgetterで取得できる', () => {
-  newsFeedOutputPort.setResult = 'success';
+  newsFeedOutputPort.setResult = mockResult;
 
-  it('結果の取得', () => {
-    const name = newsFeedOutputPort.getResult;
-    expect(name).toBe('success');
+  it('resultの取得', () => {
+    const result = newsFeedOutputPort.getResult;
+    expect(result).toBe(mockResult);
   });
 });

@@ -4,11 +4,11 @@ import { injectable } from 'tsyringe';
 export class NewsFeedOutputPort {
   private result: string;
 
-  set setResult(result: string) {
-    this.result = result ?? 'failed';
+  set setResult(result) {
+    this.result = result ?? false;
   }
 
   get getResult() {
-    return this.result ?? 'failed';
+    return this.result ?? false;
   }
 }

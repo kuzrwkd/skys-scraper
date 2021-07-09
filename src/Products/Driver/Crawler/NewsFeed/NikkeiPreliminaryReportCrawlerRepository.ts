@@ -1,11 +1,23 @@
+/**
+ * Lib
+ */
 import { injectable, inject } from 'tsyringe';
 import puppeteer from 'puppeteer';
-import { Exception } from '@/Tools/Exceptions';
+
+/**
+ * Products
+ */
 import { options } from '@/Products/Driver/Crawler/config';
+
+/**
+ * Tools
+ */
+import { Exception } from '@/Tools/Exceptions';
 
 @injectable()
 export class NikkeiPreliminaryReportCrawlerRepository {
   private logger: Lib.Logger;
+  private crawlingErrorObject;
 
   constructor(@inject('Log') private log: Tools.ILog, @inject('DayJs') private dayjs: Tools.IDayJs) {
     this.logger = log.createLogger;
@@ -13,44 +25,56 @@ export class NikkeiPreliminaryReportCrawlerRepository {
 
   /**
    * 日経速報のクローラー
-   * @throws Crawler クローリングに失敗した時
+   * @param u - string
+   * @throws Exception.CrawlingError クローリングに失敗した時
    */
-  async crawler() {
+  async crawler(u) {
     try {
       const data: NewsFeed.PreliminaryReport[] = [];
       const browser = await puppeteer.launch(options);
       const page = await browser.newPage();
-      this.logger.info('クローリング開始', this.log.crawlingStart('https://www.nikkei.com/news/category/markets/'));
-      await page.goto('https://www.nikkei.com/news/category/markets/');
+
+      this.logger.info('クローリング開始', this.log.crawlingStart(u));
+
+      const startTime = this.dayjs.processStartTime;
+      await page.goto(u);
       await page.waitForSelector('#CONTENTS_MAIN');
       const preliminaryReportLinkList = await page.$$('.m-miM09_title > a');
+      const endTime = this.dayjs.processEndTime(startTime);
+      const preliminaryReportUrl = [];
 
       if (preliminaryReportLinkList.length === 0) {
-        this.logger.error(
-          'クローリング失敗',
-          this.log.crawlingFailed('https://www.nikkei.com/news/category/markets/', {}),
-        );
-        this.sendCrawlingErrorMessage('クローリング失敗');
-      }
+        (() => {
+          this.crawlingErrorObject = {
+            url: u,
+            result: preliminaryReportLinkList,
+            crawling_time: endTime,
+          };
+          throw new Exception.CrawlingError();
+        })();
+      } else {
+        for (const link of preliminaryReportLinkList) {
+          const url: string = await (await link.getProperty('href')).jsonValue();
+          await preliminaryReportUrl.push(url);
+        }
 
-      const preliminaryReportUrl = [];
-      for (const link of preliminaryReportLinkList) {
-        const url: string = await (await link.getProperty('href')).jsonValue();
-        await preliminaryReportUrl.push(url);
+        this.logger.info('クローリング完了', this.log.crawlingSuccess(u, preliminaryReportUrl, endTime));
       }
 
       // 各記事ページのタイトル投稿日時、更新日時を取得
       const crawlingData = (
         await Promise.allSettled(
           preliminaryReportUrl.map(async (url: string) => {
-            this.logger.info('クローリング開始', this.log.crawlingStart(url));
             const page = await browser.newPage();
+            this.logger.info('クローリング開始', this.log.crawlingStart(url));
+            const startTime = this.dayjs.processStartTime;
             await page.goto(url);
 
             const title = (await page.$('h1.title_tyodebu')) ?? null;
             const createdAt = (await page.$('[class^="TimeStamp_"] > time')) ?? null;
             const updateAt = (await page.$('[class^="TimeStamp_"] > span > time')) ?? null;
 
+            const endTime = this.dayjs.processEndTime(startTime);
             const result = {
               title: (await (await title.getProperty('textContent')).jsonValue()) as string,
               url,
@@ -63,13 +87,12 @@ export class NikkeiPreliminaryReportCrawlerRepository {
                   : this.dayjs.formatDate((await (await updateAt.getProperty('dateTime')).jsonValue()) as string),
             };
 
-            if (result.title == null && result.articleCreatedAt == null) {
-              this.logger.error('クローリング失敗', this.log.crawlingFailed(url, result));
-              this.sendCrawlingErrorMessage('クローリング失敗');
-              return;
+            if (result.title == null && result.articleCreatedAt == null && result.articleUpdatedAt == null) {
+              this.crawlingErrorObject = { url, result, endTime };
+              throw new Exception.CrawlingError();
             }
 
-            this.logger.info('クローリング完了', this.log.crawlingSuccess(url, result));
+            this.logger.info('クローリング完了', this.log.crawlingSuccess(url, result, endTime));
             return result;
           }),
         )
@@ -87,18 +110,23 @@ export class NikkeiPreliminaryReportCrawlerRepository {
 
       await browser.close();
       return data;
-    } catch (e) {
-      if (e instanceof Error) {
-        this.logger.error(e.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        this.logger.error(err.message, this.log.failed(err.constructor.name, err.stack));
       }
-      if (e instanceof Exception.CrawlingError) {
-        this.logger.error(e.message);
+      if (err instanceof Exception.CrawlingError) {
+        this.logger.error(
+          'クローリング失敗',
+          this.log.crawlingFailed(
+            this.crawlingErrorObject.url,
+            this.crawlingErrorObject.result,
+            this.crawlingErrorObject.endTime,
+            err.constructor.name,
+            err.stack,
+          ),
+        );
       }
       return null;
     }
-  }
-
-  sendCrawlingErrorMessage(msg: string) {
-    throw new Exception.CrawlingError(msg);
   }
 }

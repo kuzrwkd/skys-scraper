@@ -15,7 +15,6 @@ export class Log {
     crawling_url: '', // クローリングをするURL
     crawling_result: '', // クローリングで取得した結果（DBに保存できるレベルの粒度）
     crawling_time: '', // クローリングを開始して結果を取得できるまでの時間
-    method: '', // 実行したメソッド名
     exception_class: '', // 実行された例外クラス
     stacktrace: '', // 例外時のスタックトレース
   };
@@ -29,29 +28,34 @@ export class Log {
     return {
       type: LOG_TYPE.START_CRAWLING,
       crawling_url: url,
-      method: '',
     };
   }
 
-  crawlingSuccess(url, result) {
+  crawlingSuccess(url, result, crawlingTime) {
     return {
       type: LOG_TYPE.SUCCESS_CRAWLING,
       crawling_url: url,
-      method: '',
       crawling_result: result,
-      crawling_time: '',
+      crawling_time: crawlingTime,
     };
   }
 
-  crawlingFailed(url, result) {
+  crawlingFailed(url, result, exception, stacktrace, crawlingTime) {
     return {
       type: LOG_TYPE.FAILED_CRAWLING,
       crawling_url: url,
-      method: '',
       crawling_result: result,
-      crawling_time: '',
-      exception_class: '',
-      stacktrace: '',
+      crawling_time: crawlingTime,
+      exception_class: exception,
+      stacktrace,
+    };
+  }
+
+  failed(exception, stacktrace) {
+    return {
+      type: LOG_TYPE.FAILED_CRAWLING,
+      exception_class: exception,
+      stacktrace,
     };
   }
 

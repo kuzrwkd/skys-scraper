@@ -2,31 +2,31 @@
  * NewsFeedのInteract
  */
 export interface INewsFeedInteract {
-  handle(inputData: InputData): Promise<string>;
+  handle(inputData: InputData): Promise<boolean>;
 }
 
 /**
  * NewsFeedのInteractMock
  */
 export interface IMockNewsFeedInteract {
-  handle(NewsFeedInputData: InputData): Promise<string>;
+  handle(NewsFeedInputData: InputData): Promise<boolean>;
 }
 
 /**
  * NewsFeedのInputPort
  */
 export interface INewsFeedInputPort {
-  set inputData(InputData: InputData);
+  set setInputData(InputData: InputData);
   get getOrganizationId(): number;
-  get getTags(): string;
+  get getUrls(): string[];
 }
 
 /**
  * NewsFeedのOutputPort
  */
 export interface INewsFeedOutputPort {
-  set setResult(result: string);
-  get getResult(): string;
+  set setResult(result: boolean);
+  get getResult(): boolean;
 }
 
 /**
@@ -34,5 +34,5 @@ export interface INewsFeedOutputPort {
  */
 export type InputData = {
   organizationId: number;
-  tags: string;
+  url: string[];
 };

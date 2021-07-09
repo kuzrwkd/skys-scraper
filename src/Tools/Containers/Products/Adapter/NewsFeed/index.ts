@@ -19,7 +19,7 @@ import { MockNewsFeedInteract } from '@/Products/Core/UseCase/NewsFeed/__Mock__/
 /**
  * Repository
  */
-import { NikkeiPreliminaryReportCrawlerRepository } from '@/Products/Driver/Crawler/NewsFeed/Nikkei/NikkeiPreliminaryReportCrawlerRepository';
+import { NikkeiPreliminaryReportCrawlerRepository } from '@/Products/Driver/Crawler/NewsFeed/NikkeiPreliminaryReportCrawlerRepository';
 import { NewsFeedRepository } from '@/Products/Driver/DB/NewsFeed/NewsFeedRepository';
 
 /**

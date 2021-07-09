@@ -20,6 +20,8 @@ import {
   INewsFeedOutputPort as _INewsFeedOutputPort,
   InputData as _InputData,
 } from '@/Tools/@types/Products/Core/UseCase/NewsFeed';
+import { INewsFeedPresenter as _INewsFeedPresenter } from '@/Tools/@types/Products/Adapter/Presenter/NewsFeed';
+import { INewsFeedController as _INewsFeedController } from '@/Tools/@types/Products/Adapter/Controller/NewsFeed';
 
 declare global {
   /**
@@ -59,5 +61,7 @@ declare global {
     export type INewsFeedInputPort = _INewsFeedInputPort;
     export type INewsFeedOutputPort = _INewsFeedOutputPort;
     export type InputData = _InputData;
+    export type INewsFeedPresenter = _INewsFeedPresenter;
+    export type INewsFeedController = _INewsFeedController;
   }
 }
