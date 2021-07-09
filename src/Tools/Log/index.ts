@@ -5,20 +5,6 @@ import { LOG_TYPE } from '@/Tools/Constants/Logger';
 
 @injectable()
 export class Log {
-  private logProperties = {
-    type: '', // 処理種別
-    endpoint: '', // アクセスされたAPIエンドポイント
-    api_req_param: '', // エンドポイントへ送られたリクエストパラメーター
-    api_res_param: '', // リクエストに対して返却したレスポンスパラメーター
-    api_status: '', // リクエストに対して返却したstatus
-    api_call_timeout: '', // リクエストを受け取ってレスポンスを返すまでの時間
-    crawling_url: '', // クローリングをするURL
-    crawling_result: '', // クローリングで取得した結果（DBに保存できるレベルの粒度）
-    crawling_time: '', // クローリングを開始して結果を取得できるまでの時間
-    exception_class: '', // 実行された例外クラス
-    stacktrace: '', // 例外時のスタックトレース
-  };
-
   logFormat = format((info) => {
     info.level = info.level.toUpperCase();
     return info;
@@ -53,7 +39,7 @@ export class Log {
 
   failed(exception, stacktrace) {
     return {
-      type: LOG_TYPE.FAILED_CRAWLING,
+      type: LOG_TYPE.FAILED,
       exception_class: exception,
       stacktrace,
     };
