@@ -3,7 +3,7 @@ import { container } from 'tsyringe';
 /**
  * Date
  */
-import { Date } from '@/Tools/Date';
+import { DayJs } from '@/Tools/Date';
 
 /**
  * Logger
@@ -13,7 +13,7 @@ import { Log } from '@/Tools/Log';
 /**
  * Inject
  */
-container.register<Date>('Date', { useClass: Date });
+container.register<DayJs>('DayJs', { useClass: DayJs });
 container.register<Log>('Log', { useClass: Log });
 
 export { container };

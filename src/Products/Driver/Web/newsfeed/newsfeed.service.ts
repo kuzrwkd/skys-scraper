@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { NewsFeedController } from '@/Products/Adapter/Controller/NewsFeed/NewsFeedController';
 import { NewsFeedPresenter } from '@/Products/Adapter/Presenter/NewsFeed/NewsFeedPresenter';
-import { container } from '@/Tools/Containers/Products/NewsFeed';
+import { container } from '@/Tools/Containers/Products/Adapter/NewsFeed';
 
 @Injectable()
 export class NewsFeedService {

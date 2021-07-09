@@ -1,12 +1,16 @@
-import _dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { injectable } from 'tsyringe';
 
-export const dayjs = _dayjs.extend(utc);
+export const utcDayJs = dayjs.extend(utc);
 
 @injectable()
-export class Date {
+export class DayJs {
   get getUtc(): string {
-    return dayjs.utc().format();
+    return utcDayJs.utc().format();
+  }
+
+  formatDate(date) {
+    return dayjs(date).format('YYYY-MM-DDTHH:mm:ss:SSS');
   }
 }

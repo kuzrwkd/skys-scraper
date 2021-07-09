@@ -4,10 +4,14 @@ import { AppModule } from '@/Products/Driver/Web/app.module';
 /**
  * Tools import
  */
-import { Date } from '@/Tools/Date';
+import { DayJs } from '@/Tools/Date';
 import { Log } from '@/Tools/Log';
 import { container } from '@/Tools/Containers/Tools';
-container.resolve<Date>('Date');
+
+/**
+ * Tools entry
+ */
+container.resolve<DayJs>('DayJs');
 container.resolve<Log>('Log');
 
 /**

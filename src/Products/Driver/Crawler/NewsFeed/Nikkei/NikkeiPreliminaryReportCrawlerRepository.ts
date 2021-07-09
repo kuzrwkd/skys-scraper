@@ -7,7 +7,7 @@ import { options } from '@/Products/Driver/Crawler/config';
 export class NikkeiPreliminaryReportCrawlerRepository {
   private logger: Lib.Logger;
 
-  constructor(@inject('Log') private log: Tools.ILog) {
+  constructor(@inject('Log') private log: Tools.ILog, @inject('DayJs') private dayjs: Tools.IDayJs) {
     this.logger = log.createLogger;
   }
 
@@ -54,11 +54,13 @@ export class NikkeiPreliminaryReportCrawlerRepository {
             const result = {
               title: (await (await title.getProperty('textContent')).jsonValue()) as string,
               url,
-              articleCreatedAt: (await (await createdAt.getProperty('dateTime')).jsonValue()) as string,
+              articleCreatedAt: this.dayjs.formatDate(
+                (await (await createdAt.getProperty('dateTime')).jsonValue()) as string,
+              ),
               articleUpdatedAt:
                 updateAt == null || typeof updateAt == 'undefined'
-                  ? 'null'
-                  : ((await (await updateAt.getProperty('dateTime')).jsonValue()) as string),
+                  ? null
+                  : this.dayjs.formatDate((await (await updateAt.getProperty('dateTime')).jsonValue()) as string),
             };
 
             if (result.title == null && result.articleCreatedAt == null) {

@@ -3,7 +3,7 @@ import { PrismaClient as _PrismaClient } from '@prisma/client';
 import { Logger as _Logger } from 'winston';
 
 // Tools
-import { IDate as _IDate } from '@/Tools/@types/Tools/Date';
+import { IDayJs as _IDayJs } from '@/Tools/@types/Tools/Date';
 import { ILog as _ILog } from '@/Tools/@types/Tools/Log';
 
 // NewsFeed
@@ -41,7 +41,7 @@ declare global {
    * Tools
    */
   namespace Tools {
-    export type IDate = _IDate;
+    export type IDayJs = _IDayJs;
     export type ILog = _ILog;
   }
 
