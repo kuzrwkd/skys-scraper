@@ -17,16 +17,20 @@ export class NikkeiPreliminaryReportCrawlerRepository {
    */
   async crawler() {
     try {
-      this.logger.log({ level: 'info', message: 'クローリング開始' });
       const data: NewsFeed.PreliminaryReport[] = [];
       const browser = await puppeteer.launch(options);
       const page = await browser.newPage();
+      this.logger.info('クローリング開始', this.log.crawlingStart('https://www.nikkei.com/news/category/markets/'));
       await page.goto('https://www.nikkei.com/news/category/markets/');
       await page.waitForSelector('#CONTENTS_MAIN');
       const preliminaryReportLinkList = await page.$$('.m-miM09_title > a');
 
       if (preliminaryReportLinkList.length === 0) {
-        this.sendCrawlingErrorMessage('クローリングに失敗しました');
+        this.logger.error(
+          'クローリング失敗',
+          this.log.crawlingFailed('https://www.nikkei.com/news/category/markets/', {}),
+        );
+        this.sendCrawlingErrorMessage('クローリング失敗');
       }
 
       const preliminaryReportUrl = [];
@@ -39,7 +43,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
       const crawlingData = (
         await Promise.allSettled(
           preliminaryReportUrl.map(async (url: string) => {
-            this.logger.log({ level: 'info', message: `${url}のクローリングを開始` });
+            this.logger.info('クローリング開始', this.log.crawlingStart(url));
             const page = await browser.newPage();
             await page.goto(url);
 
@@ -47,18 +51,24 @@ export class NikkeiPreliminaryReportCrawlerRepository {
             const createdAt = (await page.$('[class^="TimeStamp_"] > time')) ?? null;
             const updateAt = (await page.$('[class^="TimeStamp_"] > span > time')) ?? null;
 
-            if (title == null && createdAt == null) {
-              this.sendCrawlingErrorMessage('クローリングに失敗しました');
-              return;
-            }
-
-            return {
+            const result = {
               title: (await (await title.getProperty('textContent')).jsonValue()) as string,
               url,
               articleCreatedAt: (await (await createdAt.getProperty('dateTime')).jsonValue()) as string,
               articleUpdatedAt:
-                updateAt == null ? null : ((await (await updateAt.getProperty('dateTime')).jsonValue()) as string),
+                updateAt == null || typeof updateAt == 'undefined'
+                  ? 'null'
+                  : ((await (await updateAt.getProperty('dateTime')).jsonValue()) as string),
             };
+
+            if (result.title == null && result.articleCreatedAt == null) {
+              this.logger.error('クローリング失敗', this.log.crawlingFailed(url, result));
+              this.sendCrawlingErrorMessage('クローリング失敗');
+              return;
+            }
+
+            this.logger.info('クローリング完了', this.log.crawlingSuccess(url, result));
+            return result;
           }),
         )
       )
@@ -74,14 +84,13 @@ export class NikkeiPreliminaryReportCrawlerRepository {
       }
 
       await browser.close();
-      this.logger.log({ level: 'info', message: 'クローリング終了' });
       return data;
     } catch (e) {
       if (e instanceof Error) {
-        this.logger.log({ level: 'error', message: e.message });
+        this.logger.error(e.message);
       }
       if (e instanceof Exception.CrawlingError) {
-        this.logger.log({ level: 'error', message: e.name + ':' + e.message });
+        this.logger.error(e.message);
       }
       return null;
     }
