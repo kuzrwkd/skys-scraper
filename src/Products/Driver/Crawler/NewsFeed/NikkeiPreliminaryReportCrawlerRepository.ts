@@ -12,7 +12,7 @@ import { options } from '@/Products/Driver/Crawler/config';
 /**
  * Tools
  */
-import { Exception } from '@/Tools/Exceptions';
+import { Exception } from '@/Tools/Utility/Exceptions';
 
 @injectable()
 export class NikkeiPreliminaryReportCrawlerRepository {
@@ -20,28 +20,34 @@ export class NikkeiPreliminaryReportCrawlerRepository {
   private crawlingErrorObject;
 
   constructor(@inject('Log') private log: Tools.ILog, @inject('DayJs') private dayjs: Tools.IDayJs) {
-    this.logger = log.createLogger;
+    this.logger = log.createLogger();
   }
 
   /**
    * 日経速報のクローラー
    * @param u - string
+   * @param organization - NewsFeed.Organization
    * @throws Exception.CrawlingError クローリングに失敗した時
    */
-  async crawler(u) {
+  async crawler(u: string, organization: NewsFeed.Organization) {
+    const organizationName = organization.name;
+
     try {
       const data: NewsFeed.PreliminaryReport[] = [];
       const browser = await puppeteer.launch(options);
       const page = await browser.newPage();
 
-      this.logger.info('クローリング開始', this.log.startCrawling(u));
+      this.logger.info(`[${organizationName}] クローリング開始`, this.log.startCrawling());
 
-      const startTime = this.dayjs.processStartTime;
+      const startTime = this.dayjs.processStartTime();
       await page.goto(u);
       await page.waitForSelector('#CONTENTS_MAIN');
       const preliminaryReportLinkList = await page.$$('.m-miM09_title > a');
+
+      this.logger.info(`[${organizationName}] クローリング実行`, this.log.processCrawling(u));
+
       const endTime = this.dayjs.processEndTime(startTime);
-      const preliminaryReportUrl = [];
+      const preliminaryReportUrl: string[] = [];
 
       if (preliminaryReportLinkList.length === 0) {
         (() => {
@@ -55,10 +61,13 @@ export class NikkeiPreliminaryReportCrawlerRepository {
       } else {
         for (const link of preliminaryReportLinkList) {
           const url: string = await (await link.getProperty('href')).jsonValue();
-          await preliminaryReportUrl.push(url);
+          preliminaryReportUrl.push(url);
         }
 
-        this.logger.info('クローリング完了', this.log.successCrawling(u, preliminaryReportUrl, endTime));
+        this.logger.info(
+          `[${organizationName}] クローリング完了`,
+          this.log.successCrawling<string[]>(preliminaryReportUrl, endTime),
+        );
       }
 
       // 各記事ページのタイトル投稿日時、更新日時を取得
@@ -66,16 +75,18 @@ export class NikkeiPreliminaryReportCrawlerRepository {
         await Promise.allSettled(
           preliminaryReportUrl.map(async (url: string) => {
             const page = await browser.newPage();
-            this.logger.info('クローリング開始', this.log.startCrawling(url));
-            const startTime = this.dayjs.processStartTime;
+            this.logger.info(`[${organizationName}] クローリング開始`, this.log.startCrawling());
+            const startTime = this.dayjs.processStartTime();
             await page.goto(url);
 
             const title = (await page.$('h1.title_tyodebu')) ?? null;
             const createdAt = (await page.$('[class^="TimeStamp_"] > time')) ?? null;
             const updateAt = (await page.$('[class^="TimeStamp_"] > span > time')) ?? null;
 
+            this.logger.info(`[${organizationName}] クローリング実行`, this.log.processCrawling(url));
+
             const endTime = this.dayjs.processEndTime(startTime);
-            const result = {
+            const result: NewsFeed.PreliminaryReport = {
               title: (await (await title.getProperty('textContent')).jsonValue()) as string,
               url,
               articleCreatedAt: this.dayjs.formatDate(
@@ -92,7 +103,10 @@ export class NikkeiPreliminaryReportCrawlerRepository {
               throw new Exception.CrawlingError();
             }
 
-            this.logger.info('クローリング完了', this.log.successCrawling(url, result, endTime));
+            this.logger.info(
+              `[${organizationName}] クローリング完了`,
+              this.log.successCrawling<NewsFeed.PreliminaryReport>(result, endTime),
+            );
             return result;
           }),
         )
@@ -105,7 +119,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
         });
 
       for (const item of crawlingData) {
-        await data.push(item);
+        data.push(item);
       }
 
       await browser.close();
@@ -116,10 +130,10 @@ export class NikkeiPreliminaryReportCrawlerRepository {
       }
       if (err instanceof Exception.CrawlingError) {
         this.logger.error(
-          'クローリング失敗',
-          this.log.failedCrawling(
-            this.crawlingErrorObject.url,
+          `[${organizationName}] クローリング失敗`,
+          this.log.failedCrawling<NewsFeed.PreliminaryReport>(
             this.crawlingErrorObject.result,
+            this.crawlingErrorObject.url,
             this.crawlingErrorObject.time,
             err.constructor.name,
             err.stack,

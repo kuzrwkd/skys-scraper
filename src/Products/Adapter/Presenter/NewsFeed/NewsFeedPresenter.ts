@@ -4,7 +4,7 @@ import { injectable, inject } from 'tsyringe';
 export class NewsFeedPresenter {
   constructor(@inject('NewsFeedOutputPort') private newsFeedOutputPort: NewsFeed.INewsFeedOutputPort) {}
 
-  async handle(result) {
+  async handle(result: boolean) {
     return result;
   }
 }

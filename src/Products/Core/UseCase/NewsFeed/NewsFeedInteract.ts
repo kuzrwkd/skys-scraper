@@ -21,13 +21,13 @@ export class NewsFeedInteract {
       const organizationId = inputData.organizationId;
       const url = inputData.url;
 
-      const organization = {
+      const organization: NewsFeed.Organization = {
         id: organizationId,
         name: (await this.newsFeedRepository.findOrganization(organizationId)).name ?? null,
       };
 
       for (const u of url) {
-        const crawler = this.nikkeiPreliminaryReportCrawlerRepository.crawler(u);
+        const crawler = this.nikkeiPreliminaryReportCrawlerRepository.crawler(u, organization);
 
         await crawler.then(async (crawlingData) => {
           if (crawlingData != null) {

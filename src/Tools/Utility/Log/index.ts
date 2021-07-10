@@ -11,61 +11,58 @@ export class Log {
   });
 
   /**
-   * クローリング スタート
-   * @param url
+   * クローリングスタート
    */
-  startCrawling(url) {
+  startCrawling() {
     return {
       type: LOG_TYPE.START_CRAWLING,
-      crawling_url: url,
     };
   }
 
   /**
-   * クローリング 実行
-   */
-  processCrawling() {
-    return {
-      type: LOG_TYPE.PROCESSING,
-    };
-  }
-
-  /**
-   * クローリング 成功
-   * @param url
+   * クローリング成功
    * @param result
-   * @param crawlingTime
+   * @param time
    */
-  successCrawling(url, result, crawlingTime) {
+  successCrawling<T>(result: T, time: string) {
     return {
       type: LOG_TYPE.SUCCESS_CRAWLING,
-      crawling_url: url,
       crawling_result: result,
-      crawling_time: crawlingTime,
+      crawling_time: time,
     };
   }
 
   /**
-   * クローリング 失敗
+   * クローリング実行
+   */
+  processCrawling(url: string) {
+    return {
+      type: LOG_TYPE.PROCESS_CRAWLING,
+      crawling_url: url,
+    };
+  }
+
+  /**
+   * クローリング失敗
    * @param url
    * @param result
    * @param exceptionClass
    * @param stacktrace
-   * @param crawlingTime
+   * @param time
    */
-  failedCrawling(url, result, exceptionClass, stacktrace, crawlingTime) {
+  failedCrawling<T>(result: T, url: string, exceptionClass: string, stacktrace: string, time: string) {
     return {
       type: LOG_TYPE.FAILED_CRAWLING,
       crawling_url: url,
       crawling_result: result,
-      crawling_time: crawlingTime,
+      crawling_time: time,
       exception_class: exceptionClass,
       stacktrace,
     };
   }
 
   /**
-   * DB読み書き スタート
+   * DB読み書きスタート
    */
   startDbIo() {
     return {
@@ -74,20 +71,10 @@ export class Log {
   }
 
   /**
-   * DB読み書き 実行
-   */
-  processDbIo(query) {
-    return {
-      type: LOG_TYPE.PROCESSING,
-      query,
-    };
-  }
-
-  /**
-   * DB読み書き 成功
+   * DB読み書き成功
    * @param time
    */
-  successDbIo(time) {
+  successDbIo(time: string) {
     return {
       type: LOG_TYPE.SUCCESS_DB_IO,
       time,
@@ -95,12 +82,22 @@ export class Log {
   }
 
   /**
-   * DB読み書き 失敗
+   * DB読み書き実行
+   */
+  processDbIo(query: string) {
+    return {
+      type: LOG_TYPE.PROCESS_DB_IO,
+      query,
+    };
+  }
+
+  /**
+   * DB読み書き失敗
    * @param time
    * @param exceptionClass
    * @param stacktrace
    */
-  failedDbIo(time, exceptionClass, stacktrace) {
+  failedDbIo(time: string, exceptionClass: string, stacktrace: string) {
     return {
       type: LOG_TYPE.FAILED_DB_IO,
       time,
@@ -110,11 +107,20 @@ export class Log {
   }
 
   /**
+   * 処理の実行中
+   */
+  process() {
+    return {
+      type: LOG_TYPE.PROCESS,
+    };
+  }
+
+  /**
    * 処理の失敗
    * @param exceptionClass
    * @param stacktrace
    */
-  failed(exceptionClass, stacktrace) {
+  failed(exceptionClass: string, stacktrace: string) {
     return {
       type: LOG_TYPE.FAILED,
       exception_class: exceptionClass,
@@ -125,7 +131,7 @@ export class Log {
   /**
    * loggingインスタンスの作成
    */
-  get createLogger() {
+  createLogger() {
     return createLogger({
       format: format.combine(this.logFormat(), format.timestamp(), format.json()),
       defaultMeta: {

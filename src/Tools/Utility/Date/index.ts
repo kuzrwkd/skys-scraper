@@ -6,11 +6,11 @@ export const utcDayJs = dayjs.extend(utc);
 
 @injectable()
 export class DayJs {
-  get getUtc() {
+  getUtc() {
     return utcDayJs.utc().format();
   }
 
-  get processStartTime() {
+  processStartTime() {
     return new Date().getTime();
   }
 

@@ -5,7 +5,7 @@ import { injectable, inject } from 'tsyringe';
 /**
  * Tools
  */
-import { Exception } from '@/Tools/Exceptions';
+import { Exception } from '@/Tools/Utility/Exceptions';
 
 @injectable()
 export class NewsFeedRepository {
@@ -18,7 +18,7 @@ export class NewsFeedRepository {
     @inject('RegExpVerEx') private regExpVerEx: Tools.IRegExpVerEx,
     @inject('DayJs') private dayjs: Tools.IDayJs,
   ) {
-    this.logger = this.log.createLogger;
+    this.logger = this.log.createLogger();
     this.processLogging();
   }
 
@@ -34,7 +34,8 @@ export class NewsFeedRepository {
         );
       }
 
-      if (filterSelectRegex.test(e.query) && this.regExpVerEx.urlRegExp.test(JSON.parse(e.params)[0])) {
+      const urlRegExp = this.regExpVerEx.urlRegExp();
+      if (filterSelectRegex.test(e.query) && urlRegExp.test(JSON.parse(e.params)[0])) {
         this.logger.info(
           `NewsFeedRepository [${this.organizationName}] レコード読み取り実行`,
           this.log.processDbIo(e.query),
@@ -55,7 +56,7 @@ export class NewsFeedRepository {
    */
   async findOrganization(id: number) {
     this.logger.info('NewsFeedRepository [OrganizationMaster] レコード読み取り開始', this.log.startDbIo());
-    const startTime = this.dayjs.processStartTime;
+    const startTime = this.dayjs.processStartTime();
     const record = prisma.organizationMaster.findFirst({
       where: {
         id,
@@ -74,7 +75,7 @@ export class NewsFeedRepository {
     try {
       this.organizationName = await data.organization.name;
       this.logger.info(`NewsFeedRepository [${this.organizationName}] レコード作成開始`, this.log.startDbIo());
-      const startTime = this.dayjs.processStartTime;
+      const startTime = this.dayjs.processStartTime();
       const record = await prisma.newsFeed.create({
         data: {
           title: data.title,
@@ -120,7 +121,7 @@ export class NewsFeedRepository {
     try {
       this.organizationName = organization.name;
       this.logger.info(`NewsFeedRepository [${this.organizationName}] レコード読み取り開始`, this.log.startDbIo());
-      const startTime = this.dayjs.processStartTime;
+      const startTime = this.dayjs.processStartTime();
       const record = await prisma.newsFeed.findFirst({
         where: {
           url,
@@ -148,7 +149,7 @@ export class NewsFeedRepository {
     try {
       this.organizationName = entityData.organization.name;
       this.logger.info(`NewsFeedRepository [${this.organizationName}] レコード更新開始`, this.log.startDbIo());
-      const startTime = this.dayjs.processStartTime;
+      const startTime = this.dayjs.processStartTime();
       const record = await prisma.newsFeed.update({
         where: {
           id: entityData.id,

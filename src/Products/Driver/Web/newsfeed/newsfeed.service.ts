@@ -11,7 +11,7 @@ export class NewsFeedService {
     this.newsFeedPresenter = container.resolve<NewsFeed.INewsFeedPresenter>('NewsFeedPresenter');
   }
 
-  async handle(data): Promise<boolean> {
+  async handle(data: NewsFeed.InputData): Promise<boolean> {
     const result = await this.newsFeedController.handle(data);
     return this.newsFeedPresenter.handle(result);
   }

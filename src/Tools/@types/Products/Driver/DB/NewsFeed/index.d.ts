@@ -1,7 +1,7 @@
 export interface INewsFeedDBRepository {
   processLogging(): void;
-  findOrganization(id: number): Promise<any | undefined>;
+  findOrganization<T>(id: number): Promise<T | undefined>;
   create(data: NewsFeed.Entity): Promise<void>;
-  read(url: string, organization): Promise<any | undefined>;
+  read<T>(url: string, organization: NewsFeed.Organization): Promise<T | undefined>;
   update(data: NewsFeed.Entity): Promise<void>;
 }

@@ -79,6 +79,7 @@
     "setupFilesAfterEnv": [
       "../jest.setup.ts"
     ],
+    "modulePathIgnorePatterns": ["<rootDir>/Tools/@types"],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }

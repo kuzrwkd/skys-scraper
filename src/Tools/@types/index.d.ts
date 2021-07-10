@@ -9,7 +9,11 @@ import { IRegExpVerEx as _IRegExpVerEx } from '@/Tools/@types/Tools/RegExp';
 
 // NewsFeed
 import { INewsFeedDBRepository as _INewsFeedDBRepository } from '@/Tools/@types/Products/Driver/DB/NewsFeed';
-import { Entity as _Entity, INewsFeedEntity as _INewsFeedEntity } from '@/Tools/@types/Products/Core/Entity/NewsFeed';
+import {
+  Entity as _Entity,
+  INewsFeedEntity as _INewsFeedEntity,
+  Organization as _Organization,
+} from '@/Tools/@types/Products/Core/Entity/NewsFeed';
 import {
   INikkeiPreliminaryReportCrawlerRepository as _INikkeiPreliminaryReportCrawlerRepository,
   PreliminaryReport as _PreliminaryReport,
@@ -54,6 +58,7 @@ declare global {
   namespace NewsFeed {
     export type Entity = _Entity;
     export type INewsFeedDBRepository = _INewsFeedDBRepository;
+    export type Organization = _Organization;
     export type INewsFeedEntity = _INewsFeedEntity;
     export type INikkeiPreliminaryReportCrawlerRepository = _INikkeiPreliminaryReportCrawlerRepository;
     export type PreliminaryReport = _PreliminaryReport;

@@ -1,33 +1,64 @@
 export interface ILog {
-  startCrawling(url: string): StartCrawling;
-  processCrawling();
-  successCrawling(url: string, result: any, crawlingTime: string): SuccessCrawling;
-  failedCrawling(url: string, result: any, crawlingTime: string, exception: any, stacktrace: any): FailedCrawling;
-  startDbIo(): any;
-  processDbIo(query);
-  successDbIo(time);
-  failedDbIo(time, exceptionClass, stacktrace);
-  failed(exception: any, stacktrace: any): Failed;
-  get createLogger(): Lib.Logger;
+  startCrawling(): StartCrawling;
+  processCrawling(url: string): ProcessCrawling;
+  successCrawling<T>(result: T, crawlingTime: string): SuccessCrawling<T>;
+  failedCrawling<T>(
+    result: T,
+    url: string,
+    crawlingTime: string,
+    exception: string,
+    stacktrace: string,
+  ): FailedCrawling<T>;
+  startDbIo(): StartDbIo;
+  processDbIo(query: string): ProcessDbIo;
+  successDbIo(time: string): SuccessDbIo;
+  failedDbIo(time: string, exceptionClass: string, stacktrace: string): FailedDbIo;
+  process(): Process;
+  failed(exception: string, stacktrace: string): Failed;
+  createLogger(): Lib.Logger;
 }
 
 export type StartCrawling = {
   type: string;
-  crawling_url: string;
 };
 
-export type SuccessCrawling = {
+export type SuccessCrawling<T> = {
   type: string;
-  crawling_url: string;
-  crawling_result: string;
+  crawling_result: T;
   crawling_time: string;
 };
 
-export type FailedCrawling = {
+export type ProcessCrawling = {
   type: string;
   crawling_url: string;
-  crawling_result: string;
+};
+
+export type FailedCrawling<T> = {
+  type: string;
+  crawling_url: string;
+  crawling_result: T;
   crawling_time: string;
+  exception_class: string;
+  stacktrace: string;
+};
+
+export type StartDbIo = {
+  type: string;
+};
+
+export type SuccessDbIo = {
+  type: string;
+  time: string;
+};
+
+export type ProcessDbIo = {
+  type: string;
+  query: string;
+};
+
+export type FailedDbIo = {
+  type: string;
+  time: string;
   exception_class: string;
   stacktrace: string;
 };
@@ -36,4 +67,8 @@ export type Failed = {
   type: string;
   exception_class: string;
   stacktrace: string;
+};
+
+export type Process = {
+  type: string;
 };
