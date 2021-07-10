@@ -6,13 +6,6 @@ export interface INewsFeedInteract {
 }
 
 /**
- * NewsFeedのInteractMock
- */
-export interface IMockNewsFeedInteract {
-  handle(NewsFeedInputData: InputData): Promise<boolean>;
-}
-
-/**
  * NewsFeedのInputPort
  */
 export interface INewsFeedInputPort {

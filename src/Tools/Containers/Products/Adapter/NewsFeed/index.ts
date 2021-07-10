@@ -13,8 +13,6 @@ import { NewsFeedEntity } from '@/Products/Core/Entity/NewsFeed/NewsFeedEntity';
 import { NewsFeedInteract } from '@/Products/Core/UseCase/NewsFeed/NewsFeedInteract';
 import { NewsFeedInputPort } from '@/Products/Core/UseCase/NewsFeed/NewsFeedInputPort';
 import { NewsFeedOutputPort } from '@/Products/Core/UseCase/NewsFeed/NewsFeedOutputPort';
-// Mock
-import { MockNewsFeedInteract } from '@/Products/Core/UseCase/NewsFeed/__Mock__/MockNewsFeedInteract';
 
 /**
  * Repository
@@ -37,7 +35,6 @@ import { NewsFeedPresenter } from '@/Products/Adapter/Presenter/NewsFeed/NewsFee
  */
 container.register<NewsFeedEntity>('NewsFeedEntity', { useClass: NewsFeedEntity });
 container.register<NewsFeedInteract>('NewsFeedInteract', { useClass: NewsFeedInteract });
-container.register<MockNewsFeedInteract>('MockNewsFeedInteract', { useClass: MockNewsFeedInteract });
 container.register<NewsFeedInputPort>('NewsFeedInputPort', { useClass: NewsFeedInputPort });
 container.register<NewsFeedOutputPort>('NewsFeedOutputPort', { useClass: NewsFeedOutputPort });
 container.register<NikkeiPreliminaryReportCrawlerRepository>('NikkeiPreliminaryReportCrawlerRepository', {

@@ -15,7 +15,6 @@ import {
 } from '@/Tools/@types/Products/Driver/Crawler/NewsFeed';
 import {
   INewsFeedInteract as _INewsFeedInteract,
-  IMockNewsFeedInteract as _IMockNewsFeedInteract,
   INewsFeedInputPort as _INewsFeedInputPort,
   INewsFeedOutputPort as _INewsFeedOutputPort,
   InputData as _InputData,
@@ -57,7 +56,6 @@ declare global {
     export type INikkeiPreliminaryReportCrawlerRepository = _INikkeiPreliminaryReportCrawlerRepository;
     export type PreliminaryReport = _PreliminaryReport;
     export type INewsFeedInteract = _INewsFeedInteract;
-    export type IMockNewsFeedInteract = _IMockNewsFeedInteract;
     export type INewsFeedInputPort = _INewsFeedInputPort;
     export type INewsFeedOutputPort = _INewsFeedOutputPort;
     export type InputData = _InputData;
