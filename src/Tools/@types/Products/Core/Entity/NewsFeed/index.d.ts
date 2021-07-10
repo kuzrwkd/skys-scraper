@@ -1,7 +1,11 @@
 export type Entity = {
+  id?: number;
   title: string;
   url: string;
-  organizationId: number;
+  organization: {
+    id: number;
+    name: string;
+  };
   articleCreatedAt: string;
   articleUpdatedAt: string | null;
 };

@@ -5,6 +5,7 @@ import { Logger as _Logger } from 'winston';
 // Tools
 import { IDayJs as _IDayJs } from '@/Tools/@types/Tools/Date';
 import { ILog as _ILog } from '@/Tools/@types/Tools/Log';
+import { IRegExpVerEx as _IRegExpVerEx } from '@/Tools/@types/Tools/RegExp';
 
 // NewsFeed
 import { INewsFeedDBRepository as _INewsFeedDBRepository } from '@/Tools/@types/Products/Driver/DB/NewsFeed';
@@ -44,6 +45,7 @@ declare global {
   namespace Tools {
     export type IDayJs = _IDayJs;
     export type ILog = _ILog;
+    export type IRegExpVerEx = _IRegExpVerEx;
   }
 
   /**

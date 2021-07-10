@@ -1,10 +1,12 @@
 export interface ILog {
   startCrawling(url: string): StartCrawling;
+  processCrawling();
   successCrawling(url: string, result: any, crawlingTime: string): SuccessCrawling;
   failedCrawling(url: string, result: any, crawlingTime: string, exception: any, stacktrace: any): FailedCrawling;
   startDbIo(): any;
-  successDbIo(query, queryResult, time);
-  failedDbIo(query, queryResult, time, exceptionClass, stacktrace);
+  processDbIo(query);
+  successDbIo(time);
+  failedDbIo(time, exceptionClass, stacktrace);
   failed(exception: any, stacktrace: any): Failed;
   get createLogger(): Lib.Logger;
 }

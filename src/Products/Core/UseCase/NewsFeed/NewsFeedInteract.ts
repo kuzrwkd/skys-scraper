@@ -21,27 +21,37 @@ export class NewsFeedInteract {
       const organizationId = inputData.organizationId;
       const url = inputData.url;
 
+      const organization = {
+        id: organizationId,
+        name: (await this.newsFeedRepository.findOrganization(organizationId)).name ?? null,
+      };
+
       for (const u of url) {
         const crawler = this.nikkeiPreliminaryReportCrawlerRepository.crawler(u);
 
         await crawler.then(async (crawlingData) => {
           if (crawlingData != null) {
             for (const item of crawlingData) {
-              const existsRecord = (await this.newsFeedRepository.read(item.url)) ?? null;
+              const existsRecord = (await this.newsFeedRepository.read(item.url, organization)) ?? null;
 
               if (existsRecord == null) {
                 await this.newsFeedRepository.create({
                   ...item,
-                  organizationId,
+                  organization,
                   articleCreatedAt: item.articleCreatedAt,
                   articleUpdatedAt: item.articleUpdatedAt,
                 });
               }
 
-              // レコードが存在する且つ、articleUpdateAtがnullの場合はレコードを更新する
-              if (existsRecord != null && existsRecord.articleUpdatedAt == null) {
-                Object.assign(item, { organizationId });
-                await this.newsFeedRepository.update(item as NewsFeed.Entity);
+              // レコードが存在する且つ、クローリングの結果、articleUpdateAtが存在する場合はレコードを更新する
+              if (existsRecord != null && item.articleUpdatedAt != null) {
+                await this.newsFeedRepository.update({
+                  id: existsRecord.id,
+                  ...item,
+                  organization,
+                  title: item.title,
+                  articleUpdatedAt: item.articleUpdatedAt,
+                });
               }
             }
           }

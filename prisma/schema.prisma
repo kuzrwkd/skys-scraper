@@ -9,7 +9,7 @@ datasource db {
 
 model NewsFeed {
   id Int @id @default(autoincrement())
-  url String @unique
+  url String
   title String
   articleCreatedAt String
   articleUpdatedAt String?

@@ -22,6 +22,15 @@ export class Log {
   }
 
   /**
+   * クローリング 実行
+   */
+  processCrawling() {
+    return {
+      type: LOG_TYPE.PROCESSING,
+    };
+  }
+
+  /**
    * クローリング 成功
    * @param url
    * @param result
@@ -59,35 +68,41 @@ export class Log {
    * DB読み書き スタート
    */
   startDbIo() {
-    return {};
+    return {
+      type: LOG_TYPE.START_DB_IO,
+    };
+  }
+
+  /**
+   * DB読み書き 実行
+   */
+  processDbIo(query) {
+    return {
+      type: LOG_TYPE.PROCESSING,
+      query,
+    };
   }
 
   /**
    * DB読み書き 成功
-   * @param query
-   * @param queryResult
    * @param time
    */
-  successDbIo(query, queryResult, time) {
+  successDbIo(time) {
     return {
-      query,
-      query_result: queryResult,
+      type: LOG_TYPE.SUCCESS_DB_IO,
       time,
     };
   }
 
   /**
    * DB読み書き 失敗
-   * @param query
-   * @param queryResult
    * @param time
    * @param exceptionClass
    * @param stacktrace
    */
-  failedDbIo(query, queryResult, time, exceptionClass, stacktrace) {
+  failedDbIo(time, exceptionClass, stacktrace) {
     return {
-      query,
-      query_result: queryResult,
+      type: LOG_TYPE.FAILED_DB_IO,
       time,
       exception_class: exceptionClass,
       stacktrace,

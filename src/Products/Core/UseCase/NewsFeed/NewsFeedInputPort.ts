@@ -2,8 +2,8 @@ import { injectable } from 'tsyringe';
 
 @injectable()
 export class NewsFeedInputPort {
-  private organizationId;
-  private url;
+  private organizationId: number;
+  private url: string[];
 
   set setInputData({ organizationId, url }: NewsFeed.InputData) {
     this.organizationId = organizationId;
