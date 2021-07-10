@@ -1,24 +1,27 @@
 export interface ILog {
-  crawlingStart(url: string): CrawlingStart;
-  crawlingSuccess(url: string, result: any, crawlingTime: string): CrawlingSuccess;
-  crawlingFailed(url: string, result: any, crawlingTime: string, exception: any, stacktrace: any): CrawlingFailed;
+  startCrawling(url: string): StartCrawling;
+  successCrawling(url: string, result: any, crawlingTime: string): SuccessCrawling;
+  failedCrawling(url: string, result: any, crawlingTime: string, exception: any, stacktrace: any): FailedCrawling;
+  startDbIo(): any;
+  successDbIo(query, queryResult, time);
+  failedDbIo(query, queryResult, time, exceptionClass, stacktrace);
   failed(exception: any, stacktrace: any): Failed;
   get createLogger(): Lib.Logger;
 }
 
-export type CrawlingStart = {
+export type StartCrawling = {
   type: string;
   crawling_url: string;
 };
 
-export type CrawlingSuccess = {
+export type SuccessCrawling = {
   type: string;
   crawling_url: string;
   crawling_result: string;
   crawling_time: string;
 };
 
-export type CrawlingFailed = {
+export type FailedCrawling = {
   type: string;
   crawling_url: string;
   crawling_result: string;

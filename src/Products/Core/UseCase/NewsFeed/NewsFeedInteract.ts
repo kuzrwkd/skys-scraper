@@ -25,13 +25,12 @@ export class NewsFeedInteract {
         const crawler = this.nikkeiPreliminaryReportCrawlerRepository.crawler(u);
 
         await crawler.then(async (crawlingData) => {
-          const data: NewsFeed.Entity[] = [];
           if (crawlingData != null) {
             for (const item of crawlingData) {
               const existsRecord = (await this.newsFeedRepository.read(item.url)) ?? null;
 
               if (existsRecord == null) {
-                data.push({
+                await this.newsFeedRepository.create({
                   ...item,
                   organizationId,
                   articleCreatedAt: item.articleCreatedAt,
@@ -45,13 +44,8 @@ export class NewsFeedInteract {
                 await this.newsFeedRepository.update(item as NewsFeed.Entity);
               }
             }
-            this.newsFeed.setNewsFeed = data;
           }
         });
-
-        const insertData = this.newsFeed.getNewsFeed;
-
-        await this.newsFeedRepository.create(insertData);
       }
 
       return true;

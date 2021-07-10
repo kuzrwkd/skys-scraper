@@ -34,7 +34,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
       const browser = await puppeteer.launch(options);
       const page = await browser.newPage();
 
-      this.logger.info('クローリング開始', this.log.crawlingStart(u));
+      this.logger.info('クローリング開始', this.log.startCrawling(u));
 
       const startTime = this.dayjs.processStartTime;
       await page.goto(u);
@@ -48,7 +48,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
           this.crawlingErrorObject = {
             url: u,
             result: preliminaryReportLinkList,
-            crawling_time: endTime,
+            time: endTime,
           };
           throw new Exception.CrawlingError();
         })();
@@ -58,7 +58,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
           await preliminaryReportUrl.push(url);
         }
 
-        this.logger.info('クローリング完了', this.log.crawlingSuccess(u, preliminaryReportUrl, endTime));
+        this.logger.info('クローリング完了', this.log.successCrawling(u, preliminaryReportUrl, endTime));
       }
 
       // 各記事ページのタイトル投稿日時、更新日時を取得
@@ -66,7 +66,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
         await Promise.allSettled(
           preliminaryReportUrl.map(async (url: string) => {
             const page = await browser.newPage();
-            this.logger.info('クローリング開始', this.log.crawlingStart(url));
+            this.logger.info('クローリング開始', this.log.startCrawling(url));
             const startTime = this.dayjs.processStartTime;
             await page.goto(url);
 
@@ -88,11 +88,11 @@ export class NikkeiPreliminaryReportCrawlerRepository {
             };
 
             if (result.title == null && result.articleCreatedAt == null && result.articleUpdatedAt == null) {
-              this.crawlingErrorObject = { url, result, endTime };
+              this.crawlingErrorObject = { url, result, time: endTime };
               throw new Exception.CrawlingError();
             }
 
-            this.logger.info('クローリング完了', this.log.crawlingSuccess(url, result, endTime));
+            this.logger.info('クローリング完了', this.log.successCrawling(url, result, endTime));
             return result;
           }),
         )
@@ -117,10 +117,10 @@ export class NikkeiPreliminaryReportCrawlerRepository {
       if (err instanceof Exception.CrawlingError) {
         this.logger.error(
           'クローリング失敗',
-          this.log.crawlingFailed(
+          this.log.failedCrawling(
             this.crawlingErrorObject.url,
             this.crawlingErrorObject.result,
-            this.crawlingErrorObject.endTime,
+            this.crawlingErrorObject.time,
             err.constructor.name,
             err.stack,
           ),
