@@ -27,8 +27,8 @@ export class Log {
   successCrawling<T>(result: T, time: string) {
     return {
       type: LOG_TYPE.SUCCESS_CRAWLING,
-      crawling_result: result,
-      crawling_time: time,
+      result,
+      time,
     };
   }
 
@@ -54,8 +54,8 @@ export class Log {
     return {
       type: LOG_TYPE.FAILED_CRAWLING,
       crawling_url: url,
-      crawling_result: result,
-      crawling_time: time,
+      result,
+      time,
       exception_class: exceptionClass,
       stacktrace,
     };
@@ -107,7 +107,26 @@ export class Log {
   }
 
   /**
-   * 処理の実行中
+   * 処理開始
+   */
+  start() {
+    return {
+      type: LOG_TYPE.START,
+    };
+  }
+
+  /**
+   * 処理成功
+   */
+  success(time: string) {
+    return {
+      type: LOG_TYPE.SUCCESS,
+      time,
+    };
+  }
+
+  /**
+   * 処理実行中
    */
   process() {
     return {
@@ -116,7 +135,7 @@ export class Log {
   }
 
   /**
-   * 処理の失敗
+   * 処理失敗
    * @param exceptionClass
    * @param stacktrace
    */

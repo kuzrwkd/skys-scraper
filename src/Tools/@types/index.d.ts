@@ -15,6 +15,7 @@ import {
   Organization as _Organization,
 } from '@/Tools/@types/Products/Core/Entity/NewsFeed';
 import {
+  INewsFeedCrawlerIndex as _INewsFeedCrawlerIndex,
   INikkeiPreliminaryReportCrawlerRepository as _INikkeiPreliminaryReportCrawlerRepository,
   PreliminaryReport as _PreliminaryReport,
 } from '@/Tools/@types/Products/Driver/Crawler/NewsFeed';
@@ -60,6 +61,7 @@ declare global {
     export type INewsFeedDBRepository = _INewsFeedDBRepository;
     export type Organization = _Organization;
     export type INewsFeedEntity = _INewsFeedEntity;
+    export type INewsFeedCrawlerIndex = _INewsFeedCrawlerIndex;
     export type INikkeiPreliminaryReportCrawlerRepository = _INikkeiPreliminaryReportCrawlerRepository;
     export type PreliminaryReport = _PreliminaryReport;
     export type INewsFeedInteract = _INewsFeedInteract;

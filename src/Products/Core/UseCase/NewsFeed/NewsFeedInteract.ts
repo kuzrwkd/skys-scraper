@@ -7,9 +7,8 @@ import { injectable, inject } from 'tsyringe';
 export class NewsFeedInteract {
   constructor(
     @inject('NewsFeedEntity') private newsFeed: NewsFeed.INewsFeedEntity,
-    @inject('NikkeiPreliminaryReportCrawlerRepository')
-    private nikkeiPreliminaryReportCrawlerRepository: NewsFeed.INikkeiPreliminaryReportCrawlerRepository,
-    @inject('NewsFeedRepository') private newsFeedRepository: NewsFeed.INewsFeedDBRepository,
+    @inject('NewsFeedCrawlerIndex') private newsFeedCrawlerIndex: NewsFeed.INewsFeedCrawlerIndex,
+    @inject('NewsFeedDBRepository') private newsFeedDBRepository: NewsFeed.INewsFeedDBRepository,
     @inject('NewsFeedInputPort') private newsFeedInputPort: NewsFeed.INewsFeedInputPort,
   ) {}
 
@@ -23,19 +22,20 @@ export class NewsFeedInteract {
 
       const organization: NewsFeed.Organization = {
         id: organizationId,
-        name: (await this.newsFeedRepository.findOrganization(organizationId)).name ?? null,
+        name: (await this.newsFeedDBRepository.findOrganization<NewsFeed.Organization>(organizationId)).name ?? null,
       };
 
       for (const u of url) {
-        const crawler = this.nikkeiPreliminaryReportCrawlerRepository.crawler(u, organization);
+        const crawler = this.newsFeedCrawlerIndex.handle(u, organization);
 
         await crawler.then(async (crawlingData) => {
           if (crawlingData != null) {
             for (const item of crawlingData) {
-              const existsRecord = (await this.newsFeedRepository.read(item.url, organization)) ?? null;
+              const existsRecord: NewsFeed.Entity =
+                (await this.newsFeedDBRepository.read(item.url, organization)) ?? null;
 
               if (existsRecord == null) {
-                await this.newsFeedRepository.create({
+                await this.newsFeedDBRepository.create({
                   ...item,
                   organization,
                   articleCreatedAt: item.articleCreatedAt,
@@ -43,15 +43,18 @@ export class NewsFeedInteract {
                 });
               }
 
-              // レコードが存在する且つ、クローリングの結果、articleUpdateAtが存在する場合はレコードを更新する
+              // レコードが存在する且つ、クローリングの結果、articleUpdateAtが存在する場合
               if (existsRecord != null && item.articleUpdatedAt != null) {
-                await this.newsFeedRepository.update({
-                  id: existsRecord.id,
-                  ...item,
-                  organization,
-                  title: item.title,
-                  articleUpdatedAt: item.articleUpdatedAt,
-                });
+                // レコードのarticleUpdatedAtとクローリング結果のarticleUpdatedAtが異なる場合はレコードを更新する
+                if (item.articleUpdatedAt !== existsRecord.articleUpdatedAt) {
+                  await this.newsFeedDBRepository.update({
+                    id: existsRecord.id,
+                    ...item,
+                    organization,
+                    title: item.title,
+                    articleUpdatedAt: item.articleUpdatedAt,
+                  });
+                }
               }
             }
           }

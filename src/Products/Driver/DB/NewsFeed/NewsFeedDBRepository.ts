@@ -8,7 +8,7 @@ import { injectable, inject } from 'tsyringe';
 import { Exception } from '@/Tools/Utility/Exceptions';
 
 @injectable()
-export class NewsFeedRepository {
+export class NewsFeedDBRepository {
   private logger: Lib.Logger;
   private dbErrorObject;
   private organizationName: string;
@@ -29,7 +29,7 @@ export class NewsFeedRepository {
     prisma.$on<any>('query', (e: any) => {
       if (filterInsertRegex.test(e.query)) {
         this.logger.info(
-          `NewsFeedRepository [${this.organizationName}] レコード作成実行`,
+          `NewsFeedDBRepository [${this.organizationName}] レコード作成実行`,
           this.log.processDbIo(e.query),
         );
       }
@@ -37,14 +37,14 @@ export class NewsFeedRepository {
       const urlRegExp = this.regExpVerEx.urlRegExp();
       if (filterSelectRegex.test(e.query) && urlRegExp.test(JSON.parse(e.params)[0])) {
         this.logger.info(
-          `NewsFeedRepository [${this.organizationName}] レコード読み取り実行`,
+          `NewsFeedDBRepository [${this.organizationName}] レコード読み取り実行`,
           this.log.processDbIo(e.query),
         );
       }
 
       if (filterUpdateRegex.test(e.query)) {
         this.logger.info(
-          `NewsFeedRepository [${this.organizationName}] レコード更新実行`,
+          `NewsFeedDBRepository [${this.organizationName}] レコード更新実行`,
           this.log.processDbIo(e.query),
         );
       }
@@ -55,7 +55,7 @@ export class NewsFeedRepository {
    * 機関マスター検索
    */
   async findOrganization(id: number) {
-    this.logger.info('NewsFeedRepository [OrganizationMaster] レコード読み取り開始', this.log.startDbIo());
+    this.logger.info('NewsFeedDBRepository [OrganizationMaster] レコード読み取り開始', this.log.startDbIo());
     const startTime = this.dayjs.processStartTime();
     const record = prisma.organizationMaster.findFirst({
       where: {
@@ -63,7 +63,7 @@ export class NewsFeedRepository {
       },
     });
     const endTime = this.dayjs.processEndTime(startTime);
-    this.logger.info('NewsFeedRepository [OrganizationMaster] レコード読み取り完了', this.log.successDbIo(endTime));
+    this.logger.info('NewsFeedDBRepository [OrganizationMaster] レコード読み取り完了', this.log.successDbIo(endTime));
     return record;
   }
 
@@ -74,7 +74,7 @@ export class NewsFeedRepository {
   async create(data) {
     try {
       this.organizationName = await data.organization.name;
-      this.logger.info(`NewsFeedRepository [${this.organizationName}] レコード作成開始`, this.log.startDbIo());
+      this.logger.info(`NewsFeedDBRepository [${this.organizationName}] レコード作成開始`, this.log.startDbIo());
       const startTime = this.dayjs.processStartTime();
       const record = await prisma.newsFeed.create({
         data: {
@@ -94,7 +94,7 @@ export class NewsFeedRepository {
         })();
       } else {
         this.logger.info(
-          `NewsFeedRepository [${this.organizationName}] レコード作成完了`,
+          `NewsFeedDBRepository [${this.organizationName}] レコード作成完了`,
           this.log.successDbIo(endTime),
         );
         return record;
@@ -105,7 +105,7 @@ export class NewsFeedRepository {
       }
       if (err instanceof Exception.DBCreateError) {
         this.logger.error(
-          `NewsFeedRepository [${this.organizationName}] レコード作成失敗`,
+          `NewsFeedDBRepository [${this.organizationName}] レコード作成失敗`,
           this.log.failedDbIo(this.dbErrorObject.time, err.constructor.name, err.stack),
         );
       }
@@ -120,7 +120,7 @@ export class NewsFeedRepository {
   async read(url, organization) {
     try {
       this.organizationName = organization.name;
-      this.logger.info(`NewsFeedRepository [${this.organizationName}] レコード読み取り開始`, this.log.startDbIo());
+      this.logger.info(`NewsFeedDBRepository [${this.organizationName}] レコード読み取り開始`, this.log.startDbIo());
       const startTime = this.dayjs.processStartTime();
       const record = await prisma.newsFeed.findFirst({
         where: {
@@ -130,7 +130,7 @@ export class NewsFeedRepository {
 
       const endTime = this.dayjs.processEndTime(startTime);
       this.logger.info(
-        `NewsFeedRepository [${this.organizationName}] レコード読み取り完了`,
+        `NewsFeedDBRepository [${this.organizationName}] レコード読み取り完了`,
         this.log.successDbIo(endTime),
       );
       return record;
@@ -148,7 +148,7 @@ export class NewsFeedRepository {
   async update(entityData) {
     try {
       this.organizationName = entityData.organization.name;
-      this.logger.info(`NewsFeedRepository [${this.organizationName}] レコード更新開始`, this.log.startDbIo());
+      this.logger.info(`NewsFeedDBRepository [${this.organizationName}] レコード更新開始`, this.log.startDbIo());
       const startTime = this.dayjs.processStartTime();
       const record = await prisma.newsFeed.update({
         where: {
@@ -168,7 +168,7 @@ export class NewsFeedRepository {
         })();
       } else {
         this.logger.info(
-          `NewsFeedRepository [${this.organizationName}] レコード更新完了`,
+          `NewsFeedDBRepository [${this.organizationName}] レコード更新完了`,
           this.log.successDbIo(endTime),
         );
         return record;
@@ -179,7 +179,7 @@ export class NewsFeedRepository {
       }
       if (err instanceof Exception.DBUpdateError) {
         this.logger.error(
-          `NewsFeedRepository [${this.organizationName}] レコード更新失敗`,
+          `NewsFeedDBRepository [${this.organizationName}] レコード更新失敗`,
           this.log.failedDbIo(this.dbErrorObject.time, err.constructor.name, err.stack),
         );
       }

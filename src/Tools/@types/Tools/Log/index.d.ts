@@ -13,6 +13,8 @@ export interface ILog {
   processDbIo(query: string): ProcessDbIo;
   successDbIo(time: string): SuccessDbIo;
   failedDbIo(time: string, exceptionClass: string, stacktrace: string): FailedDbIo;
+  start(): Start;
+  success(time): Success;
   process(): Process;
   failed(exception: string, stacktrace: string): Failed;
   createLogger(): Lib.Logger;
@@ -24,7 +26,7 @@ export type StartCrawling = {
 
 export type SuccessCrawling<T> = {
   type: string;
-  crawling_result: T;
+  result: T;
   crawling_time: string;
 };
 
@@ -36,7 +38,7 @@ export type ProcessCrawling = {
 export type FailedCrawling<T> = {
   type: string;
   crawling_url: string;
-  crawling_result: T;
+  result: T;
   crawling_time: string;
   exception_class: string;
   stacktrace: string;
@@ -63,12 +65,21 @@ export type FailedDbIo = {
   stacktrace: string;
 };
 
-export type Failed = {
+export type Start = {
   type: string;
-  exception_class: string;
-  stacktrace: string;
+};
+
+export type Success = {
+  type: string;
+  time: string;
 };
 
 export type Process = {
   type: string;
+};
+
+export type Failed = {
+  type: string;
+  exception_class: string;
+  stacktrace: string;
 };
