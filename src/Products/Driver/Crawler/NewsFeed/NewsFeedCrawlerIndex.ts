@@ -1,3 +1,6 @@
+/**
+ * Lib
+ */
 import { injectable, inject } from 'tsyringe';
 
 @injectable()

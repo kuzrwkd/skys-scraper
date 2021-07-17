@@ -1,12 +1,19 @@
+/**
+ * Nest core
+ */
 import { Injectable } from '@nestjs/common';
+
+/**
+ * Tool
+ */
 import { container } from '@/Tools/Containers/Products/Adapter/NewsFeed';
 
 @Injectable()
 export class NewsFeedService {
-  newsFeedController: NewsFeed.INewsFeedController;
-  newsFeedPresenter: NewsFeed.INewsFeedPresenter;
-
-  constructor() {
+  constructor(
+    private newsFeedController: NewsFeed.INewsFeedController,
+    private newsFeedPresenter: NewsFeed.INewsFeedPresenter,
+  ) {
     this.newsFeedController = container.resolve<NewsFeed.INewsFeedController>('NewsFeedController');
     this.newsFeedPresenter = container.resolve<NewsFeed.INewsFeedPresenter>('NewsFeedPresenter');
   }

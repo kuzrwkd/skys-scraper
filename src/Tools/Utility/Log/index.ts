@@ -1,6 +1,17 @@
+/**
+ * Node core
+ */
+import os from 'os';
+
+/**
+ * Lib
+ */
 import { createLogger, format, transports } from 'winston';
 import { injectable } from 'tsyringe';
-import os from 'os';
+
+/**
+ * Tool
+ */
 import { LOG_TYPE } from '@/Tools/Constants/Logger';
 
 @injectable()

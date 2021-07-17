@@ -1,3 +1,6 @@
+/**
+ * Lib
+ */
 import { injectable } from 'tsyringe';
 import VerEx from 'verbal-expressions';
 

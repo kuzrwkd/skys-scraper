@@ -79,7 +79,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
             const startTime = this.dayjs.processStartTime();
             await page.goto(url);
 
-            const title = (await page.$('h1.title_tyodebu')) ?? null;
+            const title = (await page.$('h1[class^="title_"]')) ?? null;
             const createdAt = (await page.$('[class^="TimeStamp_"] > time')) ?? null;
             const updateAt = (await page.$('[class^="TimeStamp_"] > span > time')) ?? null;
 
@@ -97,6 +97,24 @@ export class NikkeiPreliminaryReportCrawlerRepository {
                   ? null
                   : this.dayjs.formatDate((await (await updateAt.getProperty('dateTime')).jsonValue()) as string),
             };
+
+            if (result.title == null) {
+              this.logger.info(
+                `[${organizationName}] 記事タイトルが見つかりませんでした`,
+                this.log.processCrawling(url),
+              );
+            }
+
+            if (result.articleCreatedAt == null) {
+              this.logger.info(
+                `[${organizationName}] 記事投稿日時が見つかりませんでした`,
+                this.log.processCrawling(url),
+              );
+            }
+
+            if (result.articleUpdatedAt == null) {
+              this.logger.info(`[${organizationName}] 記事更新日が見つかりませんでした`, this.log.processCrawling(url));
+            }
 
             if (result.title == null && result.articleCreatedAt == null && result.articleUpdatedAt == null) {
               this.crawlingErrorObject = { url, result, time: endTime };
