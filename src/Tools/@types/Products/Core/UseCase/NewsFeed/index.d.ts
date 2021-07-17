@@ -11,6 +11,7 @@ export interface INewsFeedInteract {
 export interface INewsFeedInputPort {
   set setInputData(InputData: InputData);
   get getOrganizationId(): number;
+  get getContentsId(): number;
   get getUrls(): string[];
 }
 
@@ -27,5 +28,6 @@ export interface INewsFeedOutputPort {
  */
 export type InputData = {
   organizationId: number;
+  contentsId: number;
   url: string[];
 };

@@ -53,6 +53,7 @@ export class NewsFeedDBRepository {
 
   /**
    * 機関マスター検索
+   *  @param id - number
    */
   async findOrganization(id: number) {
     this.logger.info('NewsFeedDBRepository [OrganizationMaster] レコード読み取り開始', this.log.startDbIo());
@@ -68,12 +69,29 @@ export class NewsFeedDBRepository {
   }
 
   /**
-   * レコード作成
-   * @param data
+   * コンテンツマスター検索
+   * @param id - number
    */
-  async create(data) {
+  async findContents(id: number) {
+    this.logger.info('NewsFeedDBRepository [ContentsMaster] レコード読み取り開始', this.log.startDbIo());
+    const startTime = this.dayjs.processStartTime();
+    const record = prisma.contentsMaster.findFirst({
+      where: {
+        id,
+      },
+    });
+    const endTime = this.dayjs.processEndTime(startTime);
+    this.logger.info('NewsFeedDBRepository [ContentsMaster] レコード読み取り完了', this.log.successDbIo(endTime));
+    return record;
+  }
+
+  /**
+   * レコード作成
+   * @param data - NewsFeed.Entity
+   */
+  async create(data: NewsFeed.Entity) {
     try {
-      this.organizationName = await data.organization.name;
+      this.organizationName = data.organization.name;
       this.logger.info(`NewsFeedDBRepository [${this.organizationName}] レコード作成開始`, this.log.startDbIo());
       const startTime = this.dayjs.processStartTime();
       const record = await prisma.newsFeed.create({
@@ -81,6 +99,7 @@ export class NewsFeedDBRepository {
           title: data.title,
           url: data.url,
           organizationId: data.organization.id,
+          contentsId: data.contents.id,
           articleCreatedAt: data.articleCreatedAt,
           articleUpdatedAt: data.articleUpdatedAt,
         },
@@ -114,8 +133,8 @@ export class NewsFeedDBRepository {
 
   /**
    * レコード読み取り
-   * @param url
-   * @param organization
+   * @param url - string
+   * @param organization - NewsFeed.Organization
    */
   async read(url, organization) {
     try {
@@ -143,20 +162,20 @@ export class NewsFeedDBRepository {
 
   /**
    * レコード更新
-   * @param entityData
+   * @param data - NewsFeed.Entity
    */
-  async update(entityData) {
+  async update(data: NewsFeed.Entity) {
     try {
-      this.organizationName = entityData.organization.name;
+      this.organizationName = data.organization.name;
       this.logger.info(`NewsFeedDBRepository [${this.organizationName}] レコード更新開始`, this.log.startDbIo());
       const startTime = this.dayjs.processStartTime();
       const record = await prisma.newsFeed.update({
         where: {
-          id: entityData.id,
+          id: data.id,
         },
         data: {
-          title: entityData.title,
-          articleUpdatedAt: entityData.articleUpdatedAt,
+          title: data.title,
+          articleUpdatedAt: data.articleUpdatedAt,
         },
       });
       const endTime = this.dayjs.processEndTime(startTime);

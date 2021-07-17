@@ -5,7 +5,7 @@ import { injectable, inject } from 'tsyringe';
 import puppeteer from 'puppeteer';
 
 /**
- * Products
+ * Options
  */
 import { options } from '@/Products/Driver/Crawler/config';
 
@@ -33,7 +33,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
     const organizationName = organization.name;
 
     try {
-      const data: NewsFeed.PreliminaryReport[] = [];
+      const data: NewsFeed.NewsFeedCrawlerResult[] = [];
       const browser = await puppeteer.launch(options);
       const page = await browser.newPage();
 
@@ -86,7 +86,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
             this.logger.info(`[${organizationName}] クローリング実行`, this.log.processCrawling(url));
 
             const endTime = this.dayjs.processEndTime(startTime);
-            const result: NewsFeed.PreliminaryReport = {
+            const result: NewsFeed.NewsFeedCrawlerResult = {
               title: (await (await title.getProperty('textContent')).jsonValue()) as string,
               url,
               articleCreatedAt: this.dayjs.formatDate(
@@ -105,7 +105,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
 
             this.logger.info(
               `[${organizationName}] クローリング完了`,
-              this.log.successCrawling<NewsFeed.PreliminaryReport>(result, endTime),
+              this.log.successCrawling<NewsFeed.NewsFeedCrawlerResult>(result, endTime),
             );
             return result;
           }),
@@ -131,7 +131,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
       if (err instanceof Exception.CrawlingError) {
         this.logger.error(
           `[${organizationName}] クローリング失敗`,
-          this.log.failedCrawling<NewsFeed.PreliminaryReport>(
+          this.log.failedCrawling<NewsFeed.NewsFeedCrawlerResult>(
             this.crawlingErrorObject.result,
             this.crawlingErrorObject.url,
             this.crawlingErrorObject.time,

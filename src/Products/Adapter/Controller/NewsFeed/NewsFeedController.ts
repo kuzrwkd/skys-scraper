@@ -11,11 +11,13 @@ export class NewsFeedController {
   async handle(inputData: NewsFeed.InputData) {
     this.newsFeedInputPort.setInputData = {
       organizationId: inputData.organizationId,
+      contentsId: inputData.contentsId,
       url: inputData.url,
     };
 
     const data = {
       organizationId: this.newsFeedInputPort.getOrganizationId,
+      contentsId: this.newsFeedInputPort.getContentsId,
       url: this.newsFeedInputPort.getUrls,
     };
 

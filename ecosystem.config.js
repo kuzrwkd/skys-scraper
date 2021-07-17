@@ -1,8 +1,8 @@
 module.exports = {
   apps: [
     {
-      name: 'skys-scraper',
-      script: 'dist/main.js',
+      name: 'skys-scraper-app',
+      script: 'node_modules/.bin/nest start --watch',
       instances: 1,
       autorestart: true,
       watch: false,

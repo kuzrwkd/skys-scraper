@@ -13,11 +13,13 @@ import {
   Entity as _Entity,
   INewsFeedEntity as _INewsFeedEntity,
   Organization as _Organization,
+  Contents as _Contents,
 } from '@/Tools/@types/Products/Core/Entity/NewsFeed';
 import {
   INewsFeedCrawlerIndex as _INewsFeedCrawlerIndex,
   INikkeiPreliminaryReportCrawlerRepository as _INikkeiPreliminaryReportCrawlerRepository,
-  PreliminaryReport as _PreliminaryReport,
+  IBloombergJaPreliminaryReportCrawlerRepository as _IBloombergJaPreliminaryReportCrawlerRepository,
+  NewsFeedCrawlerResult as _NewsFeedCrawlerResult,
 } from '@/Tools/@types/Products/Driver/Crawler/NewsFeed';
 import {
   INewsFeedInteract as _INewsFeedInteract,
@@ -60,10 +62,12 @@ declare global {
     export type Entity = _Entity;
     export type INewsFeedDBRepository = _INewsFeedDBRepository;
     export type Organization = _Organization;
+    export type Contents = _Contents;
     export type INewsFeedEntity = _INewsFeedEntity;
     export type INewsFeedCrawlerIndex = _INewsFeedCrawlerIndex;
     export type INikkeiPreliminaryReportCrawlerRepository = _INikkeiPreliminaryReportCrawlerRepository;
-    export type PreliminaryReport = _PreliminaryReport;
+    export type IBloombergJaPreliminaryReportCrawlerRepository = _IBloombergJaPreliminaryReportCrawlerRepository;
+    export type NewsFeedCrawlerResult = _NewsFeedCrawlerResult;
     export type INewsFeedInteract = _INewsFeedInteract;
     export type INewsFeedInputPort = _INewsFeedInputPort;
     export type INewsFeedOutputPort = _INewsFeedOutputPort;

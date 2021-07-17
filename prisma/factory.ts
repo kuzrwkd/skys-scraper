@@ -12,5 +12,8 @@ export const organizationMasterFactory = {
     { name: 'CNBC/JA' },
     { name: 'CNBC/US' },
   ],
-  skipDuplicates: true,
+};
+
+export const contentsMasterFactory = {
+  data: [{ name: 'Text' }, { name: 'Video' }],
 };

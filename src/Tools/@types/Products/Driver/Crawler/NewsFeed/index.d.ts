@@ -1,12 +1,16 @@
 export interface INikkeiPreliminaryReportCrawlerRepository {
-  crawler(url: string, organization: NewsFeed.Organization): Promise<PreliminaryReport[] | null>;
+  crawler(url: string, organization: NewsFeed.Organization): Promise<NewsFeedCrawlerResult[] | null>;
+}
+
+export interface IBloombergJaPreliminaryReportCrawlerRepository {
+  crawler(url: string, organization: NewsFeed.Organization): Promise<NewsFeedCrawlerResult[] | null>;
 }
 
 export interface INewsFeedCrawlerIndex {
-  handle(url: string, organization: NewsFeed.Organization): Promise<PreliminaryReport[] | null>;
+  handle(url: string, organization: NewsFeed.Organization): Promise<NewsFeedCrawlerResult[] | null>;
 }
 
-export interface PreliminaryReport {
+export interface NewsFeedCrawlerResult {
   title: string;
   url: string;
   articleCreatedAt: string;

@@ -1,3 +1,3 @@
 export interface INewsFeedPresenter {
-  handle(result): Promise<boolean>;
+  handle(result: boolean): Promise<boolean>;
 }

@@ -19,6 +19,7 @@ import { NewsFeedOutputPort } from '@/Products/Core/UseCase/NewsFeed/NewsFeedOut
  */
 import { NewsFeedCrawlerIndex } from '@/Products/Driver/Crawler/NewsFeed/NewsFeedCrawlerIndex';
 import { NikkeiPreliminaryReportCrawlerRepository } from '@/Products/Driver/Crawler/NewsFeed/NikkeiPreliminaryReportCrawlerRepository';
+import { BloombergJaPreliminaryReportCrawlerRepository } from '@/Products/Driver/Crawler/NewsFeed/BloombergJaPreliminaryReportCrawlerRepository';
 import { NewsFeedDBRepository } from '@/Products/Driver/DB/NewsFeed/NewsFeedDBRepository';
 
 /**
@@ -41,6 +42,9 @@ container.register<NewsFeedOutputPort>('NewsFeedOutputPort', { useClass: NewsFee
 container.register<NewsFeedCrawlerIndex>('NewsFeedCrawlerIndex', { useClass: NewsFeedCrawlerIndex });
 container.register<NikkeiPreliminaryReportCrawlerRepository>('NikkeiPreliminaryReportCrawlerRepository', {
   useClass: NikkeiPreliminaryReportCrawlerRepository,
+});
+container.register<BloombergJaPreliminaryReportCrawlerRepository>('BloombergJaPreliminaryReportCrawlerRepository', {
+  useClass: BloombergJaPreliminaryReportCrawlerRepository,
 });
 container.register<NewsFeedDBRepository>('NewsFeedDBRepository', { useClass: NewsFeedDBRepository });
 container.register<NewsFeedController>('NewsFeedController', { useClass: NewsFeedController });

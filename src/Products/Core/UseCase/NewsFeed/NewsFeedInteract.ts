@@ -18,11 +18,17 @@ export class NewsFeedInteract {
   async handle(inputData: NewsFeed.InputData) {
     try {
       const organizationId = inputData.organizationId;
+      const contentsId = inputData.contentsId;
       const url = inputData.url;
 
       const organization: NewsFeed.Organization = {
         id: organizationId,
-        name: (await this.newsFeedDBRepository.findOrganization<NewsFeed.Organization>(organizationId)).name ?? null,
+        name: (await this.newsFeedDBRepository.findOrganization(organizationId)).name ?? null,
+      };
+
+      const contents: NewsFeed.Contents = {
+        id: contentsId,
+        name: (await this.newsFeedDBRepository.findContents(contentsId)).name ?? null,
       };
 
       for (const u of url) {
@@ -38,6 +44,7 @@ export class NewsFeedInteract {
                 await this.newsFeedDBRepository.create({
                   ...item,
                   organization,
+                  contents,
                   articleCreatedAt: item.articleCreatedAt,
                   articleUpdatedAt: item.articleUpdatedAt,
                 });
@@ -51,6 +58,7 @@ export class NewsFeedInteract {
                     id: existsRecord.id,
                     ...item,
                     organization,
+                    contents,
                     title: item.title,
                     articleUpdatedAt: item.articleUpdatedAt,
                   });
