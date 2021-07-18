@@ -28,6 +28,11 @@ container.resolve<RegExpVerEx>('RegExpVerEx');
  */
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
+  await app.listen(3000, () => {
+    if (process.env.ENV !== 'local') {
+      // Here we send the ready signal to PM2
+      process.send('ready');
+    }
+  });
 }
 bootstrap();

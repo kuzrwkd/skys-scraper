@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'skys-scraper-app',
-      script: 'npm run start:dev',
+      script: 'dist/Products/Driver/Web/main.js',
       instances: 1,
       autorestart: true,
       watch: false,
@@ -13,11 +13,13 @@ module.exports = {
     },
     {
       name: 'skys-scraper-cron-app',
-      script: 'npm run start:batch',
+      script: 'dist/Products/Driver/Batch/index.js',
       instances: 1,
       exec_mode: 'fork',
       cron_restart: '*/3 * * * *',
       watch: false,
+      wait_ready: true,
+      listen_timeout: 100000,
       autorestart: false,
     },
   ],
