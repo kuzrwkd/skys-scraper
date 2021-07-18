@@ -3,6 +3,7 @@ import { container } from '@/Tools/Containers/Products/Adapter/NewsFeed';
 describe('NewsFeedInputPortのテスト', () => {
   const newsFeedInputPort: NewsFeed.INewsFeedInputPort = container.resolve('NewsFeedInputPort');
   const mockOrganizationId = 1;
+  const mockContentsId = 1;
   const mockUrl = [
     'https://www.nikkei.com/news/category/financial/',
     'https://www.nikkei.com/news/category/markets/',
@@ -12,6 +13,7 @@ describe('NewsFeedInputPortのテスト', () => {
 
   newsFeedInputPort.setInputData = {
     organizationId: mockOrganizationId,
+    contentsId: mockContentsId,
     url: mockUrl,
   };
 

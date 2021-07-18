@@ -25,7 +25,7 @@ import {
   INewsFeedInteract as _INewsFeedInteract,
   INewsFeedInputPort as _INewsFeedInputPort,
   INewsFeedOutputPort as _INewsFeedOutputPort,
-  InputData as _InputData,
+  RequestData as _RequestData,
 } from '@/Tools/@types/Products/Core/UseCase/NewsFeed';
 import { INewsFeedPresenter as _INewsFeedPresenter } from '@/Tools/@types/Products/Adapter/Presenter/NewsFeed';
 import { INewsFeedController as _INewsFeedController } from '@/Tools/@types/Products/Adapter/Controller/NewsFeed';
@@ -71,7 +71,7 @@ declare global {
     export type INewsFeedInteract = _INewsFeedInteract;
     export type INewsFeedInputPort = _INewsFeedInputPort;
     export type INewsFeedOutputPort = _INewsFeedOutputPort;
-    export type InputData = _InputData;
+    export type RequestData = _RequestData;
     export type INewsFeedPresenter = _INewsFeedPresenter;
     export type INewsFeedController = _INewsFeedController;
   }

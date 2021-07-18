@@ -2,14 +2,14 @@
  * NewsFeedのInteract
  */
 export interface INewsFeedInteract {
-  handle(inputData: InputData): Promise<boolean>;
+  handle(RequestData: RequestData): Promise<boolean>;
 }
 
 /**
  * NewsFeedのInputPort
  */
 export interface INewsFeedInputPort {
-  set setInputData(InputData: InputData);
+  set setInputData(RequestData: RequestData);
   get getOrganizationId(): number;
   get getContentsId(): number;
   get getUrls(): string[];
@@ -26,7 +26,7 @@ export interface INewsFeedOutputPort {
 /**
  * その他
  */
-export type InputData = {
+export type RequestData = {
   organizationId: number;
   contentsId: number;
   url: string[];

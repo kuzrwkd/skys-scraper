@@ -15,11 +15,11 @@ export class NewsFeedInteract {
   /**
    * newsFeedのUseCase
    */
-  async handle(inputData: NewsFeed.InputData) {
+  async handle(RequestData: NewsFeed.RequestData) {
     try {
-      const organizationId = inputData.organizationId;
-      const contentsId = inputData.contentsId;
-      const url = inputData.url;
+      const organizationId = RequestData.organizationId;
+      const contentsId = RequestData.contentsId;
+      const url = RequestData.url;
 
       const organization: NewsFeed.Organization = {
         id: organizationId,

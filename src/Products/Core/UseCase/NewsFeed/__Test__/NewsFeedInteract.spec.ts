@@ -6,9 +6,9 @@ const newsFeedInteractMock = NewsFeedInteract as jest.Mock;
 describe('NewsFeedInteractのテスト', () => {
   newsFeedInteractMock.mockImplementationOnce(() => {
     return {
-      async handle(inputData: NewsFeed.InputData): Promise<boolean> {
+      async handle(RequestData: NewsFeed.RequestData): Promise<boolean> {
         try {
-          if (inputData.url.length > 0) {
+          if (RequestData.url.length > 0) {
             return true;
           }
         } catch (e) {

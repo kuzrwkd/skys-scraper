@@ -8,11 +8,11 @@ export class NewsFeedController {
     @inject('NewsFeedInteract') private newsFeedInteract: NewsFeed.INewsFeedInteract,
   ) {}
 
-  async handle(inputData: NewsFeed.InputData) {
+  async handle(RequestData: NewsFeed.RequestData) {
     this.newsFeedInputPort.setInputData = {
-      organizationId: inputData.organizationId,
-      contentsId: inputData.contentsId,
-      url: inputData.url,
+      organizationId: RequestData.organizationId,
+      contentsId: RequestData.contentsId,
+      url: RequestData.url,
     };
 
     const data = {

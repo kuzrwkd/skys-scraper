@@ -1,3 +1,3 @@
 export interface INewsFeedController {
-  handle(data: NewsFeed.InputData): Promise<boolean>;
+  handle(data: NewsFeed.RequestData): Promise<boolean>;
 }

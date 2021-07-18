@@ -6,7 +6,7 @@ export class NewsFeedInputPort {
   private contentsId: number;
   private url: string[];
 
-  set setInputData({ organizationId, contentsId, url }: NewsFeed.InputData) {
+  set setInputData({ organizationId, contentsId, url }: NewsFeed.RequestData) {
     this.organizationId = organizationId;
     this.contentsId = contentsId;
     this.url = url;

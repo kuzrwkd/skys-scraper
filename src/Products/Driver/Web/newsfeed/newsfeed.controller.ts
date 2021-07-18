@@ -6,7 +6,7 @@ import { container } from '@/Tools/Containers/Tools';
 /**
  * Nest core
  */
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 
 /**
  * Nestjs Service
@@ -25,21 +25,12 @@ export class NewsFeedController {
     this.logger = this.log.createLogger();
   }
 
-  @Get()
-  async get(): Promise<boolean> {
+  @Post()
+  async post(@Body() body: NewsFeed.RequestData): Promise<boolean> {
     try {
       const startTime = this.dayjs.processStartTime();
       this.logger.info('NewsFeed 処理開始', this.log.start());
-      const result = await this.newsFeedService.handle({
-        organizationId: 1,
-        contentsId: 1,
-        url: [
-          'https://www.nikkei.com/news/category/financial/',
-          'https://www.nikkei.com/news/category/markets/',
-          'https://www.nikkei.com/news/category/technology/',
-          'https://www.nikkei.com/news/category/international/',
-        ],
-      });
+      const result = await this.newsFeedService.handle(body);
       // const result = await this.newsFeedService.handle({
       //   organizationId: 2,
       //   contentsId: 1,
