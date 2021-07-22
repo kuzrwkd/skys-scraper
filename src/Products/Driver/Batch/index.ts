@@ -26,7 +26,7 @@ const options = {
 };
 
 const req = http.request(options, (res) => {
-  const chunks = [];
+  const chunks: string[] = [];
   res.on('data', (chunk) => {
     chunks.push(chunk);
   });

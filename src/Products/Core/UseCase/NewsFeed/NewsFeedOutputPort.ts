@@ -2,7 +2,7 @@ import { injectable } from 'tsyringe';
 
 @injectable()
 export class NewsFeedOutputPort {
-  private result: boolean;
+  private result!: boolean;
 
   set setResult(result: boolean) {
     this.result = result ?? false;

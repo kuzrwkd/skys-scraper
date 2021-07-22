@@ -10,8 +10,8 @@ import { Exception } from '@/Tools/Utility/Exceptions';
 @injectable()
 export class NewsFeedDBRepository {
   private logger: Lib.Logger;
-  private dbErrorObject;
-  private organizationName: string;
+  private dbErrorObject?: any;
+  private organizationName: string | null = null;
 
   constructor(
     @inject('Log') private log: Tools.ILog,
@@ -120,12 +120,12 @@ export class NewsFeedDBRepository {
       }
     } catch (err) {
       if (err instanceof Error) {
-        this.logger.error(err.message, this.log.failed(err.constructor.name, err.stack));
+        this.logger.error(err.message, this.log.failed(err.constructor.name, err.stack as string));
       }
       if (err instanceof Exception.DBCreateError) {
         this.logger.error(
           `NewsFeedDBRepository [${this.organizationName}] レコード作成失敗`,
-          this.log.failedDbIo(this.dbErrorObject.time, err.constructor.name, err.stack),
+          this.log.failedDbIo(this.dbErrorObject.time, err.constructor.name, err.stack as string),
         );
       }
     }
@@ -133,10 +133,10 @@ export class NewsFeedDBRepository {
 
   /**
    * レコード読み取り
-   * @param url - string
-   * @param organization - NewsFeed.Organization
+   * @param url
+   * @param organization
    */
-  async read(url, organization) {
+  async read(url: string, organization: NewsFeed.Organization) {
     try {
       this.organizationName = organization.name;
       this.logger.info(`NewsFeedDBRepository [${this.organizationName}] レコード読み取り開始`, this.log.startDbIo());
@@ -155,7 +155,7 @@ export class NewsFeedDBRepository {
       return record;
     } catch (err) {
       if (err instanceof Error) {
-        this.logger.error(err.message, this.log.failed(err.constructor.name, err.stack));
+        this.logger.error(err.message, this.log.failed(err.constructor.name, err.stack as string));
       }
     }
   }
@@ -194,12 +194,12 @@ export class NewsFeedDBRepository {
       }
     } catch (err) {
       if (err instanceof Error) {
-        this.logger.error(err.message, this.log.failed(err.constructor.name, err.stack));
+        this.logger.error(err.message, this.log.failed(err.constructor.name, err.stack as string));
       }
       if (err instanceof Exception.DBUpdateError) {
         this.logger.error(
           `NewsFeedDBRepository [${this.organizationName}] レコード更新失敗`,
-          this.log.failedDbIo(this.dbErrorObject.time, err.constructor.name, err.stack),
+          this.log.failedDbIo(this.dbErrorObject.time, err.constructor.name, err.stack as string),
         );
       }
     }

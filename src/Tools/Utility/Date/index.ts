@@ -17,11 +17,11 @@ export class DayJs {
     return new Date().getTime();
   }
 
-  processEndTime(startTime) {
+  processEndTime(startTime: number) {
     return `${new Date().getTime() - startTime} ms`;
   }
 
-  formatDate(date) {
+  formatDate(date: string) {
     return dayjs(date).format('YYYY-MM-DDTHH:mm:ss:SSS[Z]');
   }
 }

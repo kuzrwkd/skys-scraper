@@ -3,7 +3,7 @@ import { container } from 'tsyringe';
 /**
  * Entity
  */
-import { NewsFeedEntity } from '@/Products/Core/Entity/NewsFeed/NewsFeedEntity';
+import { NewsFeedEntity } from '@/Products/Core/Entity/NewsFeedEntity';
 
 /**
  * UseCase
@@ -20,17 +20,17 @@ import { NewsFeedOutputPort } from '@/Products/Core/UseCase/NewsFeed/NewsFeedOut
 import { NewsFeedCrawlerIndex } from '@/Products/Driver/Crawler/NewsFeed/NewsFeedCrawlerIndex';
 import { NikkeiPreliminaryReportCrawlerRepository } from '@/Products/Driver/Crawler/NewsFeed/NikkeiPreliminaryReportCrawlerRepository';
 import { BloombergJaPreliminaryReportCrawlerRepository } from '@/Products/Driver/Crawler/NewsFeed/BloombergJaPreliminaryReportCrawlerRepository';
-import { NewsFeedDBRepository } from '@/Products/Driver/DB/NewsFeed/NewsFeedDBRepository';
+import { NewsFeedDBRepository } from '@/Products/Driver/DB/NewsFeedDBRepository';
 
 /**
  * Controller
  */
-import { NewsFeedController } from '@/Products/Adapter/Controller/NewsFeed/NewsFeedController';
+import { NewsFeedController } from '@/Products/Adapter/Controller/NewsFeedController';
 
 /**
  * Presenter
  */
-import { NewsFeedPresenter } from '@/Products/Adapter/Presenter/NewsFeed/NewsFeedPresenter';
+import { NewsFeedPresenter } from '@/Products/Adapter/Presenter/NewsFeedPresenter';
 
 /**
  * Inject

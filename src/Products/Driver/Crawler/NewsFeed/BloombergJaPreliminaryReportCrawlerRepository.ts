@@ -17,7 +17,7 @@ import { Exception } from '@/Tools/Utility/Exceptions';
 @injectable()
 export class BloombergJaPreliminaryReportCrawlerRepository {
   private logger: Lib.Logger;
-  private crawlingErrorObject;
+  private crawlingErrorObject!: any;
 
   constructor(@inject('Log') private log: Tools.ILog, @inject('DayJs') private dayjs: Tools.IDayJs) {
     this.logger = log.createLogger();

@@ -17,7 +17,7 @@ import { Exception } from '@/Tools/Utility/Exceptions';
 @injectable()
 export class NikkeiPreliminaryReportCrawlerRepository {
   private logger: Lib.Logger;
-  private crawlingErrorObject;
+  private crawlingErrorObject!: any;
 
   constructor(@inject('Log') private log: Tools.ILog, @inject('DayJs') private dayjs: Tools.IDayJs) {
     this.logger = log.createLogger();
@@ -60,8 +60,10 @@ export class NikkeiPreliminaryReportCrawlerRepository {
         })();
       } else {
         for (const link of preliminaryReportLinkList) {
-          const url: string = await (await link.getProperty('href')).jsonValue();
-          preliminaryReportUrl.push(url);
+          const url: string | null = (await (await link.getProperty('href'))?.jsonValue()) ?? null;
+          if (url != null) {
+            preliminaryReportUrl.push(url);
+          }
         }
 
         this.logger.info(
@@ -87,15 +89,16 @@ export class NikkeiPreliminaryReportCrawlerRepository {
 
             const endTime = this.dayjs.processEndTime(startTime);
             const result: NewsFeed.NewsFeedCrawlerResult = {
-              title: (await (await title.getProperty('textContent')).jsonValue()) as string,
+              title: ((await (await title?.getProperty('textContent'))?.jsonValue()) as string) ?? null,
               url,
               articleCreatedAt: this.dayjs.formatDate(
-                (await (await createdAt.getProperty('dateTime')).jsonValue()) as string,
+                ((await (await createdAt?.getProperty('dateTime'))?.jsonValue()) as string) ?? null,
               ),
               articleUpdatedAt:
                 updateAt == null || typeof updateAt == 'undefined'
                   ? null
-                  : this.dayjs.formatDate((await (await updateAt.getProperty('dateTime')).jsonValue()) as string),
+                  : this.dayjs.formatDate((await (await updateAt?.getProperty('dateTime'))?.jsonValue()) as string) ??
+                    null,
             };
 
             if (result.title == null) {
@@ -137,14 +140,16 @@ export class NikkeiPreliminaryReportCrawlerRepository {
         });
 
       for (const item of crawlingData) {
-        data.push(item);
+        if (typeof item !== 'undefined') {
+          data.push(item);
+        }
       }
 
       await browser.close();
       return data;
     } catch (err) {
       if (err instanceof Error) {
-        this.logger.error(err.message, this.log.failed(err.constructor.name, err.stack));
+        this.logger.error(err.message, this.log.failed(err.constructor.name, err.stack as string));
       }
       if (err instanceof Exception.CrawlingError) {
         this.logger.error(
@@ -154,7 +159,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
             this.crawlingErrorObject.url,
             this.crawlingErrorObject.time,
             err.constructor.name,
-            err.stack,
+            err.stack as string,
           ),
         );
       }

@@ -2,7 +2,7 @@ import { injectable } from 'tsyringe';
 
 @injectable()
 export class NewsFeedEntity {
-  private entity: NewsFeed.Entity[];
+  private entity!: NewsFeed.Entity[];
 
   /**
    * newsFeedのsetter

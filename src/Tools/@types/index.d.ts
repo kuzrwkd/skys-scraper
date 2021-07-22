@@ -1,34 +1,40 @@
-//lib
-import { PrismaClient as _PrismaClient } from '@prisma/client';
-import { Logger as _Logger } from 'winston';
+/**
+ * Lib
+ */
+import type { PrismaClient as _PrismaClient } from '@prisma/client';
+import type { Logger as _Logger } from 'winston';
 
-// Tools
-import { IDayJs as _IDayJs } from '@/Tools/@types/Tools/Date';
-import { ILog as _ILog } from '@/Tools/@types/Tools/Log';
-import { IRegExpVerEx as _IRegExpVerEx } from '@/Tools/@types/Tools/RegExp';
+/**
+ * Tools
+ */
+import type { IDayJs as _IDayJs } from '@/Tools/@types/Tools/Utility/Date';
+import type { ILog as _ILog } from '@/Tools/@types/Tools/Utility/Log';
+import type { IRegExpVerEx as _IRegExpVerEx } from '@/Tools/@types/Tools/Utility/RegExp';
 
-// NewsFeed
-import { INewsFeedDBRepository as _INewsFeedDBRepository } from '@/Tools/@types/Products/Driver/DB/NewsFeed';
-import {
+/**
+ * NewsFeed
+ */
+import type { INewsFeedDBRepository as _INewsFeedDBRepository } from '@/Tools/@types/Products/Driver/DB/NewsFeed';
+import type {
   Entity as _Entity,
   INewsFeedEntity as _INewsFeedEntity,
   Organization as _Organization,
   Contents as _Contents,
 } from '@/Tools/@types/Products/Core/Entity/NewsFeed';
-import {
+import type {
   INewsFeedCrawlerIndex as _INewsFeedCrawlerIndex,
   INikkeiPreliminaryReportCrawlerRepository as _INikkeiPreliminaryReportCrawlerRepository,
   IBloombergJaPreliminaryReportCrawlerRepository as _IBloombergJaPreliminaryReportCrawlerRepository,
   NewsFeedCrawlerResult as _NewsFeedCrawlerResult,
 } from '@/Tools/@types/Products/Driver/Crawler/NewsFeed';
-import {
+import type {
   INewsFeedInteract as _INewsFeedInteract,
   INewsFeedInputPort as _INewsFeedInputPort,
   INewsFeedOutputPort as _INewsFeedOutputPort,
   RequestData as _RequestData,
 } from '@/Tools/@types/Products/Core/UseCase/NewsFeed';
-import { INewsFeedPresenter as _INewsFeedPresenter } from '@/Tools/@types/Products/Adapter/Presenter/NewsFeed';
-import { INewsFeedController as _INewsFeedController } from '@/Tools/@types/Products/Adapter/Controller/NewsFeed';
+import type { INewsFeedPresenter as _INewsFeedPresenter } from '@/Tools/@types/Products/Adapter/Presenter/NewsFeed';
+import type { INewsFeedController as _INewsFeedController } from '@/Tools/@types/Products/Adapter/Controller/NewsFeed';
 
 declare global {
   /**

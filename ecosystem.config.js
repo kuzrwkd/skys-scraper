@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'skys-scraper-app',
+      name: 'SKYS-SCRAPER-APP',
       script: 'dist/Products/Driver/Web/main.js',
       instances: 1,
       autorestart: true,
@@ -12,7 +12,7 @@ module.exports = {
       },
     },
     {
-      name: 'skys-scraper-cron-app',
+      name: 'SKYS-SCRAPER-CRON-APP',
       script: 'dist/Products/Driver/Batch/index.js',
       instances: 1,
       exec_mode: 'fork',

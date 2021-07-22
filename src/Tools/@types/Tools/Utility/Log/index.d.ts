@@ -14,7 +14,7 @@ export interface ILog {
   successDbIo(time: string): SuccessDbIo;
   failedDbIo(time: string, exceptionClass: string, stacktrace: string): FailedDbIo;
   start(): Start;
-  success(time): Success;
+  success(time: string): Success;
   process(): Process;
   failed(exception: string, stacktrace: string): Failed;
   createLogger(): Lib.Logger;

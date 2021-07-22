@@ -39,6 +39,8 @@ export class NewsFeedController {
       const endTime = this.dayjs.processEndTime(startTime);
       this.logger.info('NewsFeed 処理終了', this.log.success(endTime));
       return result;
-    } catch (err) {}
+    } catch (err) {
+      return false;
+    }
   }
 }

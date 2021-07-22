@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 
 declare const global: CustomNodeJsGlobal;
 
-export const prisma =
+export const prisma: Lib.PrismaClient =
   global.prisma ||
   new PrismaClient({
     log: [

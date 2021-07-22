@@ -6,7 +6,7 @@ import { Injectable } from '@nestjs/common';
 /**
  * Tool
  */
-import { container } from '@/Tools/Containers/Products/Adapter/NewsFeed';
+import { container } from '@/Tools/Containers/Products/NewsFeed';
 
 @Injectable()
 export class NewsFeedService {
