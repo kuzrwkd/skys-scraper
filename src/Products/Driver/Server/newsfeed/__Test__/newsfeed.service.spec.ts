@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NewsFeedService } from '@/Products/Driver/Web/newsfeed/newsfeed.service';
+import { NewsFeedService } from '@/Products/Driver/Server/newsfeed/newsfeed.service';
 
 describe('NewsfeedService', () => {
   let service: NewsFeedService;

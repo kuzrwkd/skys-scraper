@@ -6,12 +6,12 @@ import { Module } from '@nestjs/common';
 /**
  * Nest controller
  */
-import { NewsFeedController } from '@/Products/Driver/Web/newsfeed/newsfeed.controller';
+import { NewsFeedController } from '@/Products/Driver/Server/newsfeed/newsfeed.controller';
 
 /**
  * Nest Service
  */
-import { NewsFeedService } from '@/Products/Driver/Web/newsfeed/newsfeed.service';
+import { NewsFeedService } from '@/Products/Driver/Server/newsfeed/newsfeed.service';
 
 @Module({
   controllers: [NewsFeedController],

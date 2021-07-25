@@ -6,7 +6,7 @@ import { NestFactory } from '@nestjs/core';
 /**
  * Nest module
  */
-import { AppModule } from '@/Products/Driver/Web/app.module';
+import { AppModule } from '@/Products/Driver/Server/app.module';
 
 /**
  * Tools import

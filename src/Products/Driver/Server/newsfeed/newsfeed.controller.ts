@@ -11,7 +11,7 @@ import { Controller, Post, Body } from '@nestjs/common';
 /**
  * Nestjs Service
  */
-import { NewsFeedService } from '@/Products/Driver/Web/newsfeed/newsfeed.service';
+import { NewsFeedService } from '@/Products/Driver/Server/newsfeed/newsfeed.service';
 
 @Controller('newsfeed')
 export class NewsFeedController {
