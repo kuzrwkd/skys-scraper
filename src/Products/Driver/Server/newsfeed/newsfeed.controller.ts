@@ -30,14 +30,12 @@ export class NewsFeedController {
     try {
       const startTime = this.dayjs.processStartTime();
       this.logger.info('NewsFeed 処理開始', this.log.start());
+
       const result = await this.newsFeedService.handle(body);
-      // const result = await this.newsFeedService.handle({
-      //   organizationId: 2,
-      //   contentsId: 1,
-      //   url: ['https://www.bloomberg.co.jp/'],
-      // });
+
       const endTime = this.dayjs.processEndTime(startTime);
       this.logger.info('NewsFeed 処理終了', this.log.success(endTime));
+
       return result;
     } catch (err) {
       return false;

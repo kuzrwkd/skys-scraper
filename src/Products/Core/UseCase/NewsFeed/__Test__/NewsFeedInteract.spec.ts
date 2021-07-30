@@ -8,9 +8,7 @@ describe('NewsFeedInteractのテスト', () => {
     return {
       async handle(RequestData: NewsFeed.RequestData): Promise<boolean> {
         try {
-          if (RequestData.url.length > 0) {
-            return true;
-          }
+          return RequestData.url.length > 0;
         } catch (e) {
           return false;
         }
@@ -36,10 +34,10 @@ describe('NewsFeedInteractのテスト', () => {
   };
 
   it('handleメソッド正常系', () => {
-    newsFeedInteract.handle(normalMockData).then((result) => expect(result).toBe(true));
+    newsFeedInteract.handle(normalMockData).then((result: boolean) => expect(result).toBe(true));
   });
 
   it('handleメソッド異常系', () => {
-    newsFeedInteract.handle(abnormalMockData).catch((result) => expect(result).toBe(false));
+    newsFeedInteract.handle(abnormalMockData).catch((result: boolean) => expect(result).toBe(false));
   });
 });
