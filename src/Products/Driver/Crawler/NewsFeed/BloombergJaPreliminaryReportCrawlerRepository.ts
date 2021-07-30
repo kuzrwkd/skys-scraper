@@ -12,15 +12,15 @@ import { options } from '@/Products/Driver/Crawler/config';
 /**
  * Tools
  */
-import { Exception } from '@/Tools/Utility/Exceptions';
+import { ExceptionTool } from '@/Tools/Utility/Exceptions';
 
 @injectable()
 export class BloombergJaPreliminaryReportCrawlerRepository {
   private logger: Lib.Logger;
   private crawlingErrorObject!: any;
 
-  constructor(@inject('Log') private log: Tools.ILog, @inject('DayJs') private dayjs: Tools.IDayJs) {
-    this.logger = log.createLogger();
+  constructor(@inject('Log') private logTool: Tools.ILogTool, @inject('DateTool') private dateTool: Tools.IDateTool) {
+    this.logger = logTool.createLogger();
   }
 
   async crawler(url: string, organization: NewsFeed.Organization) {

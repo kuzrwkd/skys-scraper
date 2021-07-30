@@ -15,7 +15,7 @@ import { injectable } from 'tsyringe';
 import { LOG_TYPE } from '@/Tools/Constants/Logger';
 
 @injectable()
-export class Log {
+export class LogTool {
   logFormat = format((info) => {
     info.level = info.level.toUpperCase();
     return info;

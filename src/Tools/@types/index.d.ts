@@ -7,9 +7,9 @@ import type { Logger as _Logger } from 'winston';
 /**
  * Tools
  */
-import type { IDayJs as _IDayJs } from '@/Tools/@types/Tools/Utility/Date';
-import type { ILog as _ILog } from '@/Tools/@types/Tools/Utility/Log';
-import type { IRegExpVerEx as _IRegExpVerEx } from '@/Tools/@types/Tools/Utility/RegExp';
+import type { IDateTool as _IDateTool } from '@/Tools/@types/Tools/Utility/Date';
+import type { ILogTool as _ILogTool } from '@/Tools/@types/Tools/Utility/Log';
+import type { IRegExpVerExTool as _IRegExpVerExTool } from '@/Tools/@types/Tools/Utility/RegExp';
 
 /**
  * NewsFeed
@@ -56,9 +56,9 @@ declare global {
    * Tools
    */
   namespace Tools {
-    export type IDayJs = _IDayJs;
-    export type ILog = _ILog;
-    export type IRegExpVerEx = _IRegExpVerEx;
+    export type IDateTool = _IDateTool;
+    export type ILogTool = _ILogTool;
+    export type IRegExpVerExTool = _IRegExpVerExTool;
   }
 
   /**

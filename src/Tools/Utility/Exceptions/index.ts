@@ -1,4 +1,4 @@
-export namespace Exception {
+export namespace ExceptionTool {
   /**
    * ValidationError
    * @param message - string

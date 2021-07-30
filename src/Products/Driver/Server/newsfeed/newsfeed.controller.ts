@@ -15,26 +15,26 @@ import { NewsFeedService } from '@/Products/Driver/Server/newsfeed/newsfeed.serv
 
 @Controller('newsfeed')
 export class NewsFeedController {
-  private log: Tools.ILog;
+  private logTool: Tools.ILogTool;
   private logger: Lib.Logger;
-  private dayjs: Tools.IDayJs;
+  private dateTool: Tools.IDateTool;
 
   constructor(private newsFeedService: NewsFeedService) {
-    this.log = container.resolve<Tools.ILog>('Log');
-    this.dayjs = container.resolve<Tools.IDayJs>('DayJs');
-    this.logger = this.log.createLogger();
+    this.logTool = container.resolve<Tools.ILogTool>('Log');
+    this.dateTool = container.resolve<Tools.IDateTool>('DateTool');
+    this.logger = this.logTool.createLogger();
   }
 
   @Post()
   async post(@Body() body: NewsFeed.RequestData): Promise<boolean> {
     try {
-      const startTime = this.dayjs.processStartTime();
-      this.logger.info('NewsFeed 処理開始', this.log.start());
+      const startTime = this.dateTool.processStartTime();
+      this.logger.info('NewsFeed 処理開始', this.logTool.start());
 
       const result = await this.newsFeedService.handle(body);
 
-      const endTime = this.dayjs.processEndTime(startTime);
-      this.logger.info('NewsFeed 処理終了', this.log.success(endTime));
+      const endTime = this.dateTool.processEndTime(startTime);
+      this.logger.info('NewsFeed 処理終了', this.logTool.success(endTime));
 
       return result;
     } catch (err) {

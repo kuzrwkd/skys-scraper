@@ -1,4 +1,4 @@
-export interface ILog {
+export interface ILogTool {
   startCrawling(): StartCrawling;
   processCrawling(url: string): ProcessCrawling;
   successCrawling<T>(result: T, crawlingTime: string): SuccessCrawling<T>;

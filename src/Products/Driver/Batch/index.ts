@@ -3,6 +3,26 @@
  */
 import http from 'http';
 
+/**
+ * Lib
+ */
+import 'reflect-metadata';
+
+/**
+ * Tools import
+ */
+import { container } from '@/Tools/Containers/Tools';
+
+const dayJs = container.resolve<Tools.IDateTool>('DateTool');
+const utcDate = dayJs.getUtc();
+const minutes = dayJs.formatMinutesNoZeroPadding(utcDate);
+
+// 3で割り切れる`分`の時以外は起動させない（3分, 6分, 9分, 12分, ..., 57分）
+if (Number(minutes) % 3 !== 0) {
+  console.log(`Current minutes is ${minutes}, not running.`);
+  process.exit(0);
+}
+
 const postDataStr = JSON.stringify({
   organizationId: 1,
   contentsId: 1,

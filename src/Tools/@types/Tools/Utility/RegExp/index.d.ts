@@ -1,3 +1,3 @@
-export interface IRegExpVerEx {
+export interface IRegExpVerExTool {
   urlRegExp(): RegExp;
 }

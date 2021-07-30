@@ -8,7 +8,7 @@ import { injectable } from 'tsyringe';
 export const utcDayJs = dayjs.extend(utc);
 
 @injectable()
-export class DayJs {
+export class DateTool {
   getUtc() {
     return utcDayJs.utc().format();
   }
@@ -23,5 +23,9 @@ export class DayJs {
 
   formatDate(date: string) {
     return dayjs(date).format('YYYY-MM-DDTHH:mm:ss:SSS[Z]');
+  }
+
+  formatMinutesNoZeroPadding(date: string) {
+    return dayjs(date).format('m');
   }
 }
