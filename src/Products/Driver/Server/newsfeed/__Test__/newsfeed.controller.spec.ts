@@ -15,13 +15,22 @@ describe('NewsfeedController', () => {
   it.skip('should be defined', () => {
     expect(
       controller.post({
-        organizationId: 1,
-        contentsId: 1,
-        url: [
-          'https://www.nikkei.com/news/category/financial/',
-          'https://www.nikkei.com/news/category/markets/',
-          'https://www.nikkei.com/news/category/technology/',
-          'https://www.nikkei.com/news/category/international/',
+        data: [
+          {
+            organizationId: 1,
+            contentsId: 1,
+            url: 'https://www.nikkei.com/news/category/economy/',
+          },
+          {
+            organizationId: 1,
+            contentsId: 2,
+            url: 'https://www.nikkei.com/news/category/politics/',
+          },
+          {
+            organizationId: 1,
+            contentsId: 3,
+            url: 'https://www.nikkei.com/news/category/business/',
+          },
         ],
       }),
     ).toBe(true);
