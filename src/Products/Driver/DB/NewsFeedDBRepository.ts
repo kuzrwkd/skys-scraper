@@ -84,14 +84,14 @@ export class NewsFeedDBRepository {
 
   /**
    * レコード作成
-   * @param data
+   * @param { title, url, organization, contents, articleCreatedAt, articleUpdatedAt } - NewsFeed.Entityのプロパティ
    */
-  async create(data: NewsFeed.Entity) {
-    const { title, url, organization, contents, articleCreatedAt, articleUpdatedAt } = data;
-    this.organizationName = organization.name;
+  async create({ title, url, organization, contents, articleCreatedAt, articleUpdatedAt }: NewsFeed.Entity) {
+    const organizationName = organization.name;
+    this.organizationName = organizationName; // prismaのloggingで利用
 
     try {
-      this.logger.info(`NewsFeedDBRepository [${organization.name}] レコード作成開始`, this.logTool.startDbIo());
+      this.logger.info(`NewsFeedDBRepository [${organizationName}] レコード作成開始`, this.logTool.startDbIo());
       const startTime = this.dateTool.processStartTime();
       const record = await prisma.newsFeed.create({
         data: {
@@ -106,13 +106,13 @@ export class NewsFeedDBRepository {
       const endTime = this.dateTool.processEndTime(startTime);
 
       this.logger.info(
-        `NewsFeedDBRepository [${organization.name}] レコード作成完了`,
+        `NewsFeedDBRepository [${organizationName}] レコード作成完了`,
         this.logTool.successDbIo(endTime),
       );
       return record;
     } catch (err) {
       this.logger.error(
-        `NewsFeedDBRepository [${organization.name}] レコード作成失敗`,
+        `NewsFeedDBRepository [${organizationName}] レコード作成失敗`,
         this.logTool.failed(err.constructor.name, err.stack as string),
       );
     }
@@ -121,14 +121,14 @@ export class NewsFeedDBRepository {
   /**
    * レコード読み取り
    * @param url
-   * @param organization
+   * @param { name } - organizationNameが入る
    */
-  async read(url: string, organization: NewsFeed.Organization) {
-    const { name } = organization;
-    this.organizationName = name;
+  async read(url: string, { name }: NewsFeed.Organization) {
+    const organizationName = name;
+    this.organizationName = organizationName; // prismaのloggingで利用
 
     try {
-      this.logger.info(`NewsFeedDBRepository [${name}] レコード読み取り開始`, this.logTool.startDbIo());
+      this.logger.info(`NewsFeedDBRepository [${organizationName}] レコード読み取り開始`, this.logTool.startDbIo());
       const startTime = this.dateTool.processStartTime();
       const record = await prisma.newsFeed.findFirst({
         where: {
@@ -137,12 +137,15 @@ export class NewsFeedDBRepository {
       });
 
       const endTime = this.dateTool.processEndTime(startTime);
-      this.logger.info(`NewsFeedDBRepository [${name}] レコード読み取り完了`, this.logTool.successDbIo(endTime));
+      this.logger.info(
+        `NewsFeedDBRepository [${organizationName}] レコード読み取り完了`,
+        this.logTool.successDbIo(endTime),
+      );
 
       return record;
     } catch (err) {
       this.logger.error(
-        `NewsFeedDBRepository [${name}] レコード読み取り失敗`,
+        `NewsFeedDBRepository [${organizationName}] レコード読み取り失敗`,
         this.logTool.failed(err.constructor.name, err.stack as string),
       );
     }
@@ -150,14 +153,14 @@ export class NewsFeedDBRepository {
 
   /**
    * レコード更新
-   * @param data
+   * @param { id, title, organization, articleUpdatedAt } - NewsFeed.Entityのプロパティ
    */
-  async update(data: NewsFeed.Entity) {
-    const { id, title, organization, articleUpdatedAt } = data;
-    this.organizationName = organization.name;
+  async update({ id, title, organization, articleUpdatedAt }: NewsFeed.Entity) {
+    const organizationName = organization.name;
+    this.organizationName = organizationName; // prismaのloggingで利用
 
     try {
-      this.logger.info(`NewsFeedDBRepository [${organization.name}] レコード更新開始`, this.logTool.startDbIo());
+      this.logger.info(`NewsFeedDBRepository [${organizationName}] レコード更新開始`, this.logTool.startDbIo());
 
       const startTime = this.dateTool.processStartTime();
       const record = await prisma.newsFeed.update({
@@ -172,13 +175,13 @@ export class NewsFeedDBRepository {
       const endTime = this.dateTool.processEndTime(startTime);
 
       this.logger.info(
-        `NewsFeedDBRepository [${organization.name}] レコード更新完了`,
+        `NewsFeedDBRepository [${organizationName}] レコード更新完了`,
         this.logTool.successDbIo(endTime),
       );
       return record;
     } catch (err) {
       this.logger.error(
-        `NewsFeedDBRepository [${organization.name}] レコード更新失敗`,
+        `NewsFeedDBRepository [${organizationName}] レコード更新失敗`,
         this.logTool.failed(err.constructor.name, err.stack as string),
       );
     }

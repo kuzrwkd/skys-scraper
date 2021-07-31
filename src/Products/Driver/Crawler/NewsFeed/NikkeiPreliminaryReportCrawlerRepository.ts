@@ -9,15 +9,9 @@ import puppeteer from 'puppeteer';
  */
 import { options } from '@/Products/Driver/Crawler/config';
 
-/**
- * Tools
- */
-import { ExceptionTool } from '@/Tools/Utility/Exceptions';
-
 @injectable()
 export class NikkeiPreliminaryReportCrawlerRepository {
   private logger: Lib.Logger;
-  private crawlingErrorObject!: any;
 
   constructor(@inject('Log') private logTool: Tools.ILogTool, @inject('DateTool') private dateTool: Tools.IDateTool) {
     this.logger = logTool.createLogger();
@@ -25,12 +19,11 @@ export class NikkeiPreliminaryReportCrawlerRepository {
 
   /**
    * 日経速報のクローラー
-   * @param u - string
-   * @param organization - NewsFeed.Organization
-   * @throws ExceptionTool.CrawlingError クローリングに失敗した時
+   * @param u - urlが入る
+   * @param { name } - organizationNameが入る
    */
-  async crawler(u: string, organization: NewsFeed.Organization) {
-    const organizationName = organization.name;
+  async crawler(u: string, { name }: NewsFeed.Organization) {
+    const organizationName = name;
 
     try {
       const data: NewsFeed.NewsFeedCrawlerResult[] = [];
@@ -49,28 +42,17 @@ export class NikkeiPreliminaryReportCrawlerRepository {
       const endTime = this.dateTool.processEndTime(startTime);
       const preliminaryReportUrl: string[] = [];
 
-      if (preliminaryReportLinkList.length === 0) {
-        (() => {
-          this.crawlingErrorObject = {
-            url: u,
-            result: preliminaryReportLinkList,
-            time: endTime,
-          };
-          throw new ExceptionTool.CrawlingError();
-        })();
-      } else {
-        for (const link of preliminaryReportLinkList) {
-          const url: string | null = (await (await link.getProperty('href'))?.jsonValue()) ?? null;
-          if (url != null) {
-            preliminaryReportUrl.push(url);
-          }
+      for (const link of preliminaryReportLinkList) {
+        const url: string | null = (await (await link.getProperty('href'))?.jsonValue()) ?? null;
+        if (url != null) {
+          preliminaryReportUrl.push(url);
         }
-
-        this.logger.info(
-          `[${organizationName}] クローリング完了`,
-          this.logTool.successCrawling<string[]>(preliminaryReportUrl, endTime),
-        );
       }
+
+      this.logger.info(
+        `[${organizationName}] クローリング完了`,
+        this.logTool.successCrawling<string[]>(preliminaryReportUrl, endTime),
+      );
 
       // 各記事ページのタイトル投稿日時、更新日時を取得
       const crawlingData = (
@@ -123,11 +105,6 @@ export class NikkeiPreliminaryReportCrawlerRepository {
               );
             }
 
-            if (result.title == null && result.articleCreatedAt == null && result.articleUpdatedAt == null) {
-              this.crawlingErrorObject = { url, result, time: endTime };
-              throw new ExceptionTool.CrawlingError();
-            }
-
             this.logger.info(
               `[${organizationName}] クローリング完了`,
               this.logTool.successCrawling<NewsFeed.NewsFeedCrawlerResult>(result, endTime),
@@ -152,21 +129,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
       await browser.close();
       return data;
     } catch (err) {
-      if (err instanceof Error) {
-        this.logger.error(err.message, this.logTool.failed(err.constructor.name, err.stack as string));
-      }
-      if (err instanceof ExceptionTool.CrawlingError) {
-        this.logger.error(
-          `[${organizationName}] クローリング失敗`,
-          this.logTool.failedCrawling<NewsFeed.NewsFeedCrawlerResult>(
-            this.crawlingErrorObject.result,
-            this.crawlingErrorObject.url,
-            this.crawlingErrorObject.time,
-            err.constructor.name,
-            err.stack as string,
-          ),
-        );
-      }
+      this.logger.error(err.message, this.logTool.failed(err.constructor.name, err.stack as string));
       return null;
     }
   }

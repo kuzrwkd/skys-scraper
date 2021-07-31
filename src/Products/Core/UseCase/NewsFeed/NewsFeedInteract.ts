@@ -15,52 +15,49 @@ export class NewsFeedInteract {
   /**
    * newsFeedのUseCase
    */
-  async handle(RequestData: NewsFeed.RequestData) {
+  async handle(data: NewsFeed.RequestDataParams[]) {
     try {
-      const organizationId = RequestData.organizationId;
-      const contentsId = RequestData.contentsId;
-      const url = RequestData.url;
+      for (const { organizationId, contentsId, url } of data) {
+        const organization: NewsFeed.Organization = {
+          id: organizationId,
+          name: (await this.newsFeedDBRepository.findOrganization(organizationId)).name ?? null,
+        };
 
-      const organization: NewsFeed.Organization = {
-        id: organizationId,
-        name: (await this.newsFeedDBRepository.findOrganization(organizationId)).name ?? null,
-      };
+        const contents: NewsFeed.Contents = {
+          id: contentsId,
+          name: (await this.newsFeedDBRepository.findContents(contentsId)).name ?? null,
+        };
 
-      const contents: NewsFeed.Contents = {
-        id: contentsId,
-        name: (await this.newsFeedDBRepository.findContents(contentsId)).name ?? null,
-      };
-
-      for (const u of url) {
-        const crawler = this.newsFeedCrawlerIndex.handle(u, organization);
+        const crawler = this.newsFeedCrawlerIndex.handle(url, organization);
 
         await crawler.then(async (crawlingData) => {
           if (crawlingData != null) {
-            for (const item of crawlingData) {
-              const existsRecord: NewsFeed.Entity =
-                (await this.newsFeedDBRepository.read(item.url, organization)) ?? null;
+            for (const { title, url, articleUpdatedAt, articleCreatedAt } of crawlingData) {
+              const existsRecord: NewsFeed.Entity = (await this.newsFeedDBRepository.read(url, organization)) ?? null;
 
               if (existsRecord == null) {
                 await this.newsFeedDBRepository.create({
-                  ...item,
+                  title,
+                  url,
                   organization,
                   contents,
-                  articleCreatedAt: item.articleCreatedAt,
-                  articleUpdatedAt: item.articleUpdatedAt,
+                  articleCreatedAt,
+                  articleUpdatedAt,
                 });
               }
 
               // レコードが存在する且つ、クローリングの結果、articleUpdateAtが存在する場合
-              if (existsRecord != null && item.articleUpdatedAt != null) {
+              if (existsRecord != null && articleUpdatedAt != null) {
                 // レコードのarticleUpdatedAtとクローリング結果のarticleUpdatedAtが異なる場合はレコードを更新する
-                if (item.articleUpdatedAt !== existsRecord.articleUpdatedAt) {
+                if (articleUpdatedAt !== existsRecord.articleUpdatedAt) {
                   await this.newsFeedDBRepository.update({
                     id: existsRecord.id,
-                    ...item,
+                    title,
+                    url,
                     organization,
                     contents,
-                    title: item.title,
-                    articleUpdatedAt: item.articleUpdatedAt,
+                    articleCreatedAt,
+                    articleUpdatedAt,
                   });
                 }
               }

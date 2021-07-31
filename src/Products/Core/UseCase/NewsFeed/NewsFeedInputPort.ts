@@ -2,25 +2,13 @@ import { injectable } from 'tsyringe';
 
 @injectable()
 export class NewsFeedInputPort {
-  private organizationId!: number;
-  private contentsId!: number;
-  private url!: string[];
+  private requestDate!: NewsFeed.RequestData;
 
-  set setInputData({ organizationId, contentsId, url }: NewsFeed.RequestData) {
-    this.organizationId = organizationId;
-    this.contentsId = contentsId;
-    this.url = url;
+  set setInputData({ data }: NewsFeed.RequestData) {
+    this.requestDate = { data };
   }
 
-  get getOrganizationId() {
-    return this.organizationId;
-  }
-
-  get getContentsId() {
-    return this.contentsId;
-  }
-
-  get getUrls() {
-    return this.url;
+  get getInputDate(): NewsFeed.RequestDataParams[] {
+    return this.requestDate.data;
   }
 }

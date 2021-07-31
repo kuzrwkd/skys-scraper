@@ -2,11 +2,7 @@ export const organizationMasterFactory = {
   data: [
     { name: '日本経済新聞' },
     { name: 'Bloomberg/JA' },
-    { name: 'Bloomberg/Asia' },
-    { name: 'Bloomberg/EU' },
     { name: 'Bloomberg/US' },
-    { name: 'Bloomberg/Africa' },
-    { name: 'Bloomberg/MiddleEast' },
     { name: 'Reuters/JA' },
     { name: 'Reuters/US' },
     { name: 'CNBC/JA' },
@@ -15,5 +11,15 @@ export const organizationMasterFactory = {
 };
 
 export const contentsMasterFactory = {
-  data: [{ name: 'Text' }, { name: 'Video' }],
+  data: [
+    { name: 'Economy' },
+    { name: 'Politics' },
+    { name: 'Business' },
+    { name: 'Finance' },
+    { name: 'Market' },
+    { name: 'Tech' },
+    { name: 'International' },
+    { name: 'Society' },
+    { name: 'Crypto' },
+  ],
 };

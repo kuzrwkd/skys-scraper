@@ -13,9 +13,9 @@ import 'reflect-metadata';
  */
 import { container } from '@/Tools/Containers/Tools';
 
-const dayJs = container.resolve<Tools.IDateTool>('DateTool');
-const utcDate = dayJs.getUtc();
-const minutes = dayJs.formatMinutesNoZeroPadding(utcDate);
+const dateTool = container.resolve<Tools.IDateTool>('DateTool');
+const utcDate = dateTool.getUtc();
+const minutes = dateTool.formatMinutesNoZeroPadding(utcDate);
 
 // 3で割り切れる`分`の時以外は起動させない（3分, 6分, 9分, 12分, ..., 57分）
 if (Number(minutes) % 3 !== 0) {
@@ -24,13 +24,47 @@ if (Number(minutes) % 3 !== 0) {
 }
 
 const postDataStr = JSON.stringify({
-  organizationId: 1,
-  contentsId: 1,
-  url: [
-    'https://www.nikkei.com/news/category/financial/',
-    'https://www.nikkei.com/news/category/markets/',
-    'https://www.nikkei.com/news/category/technology/',
-    'https://www.nikkei.com/news/category/international/',
+  data: [
+    {
+      organizationId: 1,
+      contentsId: 1,
+      url: 'https://www.nikkei.com/news/category/economy/',
+    },
+    {
+      organizationId: 1,
+      contentsId: 2,
+      url: 'https://www.nikkei.com/news/category/politics/',
+    },
+    {
+      organizationId: 1,
+      contentsId: 3,
+      url: 'https://www.nikkei.com/news/category/business/',
+    },
+    {
+      organizationId: 1,
+      contentsId: 4,
+      url: 'https://www.nikkei.com/news/category/financial/',
+    },
+    {
+      organizationId: 1,
+      contentsId: 5,
+      url: 'https://www.nikkei.com/news/category/markets/',
+    },
+    {
+      organizationId: 1,
+      contentsId: 6,
+      url: 'https://www.nikkei.com/news/category/technology/',
+    },
+    {
+      organizationId: 1,
+      contentsId: 7,
+      url: 'https://www.nikkei.com/news/category/international/',
+    },
+    {
+      organizationId: 1,
+      contentsId: 8,
+      url: 'https://www.nikkei.com/news/category/society/',
+    },
   ],
 });
 
