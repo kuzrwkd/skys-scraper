@@ -1,5 +1,5 @@
 /**
- * Nest core
+ * Nest
  */
 import { Injectable } from '@nestjs/common';
 
@@ -8,6 +8,9 @@ import { Injectable } from '@nestjs/common';
  */
 import { container } from '@/Tools/Containers/Products/NewsFeed';
 
+/**
+ * Container
+ */
 @Injectable()
 export class NewsFeedService {
   private newsFeedController: NewsFeed.INewsFeedController;

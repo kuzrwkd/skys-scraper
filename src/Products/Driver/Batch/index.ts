@@ -1,5 +1,5 @@
 /**
- * Nodejs core
+ * Node
  */
 import http from 'http';
 

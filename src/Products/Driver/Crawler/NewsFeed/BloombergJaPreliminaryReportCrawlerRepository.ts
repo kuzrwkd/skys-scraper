@@ -9,11 +9,6 @@ import puppeteer from 'puppeteer';
  */
 import { options } from '@/Products/Driver/Crawler/config';
 
-/**
- * Tools
- */
-import { ExceptionTool } from '@/Tools/Utility/Exceptions';
-
 @injectable()
 export class BloombergJaPreliminaryReportCrawlerRepository {
   private logger: Lib.Logger;

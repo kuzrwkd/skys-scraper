@@ -1,15 +1,20 @@
 /**
- * Nest core
+ * Nest
  */
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 
 /**
- * Nest controller
+ * Middleware
+ */
+import { UuidMiddleware } from '@/Products/Driver/Server/middleware/uuid.middleware';
+
+/**
+ * Controller
  */
 import { NewsFeedController } from '@/Products/Driver/Server/newsfeed/newsfeed.controller';
 
 /**
- * Nest Service
+ * Service
  */
 import { NewsFeedService } from '@/Products/Driver/Server/newsfeed/newsfeed.service';
 
@@ -17,4 +22,8 @@ import { NewsFeedService } from '@/Products/Driver/Server/newsfeed/newsfeed.serv
   controllers: [NewsFeedController],
   providers: [NewsFeedService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(UuidMiddleware).forRoutes('*');
+  }
+}

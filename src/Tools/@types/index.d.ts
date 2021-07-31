@@ -41,8 +41,10 @@ declare global {
   /**
    * NodeJS global type
    */
-  export interface CustomNodeJsGlobal extends NodeJS.Global {
+  export type Global = typeof global;
+  export interface CustomNodeJsGlobal extends Global {
     prisma: _PrismaClient;
+    requestId: string;
   }
 
   /**

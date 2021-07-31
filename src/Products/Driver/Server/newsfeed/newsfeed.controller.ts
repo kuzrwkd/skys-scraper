@@ -4,7 +4,7 @@
 import { container } from '@/Tools/Containers/Tools';
 
 /**
- * Nest core
+ * Nest
  */
 import { Controller, Post, Body } from '@nestjs/common';
 
@@ -13,6 +13,9 @@ import { Controller, Post, Body } from '@nestjs/common';
  */
 import { NewsFeedService } from '@/Products/Driver/Server/newsfeed/newsfeed.service';
 
+/**
+ * Container
+ */
 @Controller('newsfeed')
 export class NewsFeedController {
   private logTool: Tools.ILogTool;
@@ -29,12 +32,12 @@ export class NewsFeedController {
   async post(@Body() body: NewsFeed.RequestData): Promise<boolean> {
     try {
       const startTime = this.dateTool.processStartTime();
-      this.logger.info('NewsFeed 処理開始', this.logTool.start());
+      this.logger.info('NewsFeed 処理開始', this.logTool.getStartParams<typeof body>(body));
 
       const result = await this.newsFeedService.handle(body);
 
       const endTime = this.dateTool.processEndTime(startTime);
-      this.logger.info('NewsFeed 処理終了', this.logTool.success(endTime));
+      this.logger.info('NewsFeed 処理終了', this.logTool.getSuccessParams<typeof result>(endTime, result));
 
       return result;
     } catch (err) {

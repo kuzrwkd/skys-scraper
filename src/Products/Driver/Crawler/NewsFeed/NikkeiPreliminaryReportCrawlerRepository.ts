@@ -14,7 +14,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
   private logger: Lib.Logger;
 
   constructor(@inject('Log') private logTool: Tools.ILogTool, @inject('DateTool') private dateTool: Tools.IDateTool) {
-    this.logger = logTool.createLogger();
+    this.logger = this.logTool.createLogger();
   }
 
   /**
@@ -24,20 +24,19 @@ export class NikkeiPreliminaryReportCrawlerRepository {
    */
   async crawler(u: string, { name }: NewsFeed.Organization) {
     const organizationName = name;
-
     try {
       const data: NewsFeed.NewsFeedCrawlerResult[] = [];
       const browser = await puppeteer.launch(options);
       const page = await browser.newPage();
 
-      this.logger.info(`[${organizationName}] クローリング開始`, this.logTool.startCrawling());
+      this.logger.info(`[${organizationName}] クローリング開始`, this.logTool.getStartCrawlingParams());
 
       const startTime = this.dateTool.processStartTime();
       await page.goto(u);
       await page.waitForSelector('#CONTENTS_MAIN');
       const preliminaryReportLinkList = await page.$$('.m-miM09_title > a');
 
-      this.logger.info(`[${organizationName}] クローリング実行`, this.logTool.processCrawling(u));
+      this.logger.info(`[${organizationName}] クローリング実行`, this.logTool.getProcessCrawlingParams(u));
 
       const endTime = this.dateTool.processEndTime(startTime);
       const preliminaryReportUrl: string[] = [];
@@ -51,7 +50,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
 
       this.logger.info(
         `[${organizationName}] クローリング完了`,
-        this.logTool.successCrawling<string[]>(preliminaryReportUrl, endTime),
+        this.logTool.getSuccessCrawlingParams<string[]>(endTime, preliminaryReportUrl),
       );
 
       // 各記事ページのタイトル投稿日時、更新日時を取得
@@ -59,7 +58,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
         await Promise.allSettled(
           preliminaryReportUrl.map(async (url: string) => {
             const page = await browser.newPage();
-            this.logger.info(`[${organizationName}] クローリング開始`, this.logTool.startCrawling());
+            this.logger.info(`[${organizationName}] クローリング開始`, this.logTool.getStartCrawlingParams());
             const startTime = this.dateTool.processStartTime();
             await page.goto(url);
 
@@ -67,7 +66,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
             const createdAt = (await page.$('[class^="TimeStamp_"] > time')) ?? null;
             const updateAt = (await page.$('[class^="TimeStamp_"] > span > time')) ?? null;
 
-            this.logger.info(`[${organizationName}] クローリング実行`, this.logTool.processCrawling(url));
+            this.logger.info(`[${organizationName}] クローリング実行`, this.logTool.getProcessCrawlingParams(url));
 
             const endTime = this.dateTool.processEndTime(startTime);
             const result: NewsFeed.NewsFeedCrawlerResult = {
@@ -87,27 +86,27 @@ export class NikkeiPreliminaryReportCrawlerRepository {
             if (result.title == null) {
               this.logger.info(
                 `[${organizationName}] 記事タイトルが見つかりませんでした`,
-                this.logTool.processCrawling(url),
+                this.logTool.getProcessCrawlingParams(url),
               );
             }
 
             if (result.articleCreatedAt == null) {
               this.logger.info(
                 `[${organizationName}] 記事投稿日時が見つかりませんでした`,
-                this.logTool.processCrawling(url),
+                this.logTool.getProcessCrawlingParams(url),
               );
             }
 
             if (result.articleUpdatedAt == null) {
               this.logger.info(
                 `[${organizationName}] 記事更新日が見つかりませんでした`,
-                this.logTool.processCrawling(url),
+                this.logTool.getProcessCrawlingParams(url),
               );
             }
 
             this.logger.info(
               `[${organizationName}] クローリング完了`,
-              this.logTool.successCrawling<NewsFeed.NewsFeedCrawlerResult>(result, endTime),
+              this.logTool.getSuccessCrawlingParams<NewsFeed.NewsFeedCrawlerResult>(endTime, result),
             );
             return result;
           }),
@@ -129,7 +128,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
       await browser.close();
       return data;
     } catch (err) {
-      this.logger.error(err.message, this.logTool.failed(err.constructor.name, err.stack as string));
+      this.logger.error(err.message, this.logTool.getFailedParams(err.constructor.name, err.stack as string));
       return null;
     }
   }

@@ -1,85 +1,93 @@
 export interface ILogTool {
-  startCrawling(): StartCrawling;
-  processCrawling(url: string): ProcessCrawling;
-  successCrawling<T>(result: T, crawlingTime: string): SuccessCrawling<T>;
-  failedCrawling<T>(
-    result: T,
-    url: string,
-    crawlingTime: string,
-    exception: string,
-    stacktrace: string,
-  ): FailedCrawling<T>;
-  startDbIo(): StartDbIo;
-  processDbIo(query: string): ProcessDbIo;
-  successDbIo(time: string): SuccessDbIo;
-  failedDbIo(time: string, exceptionClass: string, stacktrace: string): FailedDbIo;
-  start(): Start;
-  success(time: string): Success;
-  process(): Process;
-  failed(exception: string, stacktrace: string): Failed;
+  getRequestId(): string;
+  setRequestId(): void;
+  getStartCrawlingParams(): StartCrawlingParams;
+  getSuccessCrawlingParams<T = any>(time: string, result: T): SuccessCrawlingParams<T>;
+  getProcessCrawlingParams(url: string): ProcessCrawlingParams;
+  getFailedCrawlingParams(url: string, exception: string, stacktrace: string): FailedCrawlingParams;
+  getStartDbIoParams(): StartDbIoParams;
+  getSuccessDbIoParams<T = any>(time: string, result: T): SuccessDbIoParams<T>;
+  getProcessDbIoParams(query: string): ProcessDbIoParams;
+  getFailedDbIoParams(exceptionClass: string, stacktrace: string): FailedDbIoParams;
+  getStartParams<T = any>(requestBody: T): StartParams<T>;
+  getSuccessParams<T = any>(time: string, responseBody: T): SuccessParams<T>;
+  getProcessParams(): ProcessParams;
+  getFailedParams(exception: string, stacktrace: string): FailedParams;
   createLogger(): Lib.Logger;
 }
 
-export type StartCrawling = {
+export type StartCrawlingParams = {
   type: string;
+  request_id: string;
 };
 
-export type SuccessCrawling<T> = {
+export type SuccessCrawlingParams<T = any> = {
   type: string;
+  request_id: string;
   result: T;
   crawling_time: string;
 };
 
-export type ProcessCrawling = {
+export type ProcessCrawlingParams = {
   type: string;
+  request_id: string;
   crawling_url: string;
 };
 
-export type FailedCrawling<T> = {
+export type FailedCrawlingParams = {
   type: string;
+  request_id: string;
   crawling_url: string;
-  result: T;
-  crawling_time: string;
   exception_class: string;
   stacktrace: string;
 };
 
-export type StartDbIo = {
+export type StartDbIoParams = {
   type: string;
+  request_id: string;
 };
 
-export type SuccessDbIo = {
+export type SuccessDbIoParams<T = any> = {
   type: string;
+  request_id: string;
   time: string;
+  result: T;
 };
 
-export type ProcessDbIo = {
+export type ProcessDbIoParams = {
   type: string;
+  request_id: string;
   query: string;
 };
 
-export type FailedDbIo = {
+export type FailedDbIoParams = {
   type: string;
-  time: string;
+  request_id: string;
   exception_class: string;
   stacktrace: string;
 };
 
-export type Start = {
+export type StartParams<T = any> = {
   type: string;
+  request_id: string;
+  request_body: T;
 };
 
-export type Success = {
+export type SuccessParams<T = any> = {
   type: string;
+  request_id: string;
   time: string;
+  response_body: T;
 };
 
-export type Process = {
+export type ProcessParams = {
   type: string;
+  request_id: string;
 };
 
-export type Failed = {
+export type FailedParams = {
   type: string;
+  request_id: string;
   exception_class: string;
   stacktrace: string;
 };

@@ -1,5 +1,5 @@
 /**
- * Nest core
+ * Nest
  */
 import { NestFactory } from '@nestjs/core';
 
