@@ -19,7 +19,7 @@ import { RegExpVerExTool } from '@/Tools/Utility/RegExp';
  * Inject
  */
 container.register<DateTool>('DateTool', { useClass: DateTool });
-container.register<LogTool>('Log', { useClass: LogTool });
+container.register<LogTool>('LogTool', { useClass: LogTool });
 container.register<RegExpVerExTool>('RegExpVerExTool', { useClass: RegExpVerExTool });
 
 export { container };

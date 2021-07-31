@@ -13,7 +13,10 @@ import { options } from '@/Products/Driver/Crawler/config';
 export class NikkeiPreliminaryReportCrawlerRepository {
   private logger: Lib.Logger;
 
-  constructor(@inject('Log') private logTool: Tools.ILogTool, @inject('DateTool') private dateTool: Tools.IDateTool) {
+  constructor(
+    @inject('LogTool') private logTool: Tools.ILogTool,
+    @inject('DateTool') private dateTool: Tools.IDateTool,
+  ) {
     this.logger = this.logTool.createLogger();
   }
 

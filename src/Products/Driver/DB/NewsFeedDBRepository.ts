@@ -8,7 +8,7 @@ export class NewsFeedDBRepository {
   private organizationName: string | null = null;
 
   constructor(
-    @inject('Log') private logTool: Tools.ILogTool,
+    @inject('LogTool') private logTool: Tools.ILogTool,
     @inject('RegExpVerExTool') private regExpVerEx: Tools.IRegExpVerExTool,
     @inject('DateTool') private dateTool: Tools.IDateTool,
   ) {

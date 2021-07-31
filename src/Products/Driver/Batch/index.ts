@@ -14,16 +14,18 @@ import 'reflect-metadata';
 import { container } from '@/Tools/Containers/Tools';
 
 const dateTool = container.resolve<Tools.IDateTool>('DateTool');
-const utcDate = dateTool.getUtc();
-const minutes = dateTool.formatMinutesNoZeroPadding(utcDate);
+const logTool = container.resolve<Tools.ILogTool>('LogTool');
+// const utcDate = dateTool.getUtc();
+// const minutes = dateTool.formatMinutesNoZeroPadding(utcDate);
+const logger = logTool.createLogger();
 
 // 3で割り切れる`分`の時以外は起動させない（3分, 6分, 9分, 12分, ..., 57分）
-if (Number(minutes) % 3 !== 0) {
-  console.log(`Current minutes is ${minutes}, not running.`);
-  process.exit(0);
-}
+// if (Number(minutes) % 3 !== 0) {
+//   console.log(`Current minutes is ${minutes}, not running.`);
+//   process.exit(0);
+// }
 
-const postDataStr = JSON.stringify({
+const postData = {
   data: [
     {
       organizationId: 1,
@@ -66,7 +68,9 @@ const postDataStr = JSON.stringify({
       url: 'https://www.nikkei.com/news/category/society/',
     },
   ],
-});
+};
+
+const postDataStr = JSON.stringify(postData);
 
 const options = {
   host: 'localhost',
@@ -79,6 +83,8 @@ const options = {
   },
 };
 
+logger.info('バッチ処理開始', logTool.getStartParams<typeof postData>(postData));
+const startTime = dateTool.processStartTime();
 const req = http.request(options, (res) => {
   const chunks: string[] = [];
   res.on('data', (chunk) => {
@@ -87,7 +93,8 @@ const req = http.request(options, (res) => {
 
   res.on('end', () => {
     const body = chunks.join(',');
-    console.log(body);
+    const endTime = dateTool.processEndTime(startTime);
+    logger.info('バッチ処理終了', logTool.getSuccessParams<typeof body>(endTime, body));
   });
 });
 

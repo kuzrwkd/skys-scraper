@@ -23,7 +23,7 @@ export class NewsFeedController {
   private dateTool: Tools.IDateTool;
 
   constructor(private newsFeedService: NewsFeedService) {
-    this.logTool = container.resolve<Tools.ILogTool>('Log');
+    this.logTool = container.resolve<Tools.ILogTool>('LogTool');
     this.dateTool = container.resolve<Tools.IDateTool>('DateTool');
     this.logger = this.logTool.createLogger();
   }

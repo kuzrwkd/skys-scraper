@@ -21,7 +21,7 @@ export class UuidMiddleware implements NestMiddleware {
   logTool: Tools.ILogTool;
 
   constructor() {
-    this.logTool = container.resolve<Tools.ILogTool>('Log');
+    this.logTool = container.resolve<Tools.ILogTool>('LogTool');
   }
 
   use(req: Request, res: Response, next: NextFunction) {
