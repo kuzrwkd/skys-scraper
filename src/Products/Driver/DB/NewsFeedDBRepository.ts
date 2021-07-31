@@ -2,15 +2,9 @@
 import { filterInsertRegex, filterSelectRegex, filterUpdateRegex, prisma } from '@/Products/Driver/DB/config';
 import { injectable, inject } from 'tsyringe';
 
-/**
- * Tools
- */
-import { ExceptionTool } from '@/Tools/Utility/Exceptions';
-
 @injectable()
 export class NewsFeedDBRepository {
   private logger: Lib.Logger;
-  private dbErrorObject?: any;
   private organizationName: string | null = null;
 
   constructor(
@@ -53,7 +47,7 @@ export class NewsFeedDBRepository {
 
   /**
    * 機関マスター検索
-   *  @param id - number
+   *  @param id
    */
   async findOrganization(id: number) {
     this.logger.info('NewsFeedDBRepository [OrganizationMaster] レコード読み取り開始', this.logTool.startDbIo());
@@ -73,7 +67,7 @@ export class NewsFeedDBRepository {
 
   /**
    * コンテンツマスター検索
-   * @param id - number
+   * @param id
    */
   async findContents(id: number) {
     this.logger.info('NewsFeedDBRepository [ContentsMaster] レコード読み取り開始', this.logTool.startDbIo());
@@ -90,47 +84,37 @@ export class NewsFeedDBRepository {
 
   /**
    * レコード作成
-   * @param data - NewsFeed.Entity
+   * @param data
    */
   async create(data: NewsFeed.Entity) {
+    const { title, url, organization, contents, articleCreatedAt, articleUpdatedAt } = data;
+    this.organizationName = organization.name;
+
     try {
-      this.organizationName = data.organization.name;
-      this.logger.info(`NewsFeedDBRepository [${this.organizationName}] レコード作成開始`, this.logTool.startDbIo());
+      this.logger.info(`NewsFeedDBRepository [${organization.name}] レコード作成開始`, this.logTool.startDbIo());
       const startTime = this.dateTool.processStartTime();
       const record = await prisma.newsFeed.create({
         data: {
-          title: data.title,
-          url: data.url,
-          organizationId: data.organization.id,
-          contentsId: data.contents.id,
-          articleCreatedAt: data.articleCreatedAt,
-          articleUpdatedAt: data.articleUpdatedAt,
+          title,
+          url,
+          organizationId: organization.id,
+          contentsId: contents.id,
+          articleCreatedAt,
+          articleUpdatedAt,
         },
       });
       const endTime = this.dateTool.processEndTime(startTime);
 
-      if (typeof record.id !== 'number') {
-        (() => {
-          this.dbErrorObject = { time: endTime };
-          throw new ExceptionTool.DBCreateError();
-        })();
-      } else {
-        this.logger.info(
-          `NewsFeedDBRepository [${this.organizationName}] レコード作成完了`,
-          this.logTool.successDbIo(endTime),
-        );
-        return record;
-      }
+      this.logger.info(
+        `NewsFeedDBRepository [${organization.name}] レコード作成完了`,
+        this.logTool.successDbIo(endTime),
+      );
+      return record;
     } catch (err) {
-      if (err instanceof Error) {
-        this.logger.error(err.message, this.logTool.failed(err.constructor.name, err.stack as string));
-      }
-      if (err instanceof ExceptionTool.DBCreateError) {
-        this.logger.error(
-          `NewsFeedDBRepository [${this.organizationName}] レコード作成失敗`,
-          this.logTool.failedDbIo(this.dbErrorObject.time, err.constructor.name, err.stack as string),
-        );
-      }
+      this.logger.error(
+        `NewsFeedDBRepository [${organization.name}] レコード作成失敗`,
+        this.logTool.failed(err.constructor.name, err.stack as string),
+      );
     }
   }
 
@@ -140,12 +124,11 @@ export class NewsFeedDBRepository {
    * @param organization
    */
   async read(url: string, organization: NewsFeed.Organization) {
+    const { name } = organization;
+    this.organizationName = name;
+
     try {
-      this.organizationName = organization.name;
-      this.logger.info(
-        `NewsFeedDBRepository [${this.organizationName}] レコード読み取り開始`,
-        this.logTool.startDbIo(),
-      );
+      this.logger.info(`NewsFeedDBRepository [${name}] レコード読み取り開始`, this.logTool.startDbIo());
       const startTime = this.dateTool.processStartTime();
       const record = await prisma.newsFeed.findFirst({
         where: {
@@ -154,60 +137,50 @@ export class NewsFeedDBRepository {
       });
 
       const endTime = this.dateTool.processEndTime(startTime);
-      this.logger.info(
-        `NewsFeedDBRepository [${this.organizationName}] レコード読み取り完了`,
-        this.logTool.successDbIo(endTime),
-      );
+      this.logger.info(`NewsFeedDBRepository [${name}] レコード読み取り完了`, this.logTool.successDbIo(endTime));
+
       return record;
     } catch (err) {
-      if (err instanceof Error) {
-        this.logger.error(err.message, this.logTool.failed(err.constructor.name, err.stack as string));
-      }
+      this.logger.error(
+        `NewsFeedDBRepository [${name}] レコード読み取り失敗`,
+        this.logTool.failed(err.constructor.name, err.stack as string),
+      );
     }
   }
 
   /**
    * レコード更新
-   * @param data - NewsFeed.Entity
+   * @param data
    */
   async update(data: NewsFeed.Entity) {
+    const { id, title, organization, articleUpdatedAt } = data;
+    this.organizationName = organization.name;
+
     try {
-      this.organizationName = data.organization.name;
-      this.logger.info(`NewsFeedDBRepository [${this.organizationName}] レコード更新開始`, this.logTool.startDbIo());
+      this.logger.info(`NewsFeedDBRepository [${organization.name}] レコード更新開始`, this.logTool.startDbIo());
+
       const startTime = this.dateTool.processStartTime();
       const record = await prisma.newsFeed.update({
         where: {
-          id: data.id,
+          id,
         },
         data: {
-          title: data.title,
-          articleUpdatedAt: data.articleUpdatedAt,
+          title,
+          articleUpdatedAt,
         },
       });
       const endTime = this.dateTool.processEndTime(startTime);
 
-      if (typeof record.id !== 'number') {
-        (() => {
-          this.dbErrorObject = { time: endTime };
-          throw new ExceptionTool.DBUpdateError();
-        })();
-      } else {
-        this.logger.info(
-          `NewsFeedDBRepository [${this.organizationName}] レコード更新完了`,
-          this.logTool.successDbIo(endTime),
-        );
-        return record;
-      }
+      this.logger.info(
+        `NewsFeedDBRepository [${organization.name}] レコード更新完了`,
+        this.logTool.successDbIo(endTime),
+      );
+      return record;
     } catch (err) {
-      if (err instanceof Error) {
-        this.logger.error(err.message, this.logTool.failed(err.constructor.name, err.stack as string));
-      }
-      if (err instanceof ExceptionTool.DBUpdateError) {
-        this.logger.error(
-          `NewsFeedDBRepository [${this.organizationName}] レコード更新失敗`,
-          this.logTool.failedDbIo(this.dbErrorObject.time, err.constructor.name, err.stack as string),
-        );
-      }
+      this.logger.error(
+        `NewsFeedDBRepository [${organization.name}] レコード更新失敗`,
+        this.logTool.failed(err.constructor.name, err.stack as string),
+      );
     }
   }
 }
