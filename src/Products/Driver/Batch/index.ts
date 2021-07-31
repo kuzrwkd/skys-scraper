@@ -15,15 +15,17 @@ import { container } from '@/Tools/Containers/Tools';
 
 const dateTool = container.resolve<Tools.IDateTool>('DateTool');
 const logTool = container.resolve<Tools.ILogTool>('LogTool');
-// const utcDate = dateTool.getUtc();
-// const minutes = dateTool.formatMinutesNoZeroPadding(utcDate);
+const utcDate = dateTool.getUtc();
+const minutes = dateTool.formatMinutesNoZeroPadding(utcDate);
 const logger = logTool.createLogger();
 
-// 3で割り切れる`分`の時以外は起動させない（3分, 6分, 9分, 12分, ..., 57分）
-// if (Number(minutes) % 3 !== 0) {
-//   console.log(`Current minutes is ${minutes}, not running.`);
-//   process.exit(0);
-// }
+if (process.env.NODE_ENV !== 'development') {
+  // 3で割り切れる`分`の時以外は起動させない（3分, 6分, 9分, 12分, ..., 57分）
+  if (Number(minutes) % 3 !== 0) {
+    console.log(`Current minutes is ${minutes}, not running.`);
+    process.exit(0);
+  }
+}
 
 const postData = {
   data: [
