@@ -9,12 +9,12 @@ commands:
   restore_npm:
     steps:
       - restore_cache:
-          name: "npmの依存関係を復元する"
+          name: "npmパッケージを復元する"
           key: npm-{{ checksum "package-lock.json" }}-{{ .Environment.CACHE_VERSION_NPM }}
   save_npm:
     steps:
       - save_cache:
-          name: "npmの依存関係をキャッシュする"
+          name: "npmパッケージをキャッシュする"
           key: npm-{{ checksum "package-lock.json" }}-{{ .Environment.CACHE_VERSION_NPM }}
           paths:
             - ~/workspace/node_modules
@@ -27,7 +27,7 @@ jobs:
       - checkout
       - restore_npm
       - run:
-          name: "依存関係をインストールする"
+          name: "npmパッケージをインストール"
           command: npm install
       - save_npm
 
@@ -37,9 +37,6 @@ jobs:
     steps:
       - checkout
       - restore_npm
-      - run:
-          name: "プロジェクトのnpmパッケージをインストール"
-          command: npm install
       - run:
           name: "lintチェック"
           command: npm run lint
