@@ -15,6 +15,7 @@ import { container } from '@/Tools/Containers/Tools';
 
 const dateTool = container.resolve<Tools.IDateTool>('DateTool');
 const logTool = container.resolve<Tools.ILogTool>('LogTool');
+
 const utcDate = dateTool.getUtc();
 const minutes = dateTool.formatMinutesNoZeroPadding(utcDate);
 const logger = logTool.createLogger();
