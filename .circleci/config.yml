@@ -15,6 +15,11 @@ jobs:
       - run:
           name: "ソースコードのビルド"
           command: npm run build
+
+  test:
+    docker:
+      - image: circleci/node:16.3.0
+    steps:
       - run:
           name: "単体テストを実行"
           command: npm run test
