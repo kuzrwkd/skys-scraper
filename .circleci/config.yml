@@ -24,8 +24,8 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/docker
-            - setup_remote_docker
-            - run: docker load -i /tmp/docker/image
+      - setup_remote_docker
+      - run: docker load -i /tmp/docker/image
       - checkout
       - run:
           name: "プロジェクトのnpmパッケージをインストール"
