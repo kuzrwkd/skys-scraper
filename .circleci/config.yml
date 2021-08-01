@@ -17,8 +17,6 @@ jobs:
             - image
 
   test:
-    requires:
-      - build
     docker:
       - image: circleci/node:16.3.0
     steps:
@@ -44,4 +42,6 @@ workflows:
   build_and_test:
     jobs:
       - build
-      - test
+      - test:
+          requires:
+            - build
