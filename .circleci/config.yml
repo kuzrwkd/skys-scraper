@@ -25,7 +25,6 @@ jobs:
       name: default
     steps:
       - checkout
-      - restore_npm
       - run:
           name: "npmパッケージをインストール"
           command: npm install
@@ -46,6 +45,15 @@ jobs:
       - run:
           name: "単体テストを実行"
           command: npm run test
+  deploy:
+    executor:
+      name: default
+    steps:
+      - checkout
+      - restore_npm
+      - run:
+          name: "リモート環境へデプロイ"
+          command: echo "deploy"
 
 workflows:
   version: 2
@@ -55,3 +63,6 @@ workflows:
       - test:
           requires:
             - setup
+      - deploy:
+          requires:
+            - test
