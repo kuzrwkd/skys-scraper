@@ -5,21 +5,27 @@ jobs:
     docker:
       - image: circleci/node:16.3.0
     steps:
-      - checkout
+      - setup_remote_docker
       - run:
-          name: "プロジェクトのnpmパッケージをインストール"
-          command: npm install
-      - run:
-          name: "lintチェック"
-          command: npm run lint
-      - run:
-          name: "ソースコードのビルド"
-          command: npm run build
+          name: "docker imageを永続化する"
+          command: |
+            mkdir -p /tmp/docker
+            docker save circleci/node:16.3.0 -o /tmp/docker/image
+      - persist_to_workspace:
+          root: /tmp/docker
+          paths:
+            - image
 
   test:
+    requires:
+      - build
     docker:
       - image: circleci/node:16.3.0
     steps:
+      - attach_workspace:
+          at: /tmp/docker
+            - setup_remote_docker
+            - run: docker load -i /tmp/docker/image
       - checkout
       - run:
           name: "プロジェクトのnpmパッケージをインストール"
