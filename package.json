@@ -21,9 +21,8 @@
     "test:cov": "node_modules/.bin/jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "node_modules/.bin/jest --config ./jest-e2e.json",
-    "dynamodb:migration": "node dist/Products/Driver/DB/Migration/NewsFeedTable.js",
-    "dynamodb:describe": "aws dynamodb describe-table --table-name NewsFeed --endpoint-url http://skys-scraper-db-svc:8000",
-    "dynamodb:cleanup": "aws dynamodb delete-table --table-name NewsFeed --endpoint-url http://skys-scraper-db-svc:8000",
+    "dynamodb:migration:up": "node dist/Products/Driver/DB/Migration/up.js",
+    "dynamodb:migration:down": "node dist/Products/Driver/DB/Migration/down.js",
     "logs": "kubectl logs deployment/skys-scraper-app-dep -f"
   },
   "dependencies": {

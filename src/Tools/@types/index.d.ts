@@ -1,7 +1,6 @@
 /**
  * Lib
  */
-import type { PrismaClient as _PrismaClient } from '@prisma/client';
 import type { Logger as _Logger } from 'winston';
 
 /**
@@ -37,13 +36,17 @@ import type {
 import type { INewsFeedPresenter as _INewsFeedPresenter } from '@/Tools/@types/Products/Adapter/Presenter/NewsFeed';
 import type { INewsFeedController as _INewsFeedController } from '@/Tools/@types/Products/Adapter/Controller/NewsFeed';
 
+/**
+ * Migration
+ */
+import { IMigration as _IMigration } from '@/Tools/@types/Products/Driver/DB/Migration/Schema';
+
 declare global {
   /**
    * NodeJS global type
    */
   export type Global = typeof global;
   export interface CustomNodeJsGlobal extends Global {
-    prisma: _PrismaClient;
     requestId: string;
   }
 
@@ -52,7 +55,6 @@ declare global {
    */
   namespace Lib {
     export type Logger = _Logger;
-    export type PrismaClient = _PrismaClient;
   }
 
   /**
@@ -85,4 +87,9 @@ declare global {
     export type INewsFeedPresenter = _INewsFeedPresenter;
     export type INewsFeedController = _INewsFeedController;
   }
+
+  /**
+   * Migration
+   */
+  export type IMigration = _IMigration;
 }

@@ -11,10 +11,10 @@ import 'reflect-metadata';
 /**
  * Tools import
  */
-import { container } from '@/Tools/Containers/Tools';
+import toolsContainer from '@/Tools/Containers/ToolsContainer';
 
-const dateTool = container.resolve<Tools.IDateTool>('DateTool');
-const logTool = container.resolve<Tools.ILogTool>('LogTool');
+const dateTool = toolsContainer.resolve<Tools.IDateTool>('DateTool');
+const logTool = toolsContainer.resolve<Tools.ILogTool>('LogTool');
 
 const utcDate = dateTool.getUtc();
 const minutes = dateTool.formatMinutesNoZeroPadding(utcDate);

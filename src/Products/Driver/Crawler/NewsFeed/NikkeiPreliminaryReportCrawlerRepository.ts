@@ -130,8 +130,10 @@ export class NikkeiPreliminaryReportCrawlerRepository {
 
       await browser.close();
       return data;
-    } catch (err) {
-      this.logger.error(err.message, this.logTool.getFailedParams(err.constructor.name, err.stack as string));
+    } catch (e) {
+      if (e instanceof Error) {
+        this.logger.error(e.message, this.logTool.getFailedParams(e.name, e.stack as string));
+      }
       return null;
     }
   }

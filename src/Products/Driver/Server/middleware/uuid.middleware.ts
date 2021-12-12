@@ -11,7 +11,7 @@ import { Request, Response, NextFunction } from 'express';
 /**
  * Tools
  */
-import { container } from '@/Tools/Containers/Tools';
+import toolsContainer from '@/Tools/Containers/ToolsContainer';
 
 /**
  * Container
@@ -21,7 +21,7 @@ export class UuidMiddleware implements NestMiddleware {
   logTool: Tools.ILogTool;
 
   constructor() {
-    this.logTool = container.resolve<Tools.ILogTool>('LogTool');
+    this.logTool = toolsContainer.resolve<Tools.ILogTool>('LogTool');
   }
 
   use(req: Request, res: Response, next: NextFunction) {

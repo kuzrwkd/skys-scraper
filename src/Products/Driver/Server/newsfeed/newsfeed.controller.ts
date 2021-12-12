@@ -1,7 +1,7 @@
 /**
  * Tool
  */
-import { container } from '@/Tools/Containers/Tools';
+import toolsContainer from '@/Tools/Containers/ToolsContainer';
 
 /**
  * Nest
@@ -23,8 +23,8 @@ export class NewsFeedController {
   private dateTool: Tools.IDateTool;
 
   constructor(private newsFeedService: NewsFeedService) {
-    this.logTool = container.resolve<Tools.ILogTool>('LogTool');
-    this.dateTool = container.resolve<Tools.IDateTool>('DateTool');
+    this.logTool = toolsContainer.resolve<Tools.ILogTool>('LogTool');
+    this.dateTool = toolsContainer.resolve<Tools.IDateTool>('DateTool');
     this.logger = this.logTool.createLogger();
   }
 

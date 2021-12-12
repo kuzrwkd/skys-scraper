@@ -20,12 +20,12 @@ export class NewsFeedInteract {
       for (const { organizationId, contentsId, url } of data) {
         const organization: NewsFeed.Organization = {
           id: organizationId,
-          name: (await this.newsFeedDBRepository.findOrganization(organizationId)).name ?? null,
+          name: (await this.newsFeedDBRepository.getOrganization(organizationId)).name ?? null,
         };
 
         const contents: NewsFeed.Contents = {
           id: contentsId,
-          name: (await this.newsFeedDBRepository.findContents(contentsId)).name ?? null,
+          name: (await this.newsFeedDBRepository.getOrganization(contentsId)).name ?? null,
         };
 
         const crawler = this.newsFeedCrawlerIndex.handle(url, organization);

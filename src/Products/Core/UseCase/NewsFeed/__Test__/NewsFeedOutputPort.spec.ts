@@ -1,7 +1,7 @@
-import { container } from '@/Tools/Containers/Products/NewsFeed';
+import newsFeedContainer from '@/Tools/Containers/NewsFeedContainer';
 
 describe('NewsFeedOutputPortのテスト', () => {
-  const newsFeedOutputPort: NewsFeed.INewsFeedOutputPort = container.resolve('NewsFeedOutputPort');
+  const newsFeedOutputPort: NewsFeed.INewsFeedOutputPort = newsFeedContainer.resolve('NewsFeedOutputPort');
   const mockResult = true;
 
   newsFeedOutputPort.setResult = mockResult;

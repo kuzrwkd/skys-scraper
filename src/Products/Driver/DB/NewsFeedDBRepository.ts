@@ -1,11 +1,20 @@
 // lib
-import { filterInsertRegex, filterSelectRegex, filterUpdateRegex, prisma } from '@/Products/Driver/DB/config';
+import { dynamodb } from '@/Tools/Utility/DynamoDBClient';
+import {
+  GetItemCommand,
+  GetItemCommandInput,
+  PutItemCommand,
+  PutItemCommandInput,
+  UpdateItemCommand,
+  UpdateItemCommandInput,
+  BatchGetItemCommand,
+  BatchGetItemCommandInput,
+} from '@aws-sdk/client-dynamodb';
 import { injectable, inject } from 'tsyringe';
 
 @injectable()
 export class NewsFeedDBRepository {
   private logger: Lib.Logger;
-  private organizationName: string | null = null;
 
   constructor(
     @inject('LogTool') private logTool: Tools.ILogTool,
@@ -13,88 +22,52 @@ export class NewsFeedDBRepository {
     @inject('DateTool') private dateTool: Tools.IDateTool,
   ) {
     this.logger = this.logTool.createLogger();
-    this.processLogging();
-  }
-
-  /**
-   * DB処理実行中のlogging
-   */
-  processLogging() {
-    prisma.$on<any>('query', (e: any) => {
-      if (filterInsertRegex.test(e.query)) {
-        this.logger.info(
-          `NewsFeedDBRepository [${this.organizationName}] レコード作成実行`,
-          this.logTool.getProcessDbIoParams(e.query),
-        );
-      }
-
-      const urlRegExp = this.regExpVerEx.urlRegExp();
-      if (filterSelectRegex.test(e.query) && urlRegExp.test(JSON.parse(e.params)[0])) {
-        this.logger.info(
-          `NewsFeedDBRepository [${this.organizationName}] レコード読み取り実行`,
-          this.logTool.getProcessDbIoParams(e.query),
-        );
-      }
-
-      if (filterUpdateRegex.test(e.query)) {
-        this.logger.info(
-          `NewsFeedDBRepository [${this.organizationName}] レコード更新実行`,
-          this.logTool.getProcessDbIoParams(e.query),
-        );
-      }
-    });
   }
 
   /**
    * 機関マスター検索
    *  @param id
    */
-  async findOrganization(id: number) {
-    this.logger.info(
-      'NewsFeedDBRepository [OrganizationMaster] レコード読み取り開始',
-      this.logTool.getStartDbIoParams(),
-    );
-    const startTime = this.dateTool.processStartTime();
-    const record = prisma.organizationMaster.findFirst({
-      where: {
-        id,
-      },
-    });
-    const endTime = this.dateTool.processEndTime(startTime);
-    this.logger.info(
-      'NewsFeedDBRepository [OrganizationMaster] レコード読み取り完了',
-      this.logTool.getSuccessDbIoParams<typeof record>(endTime, record),
-    );
-    return record;
-  }
+  async getOrganization(id: number) {
+    try {
+      this.logger.info(
+        'NewsFeedDBRepository [OrganizationMaster] レコード読み取り開始',
+        this.logTool.getStartDbIoParams(),
+      );
+      const startTime = this.dateTool.processStartTime();
 
-  /**
-   * コンテンツマスター検索
-   * @param id
-   */
-  async findContents(id: number) {
-    this.logger.info('NewsFeedDBRepository [ContentsMaster] レコード読み取り開始', this.logTool.getStartDbIoParams());
-    const startTime = this.dateTool.processStartTime();
-    const record = prisma.contentsMaster.findFirst({
-      where: {
-        id,
-      },
-    });
-    const endTime = this.dateTool.processEndTime(startTime);
-    this.logger.info(
-      'NewsFeedDBRepository [ContentsMaster] レコード読み取り完了',
-      this.logTool.getSuccessDbIoParams<typeof record>(endTime, record),
-    );
-    return record;
+      const params: GetItemCommandInput = {
+        TableName: 'MediaOrganization',
+        Key: {
+          id: { N: id.toString() },
+        },
+      };
+
+      const result = await dynamodb.send(new GetItemCommand(params));
+
+      const endTime = this.dateTool.processEndTime(startTime);
+      this.logger.info(
+        'NewsFeedDBRepository [OrganizationMaster] レコード読み取り完了',
+        this.logTool.getSuccessDbIoParams<typeof result>(endTime, result),
+      );
+      return result;
+    } catch (e) {
+      if (e instanceof Error) {
+        this.logger.error(
+          `NewsFeedDBRepository [OrganizationMaster] レコード読み取り失敗`,
+          this.logTool.getFailedParams(e.name, e.stack as string),
+        );
+      }
+    }
   }
 
   /**
    * レコード作成
-   * @param { title, url, organization, contents, articleCreatedAt, articleUpdatedAt } - NewsFeed.Entityのプロパティ
+   * @param payload
    */
-  async create({ title, url, organization, contents, articleCreatedAt, articleUpdatedAt }: NewsFeed.Entity) {
+  async create(payload: NewsFeed.Entity) {
+    const { title, url, organization, articleCreatedAt, articleUpdatedAt } = payload;
     const organizationName = organization.name;
-    this.organizationName = organizationName; // prismaのloggingで利用
 
     try {
       this.logger.info(
@@ -102,28 +75,31 @@ export class NewsFeedDBRepository {
         this.logTool.getStartDbIoParams(),
       );
       const startTime = this.dateTool.processStartTime();
-      const record = await prisma.newsFeed.create({
-        data: {
-          title,
-          url,
-          organizationId: organization.id,
-          contentsId: contents.id,
-          articleCreatedAt,
-          articleUpdatedAt,
+      const command: PutItemCommandInput = {
+        TableName: 'NewsFeed',
+        Item: {
+          title: { S: title },
+          url: { S: url },
+          organization_id: { S: organization.id.toString() },
+          articleCreated_at: { S: articleCreatedAt },
+          articleUpdated_at: { S: articleUpdatedAt ?? '' },
         },
-      });
+      };
+      const result = await dynamodb.send(new PutItemCommand(command));
       const endTime = this.dateTool.processEndTime(startTime);
 
       this.logger.info(
         `NewsFeedDBRepository [${organizationName}] レコード作成完了`,
-        this.logTool.getSuccessDbIoParams<typeof record>(endTime, record),
+        this.logTool.getSuccessDbIoParams<typeof result>(endTime, result),
       );
-      return record;
-    } catch (err) {
-      this.logger.error(
-        `NewsFeedDBRepository [${organizationName}] レコード作成失敗`,
-        this.logTool.getFailedParams(err.constructor.name, err.stack as string),
-      );
+      return result;
+    } catch (e) {
+      if (e instanceof Error) {
+        this.logger.error(
+          `NewsFeedDBRepository [${organizationName}] レコード作成失敗`,
+          this.logTool.getFailedParams(e.name, e.stack as string),
+        );
+      }
     }
   }
 
@@ -134,7 +110,6 @@ export class NewsFeedDBRepository {
    */
   async read(url: string, { name }: NewsFeed.Organization) {
     const organizationName = name;
-    this.organizationName = organizationName; // prismaのloggingで利用
 
     try {
       this.logger.info(
@@ -142,34 +117,50 @@ export class NewsFeedDBRepository {
         this.logTool.getStartDbIoParams(),
       );
       const startTime = this.dateTool.processStartTime();
-      const record = await prisma.newsFeed.findFirst({
-        where: {
-          url,
+
+      const command: BatchGetItemCommandInput = {
+        RequestItems: {
+          NewsFeed: {
+            Keys: [
+              {
+                url: { S: url },
+              },
+            ],
+          },
         },
-      });
+      };
+
+      const result = await dynamodb.send(new BatchGetItemCommand(command));
 
       const endTime = this.dateTool.processEndTime(startTime);
       this.logger.info(
         `NewsFeedDBRepository [${organizationName}] レコード読み取り完了`,
-        this.logTool.getSuccessDbIoParams<typeof record>(endTime, record),
+        this.logTool.getSuccessDbIoParams<typeof result>(endTime, result),
       );
 
-      return record;
-    } catch (err) {
-      this.logger.error(
-        `NewsFeedDBRepository [${organizationName}] レコード読み取り失敗`,
-        this.logTool.getFailedParams(err.constructor.name, err.stack as string),
-      );
+      return result;
+    } catch (e) {
+      if (e instanceof Error) {
+        this.logger.error(
+          `NewsFeedDBRepository [${organizationName}] レコード読み取り失敗`,
+          this.logTool.getFailedParams(e.name, e.stack as string),
+        );
+      }
     }
   }
 
   /**
    * レコード更新
-   * @param { id, title, organization, articleUpdatedAt } - NewsFeed.Entityのプロパティ
+   * @param payload
    */
-  async update({ id, title, organization, articleUpdatedAt }: NewsFeed.Entity) {
-    const organizationName = organization.name;
-    this.organizationName = organizationName; // prismaのloggingで利用
+  async update(payload: NewsFeed.Entity) {
+    const {
+      id,
+      title,
+      organization: { name: organizationName },
+      articleUpdatedAt,
+    } = payload;
+    if (!articleUpdatedAt || !id) return;
 
     try {
       this.logger.info(
@@ -178,27 +169,38 @@ export class NewsFeedDBRepository {
       );
 
       const startTime = this.dateTool.processStartTime();
-      const record = await prisma.newsFeed.update({
-        where: {
-          id,
+
+      const command: UpdateItemCommandInput = {
+        TableName: 'NewsFeed',
+        Key: {
+          id: { N: id.toString() },
         },
-        data: {
-          title,
-          articleUpdatedAt,
+        UpdateExpression: 'set #title = :title, #articleUpdated_at = :articleUpdated_at',
+        ExpressionAttributeNames: {
+          '#title': 'title',
+          '#articleUpdated_at': 'articleUpdated_at',
         },
-      });
+        ExpressionAttributeValues: {
+          ':title': { S: title },
+          ':articleUpdated_at': { S: articleUpdatedAt },
+        },
+      };
+      const result = await dynamodb.send(new UpdateItemCommand(command));
+
       const endTime = this.dateTool.processEndTime(startTime);
 
       this.logger.info(
         `NewsFeedDBRepository [${organizationName}] レコード更新完了`,
-        this.logTool.getSuccessDbIoParams<typeof record>(endTime, record),
+        this.logTool.getSuccessDbIoParams<typeof result>(endTime, result),
       );
-      return record;
-    } catch (err) {
-      this.logger.error(
-        `NewsFeedDBRepository [${organizationName}] レコード更新失敗`,
-        this.logTool.getFailedParams(err.constructor.name, err.stack as string),
-      );
+      return result;
+    } catch (e) {
+      if (e instanceof Error) {
+        this.logger.error(
+          `NewsFeedDBRepository [${organizationName}] レコード更新失敗`,
+          this.logTool.getFailedParams(e.name, e.stack as string),
+        );
+      }
     }
   }
 }
