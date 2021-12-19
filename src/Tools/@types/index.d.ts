@@ -41,6 +41,11 @@ import type { INewsFeedController as _INewsFeedController } from '@/Tools/@types
  */
 import { IMigration as _IMigration } from '@/Tools/@types/Products/Driver/DB/Migration/Schema';
 
+/**
+ * Seeder
+ */
+import { ISeeder as _ISeeder } from '@/Tools/@types/Products/Driver/DB/Seeder';
+
 declare global {
   /**
    * NodeJS global type
@@ -92,4 +97,9 @@ declare global {
    * Migration
    */
   export type IMigration = _IMigration;
+
+  /**
+   * Seeder
+   */
+  export type ISeeder = _ISeeder;
 }

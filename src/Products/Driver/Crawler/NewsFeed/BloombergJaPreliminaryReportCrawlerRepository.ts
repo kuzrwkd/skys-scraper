@@ -21,7 +21,7 @@ export class BloombergJaPreliminaryReportCrawlerRepository {
     this.logger = logTool.createLogger();
   }
 
-  async crawler(url: string, organization: NewsFeed.Organization) {
+  async handle(url: string, organization: NewsFeed.Organization) {
     const organizationName = organization.name;
 
     try {

@@ -34,11 +34,23 @@ class NewsFeedTableMigration {
         AttributeDefinitions: [
           { AttributeName: 'id', AttributeType: 'S' },
           { AttributeName: 'created_at', AttributeType: 'S' },
+          { AttributeName: 'url', AttributeType: 'S' },
         ],
         ProvisionedThroughput: {
           ReadCapacityUnits: 5,
           WriteCapacityUnits: 5,
         },
+        GlobalSecondaryIndexes: [
+          {
+            IndexName: 'UrlIndex',
+            KeySchema: [{ AttributeName: 'url', KeyType: 'HASH' }],
+            Projection: { ProjectionType: 'ALL' },
+            ProvisionedThroughput: {
+              ReadCapacityUnits: 5,
+              WriteCapacityUnits: 5,
+            },
+          },
+        ],
         TableClass: 'STANDARD',
       };
       this.logger.info('NewsFeedTable マイグレーション開始');

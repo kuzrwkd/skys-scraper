@@ -2,7 +2,7 @@
  * NewsFeedのInteract
  */
 export interface INewsFeedInteract {
-  handle(data: RequestDataParams[]): Promise<boolean>;
+  handle(data: RequestDataParams[], tracking_id: string): Promise<boolean>;
 }
 
 /**
@@ -30,6 +30,5 @@ export type RequestData = {
 
 export type RequestDataParams = {
   organizationId: number;
-  contentsId: number;
   url: string;
 };

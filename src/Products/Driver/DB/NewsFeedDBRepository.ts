@@ -1,5 +1,6 @@
-// lib
-import { dynamodb } from '@/Tools/Utility/DynamoDBClient';
+/**
+ * Lib
+ */
 import {
   GetItemCommand,
   GetItemCommandInput,
@@ -7,10 +8,15 @@ import {
   PutItemCommandInput,
   UpdateItemCommand,
   UpdateItemCommandInput,
-  BatchGetItemCommand,
-  BatchGetItemCommandInput,
+  QueryCommand,
+  QueryCommandInput,
 } from '@aws-sdk/client-dynamodb';
 import { injectable, inject } from 'tsyringe';
+
+/**
+ * Tools
+ */
+import { dynamodb } from '@/Tools/Utility/DynamoDBClient';
 
 @injectable()
 export class NewsFeedDBRepository {
@@ -26,36 +32,38 @@ export class NewsFeedDBRepository {
 
   /**
    * 機関マスター検索
-   *  @param id
+   * @param id
+   * @param tracking_id
    */
-  async getOrganization(id: number) {
+  async getOrganization(id: number, tracking_id: string) {
     try {
       this.logger.info(
-        'NewsFeedDBRepository [OrganizationMaster] レコード読み取り開始',
-        this.logTool.getStartDbIoParams(),
+        'NewsFeedDBRepository [MediaOrganization] レコード読み取り開始',
+        this.logTool.getStartDbIoParams({ tracking_id }),
       );
       const startTime = this.dateTool.processStartTime();
 
-      const params: GetItemCommandInput = {
+      const command: GetItemCommandInput = {
         TableName: 'MediaOrganization',
         Key: {
-          id: { N: id.toString() },
+          organization_id: { N: id.toString() },
         },
       };
 
-      const result = await dynamodb.send(new GetItemCommand(params));
+      const { Item } = await dynamodb.send(new GetItemCommand(command));
 
       const endTime = this.dateTool.processEndTime(startTime);
       this.logger.info(
-        'NewsFeedDBRepository [OrganizationMaster] レコード読み取り完了',
-        this.logTool.getSuccessDbIoParams<typeof result>(endTime, result),
+        'NewsFeedDBRepository [MediaOrganization] レコード読み取り完了',
+        this.logTool.getSuccessDbIoParams<typeof Item>({ tracking_id, time: endTime, result: Item }),
       );
-      return result;
+
+      return { organization_id: Item?.organization_id.N, name: Item?.name.S };
     } catch (e) {
       if (e instanceof Error) {
         this.logger.error(
-          `NewsFeedDBRepository [OrganizationMaster] レコード読み取り失敗`,
-          this.logTool.getFailedParams(e.name, e.stack as string),
+          `NewsFeedDBRepository [MediaOrganization] レコード読み取り失敗`,
+          this.logTool.getFailedParams({ tracking_id, exception: e.name, stacktrace: e.stack as string }),
         );
       }
     }
@@ -64,25 +72,28 @@ export class NewsFeedDBRepository {
   /**
    * レコード作成
    * @param payload
+   * @param tracking_id
    */
-  async create(payload: NewsFeed.Entity) {
-    const { title, url, organization, articleCreatedAt, articleUpdatedAt } = payload;
+  async create(payload: NewsFeed.Entity, tracking_id: string) {
+    const { title, url, organization, article_created_at, article_updated_at } = payload;
     const organizationName = organization.name;
 
     try {
       this.logger.info(
         `NewsFeedDBRepository [${organizationName}] レコード作成開始`,
-        this.logTool.getStartDbIoParams(),
+        this.logTool.getStartDbIoParams({ tracking_id }),
       );
       const startTime = this.dateTool.processStartTime();
       const command: PutItemCommandInput = {
         TableName: 'NewsFeed',
         Item: {
+          id: { S: tracking_id },
           title: { S: title },
           url: { S: url },
           organization_id: { S: organization.id.toString() },
-          articleCreated_at: { S: articleCreatedAt },
-          articleUpdated_at: { S: articleUpdatedAt ?? '' },
+          article_created_at: { S: article_created_at },
+          article_updated_at: { S: article_updated_at ?? '' },
+          created_at: { S: this.dateTool.getUtc() },
         },
       };
       const result = await dynamodb.send(new PutItemCommand(command));
@@ -90,14 +101,14 @@ export class NewsFeedDBRepository {
 
       this.logger.info(
         `NewsFeedDBRepository [${organizationName}] レコード作成完了`,
-        this.logTool.getSuccessDbIoParams<typeof result>(endTime, result),
+        this.logTool.getSuccessDbIoParams<typeof result>({ tracking_id, time: endTime, result }),
       );
       return result;
     } catch (e) {
       if (e instanceof Error) {
         this.logger.error(
           `NewsFeedDBRepository [${organizationName}] レコード作成失敗`,
-          this.logTool.getFailedParams(e.name, e.stack as string),
+          this.logTool.getFailedParams({ tracking_id, exception: e.name, stacktrace: e.stack as string }),
         );
       }
     }
@@ -106,44 +117,53 @@ export class NewsFeedDBRepository {
   /**
    * レコード読み取り
    * @param url
-   * @param { name } - organizationNameが入る
+   * @param organization
+   * @param tracking_id
    */
-  async read(url: string, { name }: NewsFeed.Organization) {
-    const organizationName = name;
+  async read(url: string, organization: NewsFeed.Organization, tracking_id: string) {
+    const { name: organizationName } = organization;
 
     try {
       this.logger.info(
         `NewsFeedDBRepository [${organizationName}] レコード読み取り開始`,
-        this.logTool.getStartDbIoParams(),
+        this.logTool.getStartDbIoParams({ tracking_id }),
       );
       const startTime = this.dateTool.processStartTime();
 
-      const command: BatchGetItemCommandInput = {
-        RequestItems: {
-          NewsFeed: {
-            Keys: [
-              {
-                url: { S: url },
-              },
-            ],
-          },
+      const command: QueryCommandInput = {
+        TableName: 'NewsFeed',
+        IndexName: 'UrlIndex',
+        KeyConditionExpression: '#url = :url',
+        ExpressionAttributeNames: {
+          '#url': 'url',
+        },
+        ExpressionAttributeValues: {
+          ':url': { S: url },
         },
       };
 
-      const result = await dynamodb.send(new BatchGetItemCommand(command));
+      const { Items } = await dynamodb.send(new QueryCommand(command));
 
       const endTime = this.dateTool.processEndTime(startTime);
       this.logger.info(
         `NewsFeedDBRepository [${organizationName}] レコード読み取り完了`,
-        this.logTool.getSuccessDbIoParams<typeof result>(endTime, result),
+        this.logTool.getSuccessDbIoParams<typeof Items>({ tracking_id, time: endTime, result: Items }),
       );
 
-      return result;
+      if (!Items) {
+        return Items;
+      }
+
+      if (Items.length === 0) {
+        return undefined;
+      }
+
+      return Items[0];
     } catch (e) {
       if (e instanceof Error) {
         this.logger.error(
           `NewsFeedDBRepository [${organizationName}] レコード読み取り失敗`,
-          this.logTool.getFailedParams(e.name, e.stack as string),
+          this.logTool.getFailedParams({ tracking_id, exception: e.name, stacktrace: e.stack as string }),
         );
       }
     }
@@ -152,20 +172,21 @@ export class NewsFeedDBRepository {
   /**
    * レコード更新
    * @param payload
+   * @param tracking_id
    */
-  async update(payload: NewsFeed.Entity) {
+  async update(payload: NewsFeed.Entity, tracking_id: string) {
     const {
       id,
       title,
       organization: { name: organizationName },
-      articleUpdatedAt,
+      article_updated_at,
     } = payload;
-    if (!articleUpdatedAt || !id) return;
+    if (!article_updated_at || !id) return;
 
     try {
       this.logger.info(
         `NewsFeedDBRepository [${organizationName}] レコード更新開始`,
-        this.logTool.getStartDbIoParams(),
+        this.logTool.getStartDbIoParams({ tracking_id }),
       );
 
       const startTime = this.dateTool.processStartTime();
@@ -173,16 +194,16 @@ export class NewsFeedDBRepository {
       const command: UpdateItemCommandInput = {
         TableName: 'NewsFeed',
         Key: {
-          id: { N: id.toString() },
+          id: { S: id },
         },
-        UpdateExpression: 'set #title = :title, #articleUpdated_at = :articleUpdated_at',
+        UpdateExpression: 'set #title = :title, #article_updated_at = :article_updated_at',
         ExpressionAttributeNames: {
           '#title': 'title',
-          '#articleUpdated_at': 'articleUpdated_at',
+          '#article_updated_at': 'article_updated_at',
         },
         ExpressionAttributeValues: {
           ':title': { S: title },
-          ':articleUpdated_at': { S: articleUpdatedAt },
+          ':article_updated_at': { S: article_updated_at },
         },
       };
       const result = await dynamodb.send(new UpdateItemCommand(command));
@@ -191,14 +212,14 @@ export class NewsFeedDBRepository {
 
       this.logger.info(
         `NewsFeedDBRepository [${organizationName}] レコード更新完了`,
-        this.logTool.getSuccessDbIoParams<typeof result>(endTime, result),
+        this.logTool.getSuccessDbIoParams<typeof result>({ tracking_id, time: endTime, result }),
       );
       return result;
     } catch (e) {
       if (e instanceof Error) {
         this.logger.error(
           `NewsFeedDBRepository [${organizationName}] レコード更新失敗`,
-          this.logTool.getFailedParams(e.name, e.stack as string),
+          this.logTool.getFailedParams({ tracking_id, exception: e.name, stacktrace: e.stack as string }),
         );
       }
     }

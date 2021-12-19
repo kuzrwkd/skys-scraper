@@ -13,7 +13,7 @@ import { injectable } from 'tsyringe';
 /**
  * Tool
  */
-import { LOG_TYPE } from '@/Tools/Constants/Logger';
+import { LOW_CASE_WITH_NUMBER_CHARACTERS, LOG_TYPE } from '@/Tools/Constants/Logger';
 
 @injectable()
 export class LogTool {
@@ -21,6 +21,17 @@ export class LogTool {
     info.level = info.level.toUpperCase();
     return info;
   });
+
+  createRandomString() {
+    const length = 5;
+    let result = '';
+    const characters = LOW_CASE_WITH_NUMBER_CHARACTERS;
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
 
   /**
    * リクエスト単位でユニークIDをglobalへ保存
@@ -38,23 +49,25 @@ export class LogTool {
 
   /**
    * クローリングスタート
+   * @param payload
    */
-  getStartCrawlingParams() {
+  getStartCrawlingParams(payload: { tracking_id: string }) {
+    const { tracking_id } = payload;
     return {
       type: LOG_TYPE.START_CRAWLING,
-      request_id: this.getRequestId(),
+      tracking_id,
     };
   }
 
   /**
    * クローリング成功
-   * @param result
-   * @param time
+   * @param payload
    */
-  getSuccessCrawlingParams<T = any>(time: string, result: T) {
+  getSuccessCrawlingParams<T = any>(payload: { time: string; result: T; tracking_id: string }) {
+    const { time, result, tracking_id } = payload;
     return {
       type: LOG_TYPE.SUCCESS_CRAWLING,
-      request_id: this.getRequestId(),
+      tracking_id,
       time,
       result,
     };
@@ -63,26 +76,26 @@ export class LogTool {
   /**
    * クローリング実行
    */
-  getProcessCrawlingParams(url: string) {
+  getProcessCrawlingParams(payload: { url: string; tracking_id: string }) {
+    const { url, tracking_id } = payload;
     return {
       type: LOG_TYPE.PROCESS_CRAWLING,
-      request_id: this.getRequestId(),
+      tracking_id,
       crawling_url: url,
     };
   }
 
   /**
    * クローリング失敗
-   * @param url
-   * @param exceptionClass
-   * @param stacktrace
+   * @param payload
    */
-  getFailedCrawlingParams(url: string, exceptionClass: string, stacktrace: string) {
+  getFailedCrawlingParams(payload: { url: string; tracking_id: string; exception_class: string; stacktrace: string }) {
+    const { url, tracking_id, exception_class, stacktrace } = payload;
     return {
       type: LOG_TYPE.FAILED_CRAWLING,
-      request_id: this.getRequestId(),
+      tracking_id,
       crawling_url: url,
-      exception_class: exceptionClass,
+      exception_class,
       stacktrace,
     };
   }
@@ -90,22 +103,23 @@ export class LogTool {
   /**
    * DB読み書きスタート
    */
-  getStartDbIoParams() {
+  getStartDbIoParams(payload: { tracking_id: string }) {
+    const { tracking_id } = payload;
     return {
       type: LOG_TYPE.START_DB_IO,
-      request_id: this.getRequestId(),
+      tracking_id,
     };
   }
 
   /**
    * DB読み書き成功
-   * @param time
-   * @param result
+   * @param payload
    */
-  getSuccessDbIoParams<T = any>(time: string, result: T) {
+  getSuccessDbIoParams<T = any>(payload: { time: string; result: T; tracking_id: string }) {
+    const { time, result, tracking_id } = payload;
     return {
       type: LOG_TYPE.SUCCESS_DB_IO,
-      request_id: this.getRequestId(),
+      tracking_id,
       time,
       result,
     };
@@ -113,25 +127,27 @@ export class LogTool {
 
   /**
    * DB読み書き実行
+   * @param payload
    */
-  getProcessDbIoParams(query: string) {
+  getProcessDbIoParams(payload: { tracking_id: string; query: string }) {
+    const { tracking_id, query } = payload;
     return {
       type: LOG_TYPE.PROCESS_DB_IO,
-      request_id: this.getRequestId(),
+      tracking_id: tracking_id,
       query,
     };
   }
 
   /**
    * DB読み書き失敗
-   * @param exceptionClass
-   * @param stacktrace
+   * @param payload
    */
-  getFailedDbIoParams(exceptionClass: string, stacktrace: string) {
+  getFailedDbIoParams(payload: { tracking_id: string; exception_class: string; stacktrace: string }) {
+    const { tracking_id, exception_class, stacktrace } = payload;
     return {
       type: LOG_TYPE.FAILED_DB_IO,
-      request_id: this.getRequestId(),
-      exception_class: exceptionClass,
+      tracking_id,
+      exception_class,
       stacktrace,
     };
   }
@@ -139,46 +155,49 @@ export class LogTool {
   /**
    * 処理開始
    */
-  getStartParams<T = any>(requestBody: T) {
+  getStartParams<T = any>(payload: { tracking_id: string; request_body: T }) {
+    const { tracking_id, request_body } = payload;
     return {
       type: LOG_TYPE.START,
-      request_id: this.getRequestId(),
-      request_body: requestBody,
+      tracking_id,
+      request_body,
     };
   }
 
   /**
    * 処理成功
    */
-  getSuccessParams<T = any>(time: string, responseBody: T) {
+  getSuccessParams<T = any>(payload: { tracking_id: string; time: string; response_body: T }) {
+    const { tracking_id, time, response_body } = payload;
     return {
       type: LOG_TYPE.SUCCESS,
-      request_id: this.getRequestId(),
+      tracking_id,
       time,
-      response_body: responseBody,
+      response_body,
     };
   }
 
   /**
    * 処理実行中
    */
-  getProcessParams() {
+  getProcessParams(payload: { tracking_id: string }) {
+    const { tracking_id } = payload;
     return {
       type: LOG_TYPE.PROCESS,
-      request_id: this.getRequestId(),
+      tracking_id,
     };
   }
 
   /**
    * 処理失敗
-   * @param exceptionClass
-   * @param stacktrace
+   * @param payload
    */
-  getFailedParams(exceptionClass: string, stacktrace: string) {
+  getFailedParams(payload: { tracking_id: string; exception_class: string; stacktrace: string }) {
+    const { tracking_id, exception_class, stacktrace } = payload;
     return {
       type: LOG_TYPE.FAILED,
-      request_id: this.getRequestId(),
-      exception_class: exceptionClass,
+      tracking_id,
+      exception_class,
       stacktrace,
     };
   }

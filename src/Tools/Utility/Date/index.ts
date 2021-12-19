@@ -10,7 +10,7 @@ export const utcDayJs = dayjs.extend(utc);
 @injectable()
 export class DateTool {
   getUtc() {
-    return utcDayJs.utc().format();
+    return utcDayJs.utc().format('YYYY-MM-DDTHH:mm:ss:SSS[Z]');
   }
 
   processStartTime() {

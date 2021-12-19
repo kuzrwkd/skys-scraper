@@ -12,12 +12,13 @@ export class NewsFeedCrawlerIndex {
     private bloombergJaPreliminaryReportCrawlerRepository: NewsFeed.IBloombergJaPreliminaryReportCrawlerRepository,
   ) {}
 
-  async handle(url: string, { id, name }: NewsFeed.Organization) {
+  async handle(url: string, organization: NewsFeed.Organization, tracking_id: string) {
+    const { id } = organization;
     switch (id) {
       case 1:
-        return await this.nikkeiPreliminaryReportCrawlerRepository.crawler(url, { id, name });
+        return await this.nikkeiPreliminaryReportCrawlerRepository.handle(url, organization, tracking_id);
       case 2:
-        return await this.bloombergJaPreliminaryReportCrawlerRepository.crawler(url, { id, name });
+        return await this.bloombergJaPreliminaryReportCrawlerRepository.handle(url, organization, tracking_id);
     }
   }
 }

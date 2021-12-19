@@ -32,12 +32,22 @@ export class NewsFeedController {
   async post(@Body() body: NewsFeed.RequestData): Promise<boolean> {
     try {
       const startTime = this.dateTool.processStartTime();
-      this.logger.info('NewsFeed 処理開始', this.logTool.getStartParams<typeof body>(body));
+      this.logger.info(
+        'NewsFeed 処理開始',
+        this.logTool.getStartParams<typeof body>({ tracking_id: this.logTool.getRequestId(), request_body: body }),
+      );
 
       const result = await this.newsFeedService.handle(body);
 
       const endTime = this.dateTool.processEndTime(startTime);
-      this.logger.info('NewsFeed 処理終了', this.logTool.getSuccessParams<typeof result>(endTime, result));
+      this.logger.info(
+        'NewsFeed 処理終了',
+        this.logTool.getSuccessParams<typeof result>({
+          tracking_id: this.logTool.getRequestId(),
+          time: endTime,
+          response_body: result,
+        }),
+      );
 
       return result;
     } catch (err) {

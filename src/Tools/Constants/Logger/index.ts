@@ -12,3 +12,6 @@ export const LOG_TYPE = {
   PROCESS_DB_IO: 'PROCESS DB I/0',
   FAILED_DB_IO: 'FAILED DB I/0',
 } as const;
+
+export const CHARACTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+export const LOW_CASE_WITH_NUMBER_CHARACTERS = 'abcdefghijklmnopqrstuvwxyz0123456789';

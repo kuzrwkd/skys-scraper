@@ -1,11 +1,13 @@
-import {
-  CreateTableCommand,
-  CreateTableCommandInput,
-  DeleteTableCommand,
-  DeleteTableCommandInput,
-} from '@aws-sdk/client-dynamodb';
-import { dynamodb } from '@/Tools/Utility/DynamoDBClient';
+/**
+ * Lib
+ */
+import { BatchWriteItemCommand, BatchWriteItemCommandInput } from '@aws-sdk/client-dynamodb';
 import { inject, injectable } from 'tsyringe';
+
+/**
+ * Tools
+ */
+import { dynamodb } from '@/Tools/Utility/DynamoDBClient';
 
 @injectable()
 class MediaOrganizationSeed {
@@ -15,8 +17,40 @@ class MediaOrganizationSeed {
     this.logger = this.logTool.createLogger();
   }
 
-  async seed() {
-    // TODO: 後でやる
+  async install() {
+    try {
+      const command: BatchWriteItemCommandInput = {
+        RequestItems: {
+          MediaOrganization: [
+            {
+              PutRequest: {
+                Item: {
+                  organization_id: { N: '1' },
+                  name: { S: '日本経済新聞' },
+                },
+              },
+            },
+            {
+              PutRequest: {
+                Item: {
+                  organization_id: { N: '2' },
+                  name: { S: 'Reuters' },
+                },
+              },
+            },
+            {
+              PutRequest: {
+                Item: {
+                  organization_id: { N: '3' },
+                  name: { S: 'Bloomberg' },
+                },
+              },
+            },
+          ],
+        },
+      };
+      dynamodb.send(new BatchWriteItemCommand(command));
+    } catch (e) {}
   }
 }
 

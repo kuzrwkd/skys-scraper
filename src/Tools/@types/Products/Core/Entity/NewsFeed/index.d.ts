@@ -4,21 +4,15 @@ export interface INewsFeedEntity {
 }
 
 export type Entity = {
-  id?: number;
+  id: string;
   title: string;
   url: string;
   organization: Organization;
-  contents: Contents;
-  articleCreatedAt: string;
-  articleUpdatedAt: string | null;
+  article_created_at: string;
+  article_updated_at?: string;
 };
 
 export type Organization = {
   id: number;
-  name: string | null;
-};
-
-export type Contents = {
-  id: number;
-  name: string | null;
+  name?: string;
 };

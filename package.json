@@ -13,7 +13,7 @@
     "start:dev": "node_modules/.bin/nest start --watch",
     "start:debug": "node_modules/.bin/nest start --debug --watch",
     "start:prod": "node dist/Products/Driver/Server/main.js",
-    "start:batch": "node dist/Products/Driver/Batch/index.js",
+    "start:cron:dev": "ts-node src/Products/Driver/Cron/index.ts",
     "lint": "node_modules/.bin/eslint '{src,apps,libs,test}/**/*.ts'",
     "fix": "node_modules/.bin/eslint '{src,apps,libs,test}/**/*.ts' --fix",
     "test": "node_modules/.bin/jest",
@@ -23,6 +23,7 @@
     "test:e2e": "node_modules/.bin/jest --config ./jest-e2e.json",
     "dynamodb:migration:up": "node dist/Products/Driver/DB/Migration/up.js",
     "dynamodb:migration:down": "node dist/Products/Driver/DB/Migration/down.js",
+    "dynamodb:seed": "node dist/Products/Driver/DB/Seeder/install.js",
     "logs": "kubectl logs deployment/skys-scraper-app-dep -f"
   },
   "dependencies": {

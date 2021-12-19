@@ -1,4 +1,9 @@
 /**
+ * Lib
+ */
+import 'reflect-metadata';
+
+/**
  * Tool
  */
 import migrationContainer from '@/Tools/Containers/MigrationContainer';

@@ -1,18 +1,31 @@
 export interface INikkeiPreliminaryReportCrawlerRepository {
-  crawler(url: string, organization: NewsFeed.Organization): Promise<NewsFeedCrawlerResult[] | null>;
+  handle(
+    url: string,
+    organization: NewsFeed.Organization,
+    tracking_id: string,
+  ): Promise<NewsFeedCrawlerResult[] | undefined>;
 }
 
 export interface IBloombergJaPreliminaryReportCrawlerRepository {
-  crawler(url: string, organization: NewsFeed.Organization): Promise<NewsFeedCrawlerResult[] | null>;
+  handle(
+    url: string,
+    organization: NewsFeed.Organization,
+    tracking_id: string,
+  ): Promise<NewsFeedCrawlerResult[] | undefined>;
 }
 
 export interface INewsFeedCrawlerIndex {
-  handle(url: string, organization: NewsFeed.Organization): Promise<NewsFeedCrawlerResult[] | null>;
+  handle(
+    url: string,
+    organization: NewsFeed.Organization,
+    tracking_id: string,
+  ): Promise<NewsFeedCrawlerResult[] | undefined>;
 }
 
 export interface NewsFeedCrawlerResult {
+  id: string;
   title: string;
   url: string;
-  articleCreatedAt: string;
-  articleUpdatedAt: string | null;
+  article_created_at: string;
+  article_updated_at?: string;
 }

@@ -27,8 +27,8 @@ class MediaOrganizationTableMigration {
     try {
       const command: CreateTableCommandInput = {
         TableName: 'MediaOrganization',
-        KeySchema: [{ AttributeName: 'id', KeyType: 'HASH' }],
-        AttributeDefinitions: [{ AttributeName: 'id', AttributeType: 'N' }],
+        KeySchema: [{ AttributeName: 'organization_id', KeyType: 'HASH' }],
+        AttributeDefinitions: [{ AttributeName: 'organization_id', AttributeType: 'N' }],
         ProvisionedThroughput: {
           ReadCapacityUnits: 5,
           WriteCapacityUnits: 5,
