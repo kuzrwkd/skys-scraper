@@ -13,33 +13,31 @@ import type { IRegExpVerExTool as _IRegExpVerExTool } from '@/Tools/@types/Tools
 /**
  * NewsFeed
  */
-import type { INewsFeedDBRepository as _INewsFeedDBRepository } from '@/Tools/@types/Products/Driver/DB/NewsFeed';
+import type { INewsFeedDBRepository as _INewsFeedDBRepository } from '@/Tools/@types/Products/Driver/DB/Repository/NewsFeedDBRepository';
 import type {
   Entity as _Entity,
   INewsFeedEntity as _INewsFeedEntity,
   Organization as _Organization,
   Contents as _Contents,
-} from '@/Tools/@types/Products/Core/Entity/NewsFeed';
+} from '@/Tools/@types/Products/Core/Entity/NewsFeedEntity';
 import type {
   INewsFeedCrawlerIndex as _INewsFeedCrawlerIndex,
   INikkeiPreliminaryReportCrawlerRepository as _INikkeiPreliminaryReportCrawlerRepository,
   IBloombergJaPreliminaryReportCrawlerRepository as _IBloombergJaPreliminaryReportCrawlerRepository,
   NewsFeedCrawlerResult as _NewsFeedCrawlerResult,
-} from '@/Tools/@types/Products/Driver/Crawler/NewsFeed';
+} from '@/Tools/@types/Products/Driver/Crawler/NewsFeedCrawler';
 import type {
   INewsFeedInteract as _INewsFeedInteract,
-  INewsFeedInputPort as _INewsFeedInputPort,
-  INewsFeedOutputPort as _INewsFeedOutputPort,
   RequestData as _RequestData,
   RequestDataParams as _RequestDataParams,
-} from '@/Tools/@types/Products/Core/UseCase/NewsFeed';
-import type { INewsFeedPresenter as _INewsFeedPresenter } from '@/Tools/@types/Products/Adapter/Presenter/NewsFeed';
-import type { INewsFeedController as _INewsFeedController } from '@/Tools/@types/Products/Adapter/Controller/NewsFeed';
+} from '@/Tools/@types/Products/Core/UseCase/NewsFeedUseCase';
+import type { INewsFeedPresenter as _INewsFeedPresenter } from '@/Tools/@types/Products/Adapter/Presenter/NewsFeedPresenter';
+import type { INewsFeedController as _INewsFeedController } from '@/Tools/@types/Products/Adapter/Controller/NewsFeedController';
 
 /**
  * Migration
  */
-import { IMigration as _IMigration } from '@/Tools/@types/Products/Driver/DB/Migration/Schema';
+import { IMigration as _IMigration } from '@/Tools/@types/Products/Driver/DB/Migration';
 
 /**
  * Seeder

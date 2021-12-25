@@ -8,17 +8,15 @@ import { NewsFeedEntity } from '@/Products/Core/Entity/NewsFeedEntity';
 /**
  * UseCase
  */
-import { NewsFeedInteract } from '@/Products/Core/UseCase/NewsFeed/NewsFeedInteract';
-import { NewsFeedInputPort } from '@/Products/Core/UseCase/NewsFeed/NewsFeedInputPort';
-import { NewsFeedOutputPort } from '@/Products/Core/UseCase/NewsFeed/NewsFeedOutputPort';
+import { NewsFeedInteract } from '@/Products/Core/UseCase/NewsFeedInteract';
 
 /**
  * Repository
  */
-import { NewsFeedCrawlerIndex } from '@/Products/Driver/Crawler/NewsFeed/NewsFeedCrawlerIndex';
-import { NikkeiPreliminaryReportCrawlerRepository } from '@/Products/Driver/Crawler/NewsFeed/NikkeiPreliminaryReportCrawlerRepository';
-import { BloombergJaPreliminaryReportCrawlerRepository } from '@/Products/Driver/Crawler/NewsFeed/BloombergJaPreliminaryReportCrawlerRepository';
-import { NewsFeedDBRepository } from '@/Products/Driver/DB/NewsFeedDBRepository';
+import { NewsFeedCrawlerIndex } from '@/Products/Driver/Crawler/Index/NewsFeedCrawlerIndex';
+import { NikkeiPreliminaryReportCrawlerRepository } from '@/Products/Driver/Crawler/Repository/NikkeiPreliminaryReportCrawlerRepository';
+import { BloombergJaPreliminaryReportCrawlerRepository } from '@/Products/Driver/Crawler/Repository/BloombergJaPreliminaryReportCrawlerRepository';
+import { NewsFeedDBRepository } from '@/Products/Driver/DB/Repository/NewsFeedDBRepository';
 
 /**
  * Controller
@@ -35,8 +33,6 @@ import { NewsFeedPresenter } from '@/Products/Adapter/Presenter/NewsFeedPresente
  */
 newsFeedContainer.register<NewsFeedEntity>('NewsFeedEntity', { useClass: NewsFeedEntity });
 newsFeedContainer.register<NewsFeedInteract>('NewsFeedInteract', { useClass: NewsFeedInteract });
-newsFeedContainer.register<NewsFeedInputPort>('NewsFeedInputPort', { useClass: NewsFeedInputPort });
-newsFeedContainer.register<NewsFeedOutputPort>('NewsFeedOutputPort', { useClass: NewsFeedOutputPort });
 newsFeedContainer.register<NewsFeedCrawlerIndex>('NewsFeedCrawlerIndex', { useClass: NewsFeedCrawlerIndex });
 newsFeedContainer.register<NikkeiPreliminaryReportCrawlerRepository>('NikkeiPreliminaryReportCrawlerRepository', {
   useClass: NikkeiPreliminaryReportCrawlerRepository,
