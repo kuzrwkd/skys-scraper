@@ -18,17 +18,14 @@ describe('NewsfeedController', () => {
         data: [
           {
             organizationId: 1,
-            contentsId: 1,
             url: 'https://www.nikkei.com/news/category/economy/',
           },
           {
             organizationId: 1,
-            contentsId: 2,
             url: 'https://www.nikkei.com/news/category/politics/',
           },
           {
             organizationId: 1,
-            contentsId: 3,
             url: 'https://www.nikkei.com/news/category/business/',
           },
         ],

@@ -46,7 +46,7 @@ export class NewsFeedDBRepository {
       const command: GetItemCommandInput = {
         TableName: 'MediaOrganization',
         Key: {
-          organization_id: { N: id.toString() },
+          id: { N: id.toString() },
         },
       };
 
@@ -58,7 +58,7 @@ export class NewsFeedDBRepository {
         this.logTool.getSuccessDbIoParams<typeof Item>({ tracking_id, time: endTime, result: Item }),
       );
 
-      return { organization_id: Item?.organization_id.N, name: Item?.name.S };
+      return { id: Item?.id.N, name: Item?.name.S };
     } catch (e) {
       if (e instanceof Error) {
         this.logger.error(
@@ -204,14 +204,16 @@ export class NewsFeedDBRepository {
           id: { S: id },
           article_created_at: { S: article_created_at },
         },
-        UpdateExpression: 'set #title = :title, #article_updated_at = :article_updated_at',
+        UpdateExpression: 'set #title = :title, #article_updated_at = :article_updated_at, #updated_at = :updated_at',
         ExpressionAttributeNames: {
           '#title': 'title',
           '#article_updated_at': 'article_updated_at',
+          '#updated_at': 'updated_at',
         },
         ExpressionAttributeValues: {
           ':title': { S: title },
           ':article_updated_at': { S: article_updated_at },
+          ':updated_at': { S: this.dateTool.getUtc() },
         },
         ReturnValues: 'ALL_NEW',
         ConditionExpression: 'attribute_exists(#article_updated_at)',

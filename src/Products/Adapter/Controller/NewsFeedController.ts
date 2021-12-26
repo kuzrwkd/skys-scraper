@@ -9,7 +9,6 @@ export class NewsFeedController {
 
   async handle(RequestData: NewsFeed.RequestData) {
     const tracking_id = this.logTool.getRequestId();
-
     return await this.newsFeedInteract.handle(RequestData.data, tracking_id);
   }
 }

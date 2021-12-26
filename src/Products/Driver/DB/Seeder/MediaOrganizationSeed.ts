@@ -25,7 +25,7 @@ class MediaOrganizationSeed {
             {
               PutRequest: {
                 Item: {
-                  organization_id: { N: '1' },
+                  id: { N: '1' },
                   name: { S: '日本経済新聞' },
                 },
               },
@@ -33,7 +33,7 @@ class MediaOrganizationSeed {
             {
               PutRequest: {
                 Item: {
-                  organization_id: { N: '2' },
+                  id: { N: '2' },
                   name: { S: 'Reuters' },
                 },
               },
@@ -41,7 +41,7 @@ class MediaOrganizationSeed {
             {
               PutRequest: {
                 Item: {
-                  organization_id: { N: '3' },
+                  id: { N: '3' },
                   name: { S: 'Bloomberg' },
                 },
               },
@@ -49,8 +49,13 @@ class MediaOrganizationSeed {
           ],
         },
       };
+
+      this.logger.info('MediaOrganizationTable レコード作成開始');
       dynamodb.send(new BatchWriteItemCommand(command));
-    } catch (e) {}
+      this.logger.info('MediaOrganizationTable レコード作成完了');
+    } catch (e) {
+      this.logger.error(e);
+    }
   }
 }
 
