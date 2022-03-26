@@ -16,7 +16,7 @@ import { inject, injectable } from 'tsyringe';
 import { dynamodb } from '@/Tools/Utility/DynamoDBClient';
 
 @injectable()
-class BloombergNewsFeedTableMigration {
+class NewsFeedTableMigration {
   private logger: Lib.Logger;
 
   constructor(@inject('LogTool') private logTool: Tools.ILogTool) {
@@ -26,7 +26,7 @@ class BloombergNewsFeedTableMigration {
   async up() {
     try {
       const params: CreateTableCommandInput = {
-        TableName: 'BloombergNewsFeed',
+        TableName: process.env.NEWSFEED_TABLE_NAME,
         KeySchema: [
           { AttributeName: 'id', KeyType: 'HASH' },
           { AttributeName: 'article_created_at', KeyType: 'RANGE' },
@@ -51,26 +51,25 @@ class BloombergNewsFeedTableMigration {
             },
           },
         ],
-        TableClass: 'STANDARD',
       };
-      this.logger.info('BloombergNewsFeedTable マイグレーション開始');
+      this.logger.info('NewsFeedTable マイグレーション開始');
       const result = dynamodb.send(new CreateTableCommand(params));
-      this.logger.info('BloombergNewsFeedTable マイグレーション終了', result);
+      this.logger.info('NewsFeedTable マイグレーション終了', result);
     } catch (e) {}
   }
 
   async down() {
     try {
       const command: DeleteTableCommandInput = {
-        TableName: 'BloombergNewsFeed',
+        TableName: process.env.NEWSFEED_TABLE_NAME,
       };
-      this.logger.info('BloombergNewsFeedTable テーブル削除開始');
+      this.logger.info('NewsFeedTable テーブル削除開始');
       const result = await dynamodb.send(new DeleteTableCommand(command));
-      this.logger.info('BloombergNewsFeedTable テーブル削除終了', result);
+      this.logger.info('NewsFeedTable テーブル削除終了', result);
     } catch (e) {
       this.logger.error(e);
     }
   }
 }
 
-export default BloombergNewsFeedTableMigration;
+export default NewsFeedTableMigration;

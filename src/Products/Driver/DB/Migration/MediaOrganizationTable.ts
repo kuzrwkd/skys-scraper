@@ -26,14 +26,13 @@ class MediaOrganizationTableMigration {
   async up() {
     try {
       const command: CreateTableCommandInput = {
-        TableName: 'MediaOrganization',
+        TableName: process.env.MEDIA_ORGANIZATION_TABLE_NAME,
         KeySchema: [{ AttributeName: 'id', KeyType: 'HASH' }],
         AttributeDefinitions: [{ AttributeName: 'id', AttributeType: 'N' }],
         ProvisionedThroughput: {
           ReadCapacityUnits: 5,
           WriteCapacityUnits: 5,
         },
-        TableClass: 'STANDARD',
       };
 
       this.logger.info('MediaOrganizationTable マイグレーション開始');
@@ -47,7 +46,7 @@ class MediaOrganizationTableMigration {
   async down() {
     try {
       const command: DeleteTableCommandInput = {
-        TableName: 'MediaOrganization',
+        TableName: process.env.MEDIA_ORGANIZATION_TABLE_NAME,
       };
       this.logger.info('MediaOrganizationTable テーブル削除開始');
       const result = await dynamodb.send(new DeleteTableCommand(command));

@@ -44,7 +44,7 @@ export class NewsFeedDBRepository {
       const startTime = this.dateTool.processStartTime();
 
       const command: GetItemCommandInput = {
-        TableName: 'MediaOrganization',
+        TableName: process.env.MEDIA_ORGANIZATION_TABLE_NAME,
         Key: {
           id: { N: id.toString() },
         },
@@ -85,7 +85,7 @@ export class NewsFeedDBRepository {
       );
       const startTime = this.dateTool.processStartTime();
       const command: PutItemCommandInput = {
-        TableName: 'NikkeiNewsFeed',
+        TableName: process.env.NEWSFEED_TABLE_NAME,
         Item: {
           id: { S: tracking_id },
           title: { S: title },
@@ -131,7 +131,7 @@ export class NewsFeedDBRepository {
       const startTime = this.dateTool.processStartTime();
 
       const command: QueryCommandInput = {
-        TableName: 'NikkeiNewsFeed',
+        TableName: process.env.NEWSFEED_TABLE_NAME,
         IndexName: 'UrlIndex',
         KeyConditionExpression: '#url = :url',
         ExpressionAttributeNames: {
@@ -199,7 +199,7 @@ export class NewsFeedDBRepository {
       const startTime = this.dateTool.processStartTime();
 
       const command: UpdateItemCommandInput = {
-        TableName: 'NikkeiNewsFeed',
+        TableName: process.env.NEWSFEED_TABLE_NAME,
         Key: {
           id: { S: id },
           article_created_at: { S: article_created_at },

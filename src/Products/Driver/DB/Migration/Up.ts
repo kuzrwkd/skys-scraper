@@ -12,9 +12,7 @@ import toolsContainer from '@/Tools/Containers/ToolsContainer';
 toolsContainer.resolve<Tools.ILogTool>('LogTool');
 
 const mediaOrganizationTableMigration = migrationContainer.resolve<IMigration>('MediaOrganizationTableMigration');
-const nikkeiNewsFeedTableMigration = migrationContainer.resolve<IMigration>('NikkeiNewsFeedTableMigration');
-const bloombergNewsFeedTableMigration = migrationContainer.resolve<IMigration>('BloombergNewsFeedTableMigration');
+const newsFeedTableMigration = migrationContainer.resolve<IMigration>('NewsFeedTableMigration');
 
 mediaOrganizationTableMigration.up();
-nikkeiNewsFeedTableMigration.up();
-bloombergNewsFeedTableMigration.up();
+newsFeedTableMigration.up();
