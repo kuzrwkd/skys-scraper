@@ -10,7 +10,7 @@ export default {
     '^@/(.*)$': '<rootDir>/$1',
   },
   setupFilesAfterEnv: ['../jest.setup.ts'],
-  modulePathIgnorePatterns: ['<rootDir>/Tools/@types'],
+  modulePathIgnorePatterns: ['<rootDir>/Utils/types'],
   coverageDirectory: '../coverage',
   testEnvironment: 'node',
 };

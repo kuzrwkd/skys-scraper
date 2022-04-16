@@ -16,7 +16,7 @@
     },
     "typeRoots" : [
       "./node_modules/@types",
-      "./src/Tools/@types"
+      "./src/types"
     ],
     "skipLibCheck": true,
     "incremental": true,

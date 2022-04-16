@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'SKYS-SCRAPER-APP',
-      script: 'dist/Products/Server/main.js',
+      script: 'dist/server/main.js',
       instances: 1,
       autorestart: true,
       watch: true,

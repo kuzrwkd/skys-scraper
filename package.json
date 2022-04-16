@@ -20,9 +20,9 @@
     "test:cov": "node_modules/.bin/jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "node_modules/.bin/jest --config ./jest-e2e.json",
-    "dynamodb:migration:up": "node dist/Products/Driver/DB/Migration/Up.js",
-    "dynamodb:migration:down": "node dist/Products/Driver/DB/Migration/Down.js",
-    "dynamodb:seed": "node dist/Products/Driver/DB/Seeder/Install.js",
+    "dynamodb:migration:up": "node dist/repository/db/migration/Up.js",
+    "dynamodb:migration:down": "node dist/repository/db/migration/Down.js",
+    "dynamodb:seed": "node dist/repository/db/seeder/Install.js",
     "logs": "kubectl logs deployment/skys-scraper-app-dep -f"
   },
   "dependencies": {
