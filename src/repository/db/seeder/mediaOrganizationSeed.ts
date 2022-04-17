@@ -2,21 +2,16 @@
  * Lib
  */
 import { BatchWriteItemCommand, BatchWriteItemCommandInput } from '@aws-sdk/client-dynamodb';
-import { inject, injectable } from 'tsyringe';
+import { injectable } from 'tsyringe';
 
 /**
  * Utils
  */
 import { dynamodb } from '@/util/dynamoDBClient';
+import logger from '@/util/log';
 
 @injectable()
 class MediaOrganizationSeed {
-  private logger: Lib.Logger;
-
-  constructor(@inject('LogUtil') private logUtil: Util.ILogUtil) {
-    this.logger = this.logUtil.createLogger();
-  }
-
   async install() {
     try {
       const command: BatchWriteItemCommandInput = {
@@ -50,11 +45,11 @@ class MediaOrganizationSeed {
         },
       };
 
-      this.logger.info('MediaOrganizationTable レコード作成開始');
+      logger.info('MediaOrganizationTable レコード作成開始');
       await dynamodb.send(new BatchWriteItemCommand(command));
-      this.logger.info('MediaOrganizationTable レコード作成完了');
+      logger.info('MediaOrganizationTable レコード作成完了');
     } catch (e) {
-      this.logger.error(e);
+      logger.error(e);
     }
   }
 }

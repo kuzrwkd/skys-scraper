@@ -1,5 +1,5 @@
 type CustomNodeJsGlobal = {
-  requestId?: string;
+  requestId: string;
 };
 
 declare type Global = typeof global & CustomNodeJsGlobal;

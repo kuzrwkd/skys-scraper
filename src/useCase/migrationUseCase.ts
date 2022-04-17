@@ -1,7 +1,7 @@
 /**
  * Lib
  */
-import { container as migrationContainer } from 'tsyringe';
+import { container as migrationUseCase } from 'tsyringe';
 
 /**
  * Migration
@@ -9,12 +9,12 @@ import { container as migrationContainer } from 'tsyringe';
 import MediaOrganizationTableMigration from '@/repository/db/migration/mediaOrganizationTable';
 import NewsFeedTableMigration from '@/repository/db/migration/newsFeedTable';
 
-migrationContainer.register<MediaOrganizationTableMigration>('MediaOrganizationTableMigration', {
+migrationUseCase.register<MediaOrganizationTableMigration>('MediaOrganizationTableMigration', {
   useClass: MediaOrganizationTableMigration,
 });
 
-migrationContainer.register<NewsFeedTableMigration>('NewsFeedTableMigration', {
+migrationUseCase.register<NewsFeedTableMigration>('NewsFeedTableMigration', {
   useClass: NewsFeedTableMigration,
 });
 
-export default migrationContainer;
+export default migrationUseCase;

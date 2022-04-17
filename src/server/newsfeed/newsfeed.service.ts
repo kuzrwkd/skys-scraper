@@ -6,7 +6,7 @@ import { Injectable } from '@nestjs/common';
 /**
  * Util
  */
-import newsFeedContainer from '@/useCase/newsFeedContainer';
+import newsFeedUseCase from '@/useCase/newsFeedUseCase';
 
 /**
  * Container
@@ -16,7 +16,7 @@ export class NewsFeedService {
   private newsFeedController: NewsFeed.INewsFeedController;
 
   constructor() {
-    this.newsFeedController = newsFeedContainer.resolve<NewsFeed.INewsFeedController>('NewsFeedController');
+    this.newsFeedController = newsFeedUseCase.resolve<NewsFeed.INewsFeedController>('NewsFeedController');
   }
 
   async handle(data: NewsFeed.RequestData): Promise<boolean> {

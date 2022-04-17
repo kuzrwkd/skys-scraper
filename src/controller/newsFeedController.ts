@@ -1,14 +1,12 @@
 import { inject, injectable } from 'tsyringe';
+import { getRequestId } from '@/util/log';
 
 @injectable()
 export class NewsFeedController {
-  constructor(
-    @inject('LogUtil') private logUtil: Util.ILogUtil,
-    @inject('NewsFeedInteract') private newsFeedInteract: NewsFeed.INewsFeedInteract,
-  ) {}
+  constructor(@inject('NewsFeedInteract') private newsFeedInteract: NewsFeed.INewsFeedInteract) {}
 
   async handle(RequestData: NewsFeed.RequestData) {
-    const tracking_id = this.logUtil.getRequestId();
+    const tracking_id = getRequestId();
     return await this.newsFeedInteract.handle(RequestData.data, tracking_id);
   }
 }

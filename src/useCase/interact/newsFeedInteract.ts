@@ -2,26 +2,23 @@
  * Lib
  */
 import { injectable, inject } from 'tsyringe';
+import { createRandomString } from '@/util/log';
 
 @injectable()
 export class NewsFeedInteract {
   constructor(
-    @inject('LogUtil') private logUtil: Util.ILogUtil,
     @inject('NewsFeedEntity') private newsFeed: NewsFeed.INewsFeedEntity,
     @inject('NewsFeedCrawlerIndex') private newsFeedCrawlerIndex: NewsFeed.INewsFeedCrawlerIndex,
     @inject('NewsFeedDB') private NewsFeedDB: NewsFeed.INewsFeedDB,
   ) {}
 
-  /**
-   * newsFeedのUseCase
-   */
   async handle(data: NewsFeed.RequestDataParams[], tracking_id: string) {
     try {
       for (const { organizationId, url } of data) {
-        const useCaseTrackingId = `${tracking_id}-i-${this.logUtil.createRandomString()}`;
+        const useCaseTrackingId = `${tracking_id}-i-${createRandomString()}`;
         const { name: organizationName } = await this.NewsFeedDB.getOrganization(
           organizationId,
-          `${useCaseTrackingId}-db-${this.logUtil.createRandomString()}`,
+          `${useCaseTrackingId}-db-${createRandomString()}`,
         );
 
         const organization: NewsFeed.Organization = {
@@ -35,7 +32,7 @@ export class NewsFeedInteract {
           if (crawlingData) {
             for (const item of crawlingData) {
               const { id: articleId, url: articleUrl, article_updated_at: articleUpdatedAt } = item;
-              const dataBaseTrackingId = `${articleId}-db-${this.logUtil.createRandomString()}`;
+              const dataBaseTrackingId = `${articleId}-db-${createRandomString()}`;
               const existsRecord = await this.NewsFeedDB.read(articleUrl, organization, dataBaseTrackingId);
 
               if (!existsRecord) {

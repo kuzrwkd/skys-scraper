@@ -3,6 +3,7 @@ declare namespace DB {
     up(): Promise<void>;
     down(): Promise<void>;
   }
+
   interface ISeeder {
     install(): Promise<void>;
   }

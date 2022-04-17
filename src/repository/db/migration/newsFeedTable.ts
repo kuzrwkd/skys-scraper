@@ -8,21 +8,16 @@ import {
   DeleteTableCommandInput,
 } from '@aws-sdk/client-dynamodb';
 
-import { inject, injectable } from 'tsyringe';
+import { injectable } from 'tsyringe';
 
 /**
  * Util
  */
 import { dynamodb } from '@/util/dynamoDBClient';
+import logger from '@/util/log';
 
 @injectable()
 class NewsFeedTableMigration {
-  private logger: Lib.Logger;
-
-  constructor(@inject('LogUtil') private logUtil: Util.ILogUtil) {
-    this.logger = this.logUtil.createLogger();
-  }
-
   async up() {
     try {
       const params: CreateTableCommandInput = {
@@ -52,9 +47,9 @@ class NewsFeedTableMigration {
           },
         ],
       };
-      this.logger.info('NewsFeedTable マイグレーション開始');
+      logger.info('NewsFeedTable マイグレーション開始');
       const result = dynamodb.send(new CreateTableCommand(params));
-      this.logger.info('NewsFeedTable マイグレーション終了', result);
+      logger.info('NewsFeedTable マイグレーション終了', result);
     } catch (e) {}
   }
 
@@ -63,11 +58,11 @@ class NewsFeedTableMigration {
       const command: DeleteTableCommandInput = {
         TableName: process.env.NEWSFEED_TABLE_NAME,
       };
-      this.logger.info('NewsFeedTable テーブル削除開始');
+      logger.info('NewsFeedTable テーブル削除開始');
       const result = await dynamodb.send(new DeleteTableCommand(command));
-      this.logger.info('NewsFeedTable テーブル削除終了', result);
+      logger.info('NewsFeedTable テーブル削除終了', result);
     } catch (e) {
-      this.logger.error(e);
+      logger.error(e);
     }
   }
 }

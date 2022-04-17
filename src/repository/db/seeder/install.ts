@@ -6,11 +6,8 @@ import 'reflect-metadata';
 /**
  * Util
  */
-import seederContainer from '@/useCase/seederContainer';
-import utilContainer from '@/useCase/utilContainer';
+import seederUseCase from '@/useCase/seederUseCase';
 
-utilContainer.resolve<Util.ILogUtil>('LogUtil');
-
-const mediaOrganizationSeed = seederContainer.resolve<DB.ISeeder>('MediaOrganizationSeed');
+const mediaOrganizationSeed = seederUseCase.resolve<DB.ISeeder>('MediaOrganizationSeed');
 
 mediaOrganizationSeed.install();

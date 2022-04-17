@@ -1,7 +1,8 @@
 /**
  * Util
  */
-import utilContainer from '@/useCase/utilContainer';
+import logger, { getStartParams, getRequestId, getSuccessParams } from '@/util/log';
+import { processStartTime, processEndTime } from '@/util/date';
 
 /**
  * Nest
@@ -18,32 +19,24 @@ import { NewsFeedService } from '@/server/newsfeed/newsfeed.service';
  */
 @Controller('newsfeed')
 export class NewsFeedController {
-  private logUtil: Util.ILogUtil;
-  private logger: Lib.Logger;
-  private dateUtil: Util.IDateUtil;
-
-  constructor(private newsFeedService: NewsFeedService) {
-    this.logUtil = utilContainer.resolve<Util.ILogUtil>('LogUtil');
-    this.dateUtil = utilContainer.resolve<Util.IDateUtil>('DateUtil');
-    this.logger = this.logUtil.createLogger();
-  }
+  constructor(private newsFeedService: NewsFeedService) {}
 
   @Post()
   async post(@Body() body: NewsFeed.RequestData): Promise<boolean> {
     try {
-      const startTime = this.dateUtil.processStartTime();
-      this.logger.info(
+      const startTime = processStartTime();
+      logger.info(
         'NewsFeed 処理開始',
-        this.logUtil.getStartParams<typeof body>({ tracking_id: this.logUtil.getRequestId(), request_body: body }),
+        getStartParams<typeof body>({ tracking_id: getRequestId(), request_body: body }),
       );
 
       const result = await this.newsFeedService.handle(body);
 
-      const endTime = this.dateUtil.processEndTime(startTime);
-      this.logger.info(
+      const endTime = processEndTime(startTime);
+      logger.info(
         'NewsFeed 処理終了',
-        this.logUtil.getSuccessParams<typeof result>({
-          tracking_id: this.logUtil.getRequestId(),
+        getSuccessParams<typeof result>({
+          tracking_id: getRequestId(),
           time: endTime,
           response_body: result,
         }),
