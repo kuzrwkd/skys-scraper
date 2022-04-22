@@ -1,11 +1,5 @@
-/**
- * Lib
- */
 import { container as migrationUseCase } from 'tsyringe';
 
-/**
- * Migration
- */
 import MediaOrganizationTableMigration from '@/repository/db/migration/mediaOrganizationTable';
 import NewsFeedTableMigration from '@/repository/db/migration/newsFeedTable';
 

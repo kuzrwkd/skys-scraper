@@ -1,25 +1,18 @@
-/**
- * Nest
- */
 import { Injectable } from '@nestjs/common';
 
-/**
- * Util
- */
 import newsFeedUseCase from '@/useCase/newsFeedUseCase';
+import { getRequestId } from '@/util/log';
 
-/**
- * Container
- */
 @Injectable()
 export class NewsFeedService {
-  private newsFeedController: NewsFeed.INewsFeedController;
+  private newsFeedInteract: NewsFeed.INewsFeedInteract;
 
   constructor() {
-    this.newsFeedController = newsFeedUseCase.resolve<NewsFeed.INewsFeedController>('NewsFeedController');
+    this.newsFeedInteract = newsFeedUseCase.resolve<NewsFeed.INewsFeedInteract>('NewsFeedInteract');
   }
 
-  async handle(data: NewsFeed.RequestData): Promise<boolean> {
-    return await this.newsFeedController.handle(data);
+  async handle(RequestData: NewsFeed.RequestData): Promise<boolean> {
+    const tracking_id = getRequestId();
+    return await this.newsFeedInteract.handle(RequestData.data, tracking_id);
   }
 }

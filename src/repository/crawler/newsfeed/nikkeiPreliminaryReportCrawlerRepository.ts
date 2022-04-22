@@ -1,13 +1,8 @@
-/**
- * Lib
- */
-import { injectable } from 'tsyringe';
 import puppeteer from 'puppeteer';
+import { injectable } from 'tsyringe';
 
-/**
- * Utils
- */
 import { options } from '@/util/crawlerOptions';
+import { processStartTime, processEndTime, formatDate } from '@/util/date';
 import logger, {
   createRandomString,
   getStartCrawlingParams,
@@ -15,16 +10,9 @@ import logger, {
   getSuccessCrawlingParams,
   getFailedParams,
 } from '@/util/log';
-import { processStartTime, processEndTime, formatDate } from '@/util/date';
 
 @injectable()
 export class NikkeiPreliminaryReportCrawlerRepository {
-  /**
-   * 日経速報のクローラー
-   * @param u - urlが入る
-   * @param organization
-   * @param tracking_id
-   */
   async handle(u: string, organization: NewsFeed.Organization, tracking_id: string) {
     const { name: organizationName } = organization;
     try {

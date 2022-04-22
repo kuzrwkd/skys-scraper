@@ -1,12 +1,6 @@
-/**
- * Lib
- */
 import { BatchWriteItemCommand, BatchWriteItemCommandInput } from '@aws-sdk/client-dynamodb';
 import { injectable } from 'tsyringe';
 
-/**
- * Utils
- */
 import { dynamodb } from '@/util/dynamoDBClient';
 import logger from '@/util/log';
 

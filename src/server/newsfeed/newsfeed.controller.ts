@@ -1,22 +1,9 @@
-/**
- * Util
- */
-import logger, { getStartParams, getRequestId, getSuccessParams } from '@/util/log';
-import { processStartTime, processEndTime } from '@/util/date';
-
-/**
- * Nest
- */
 import { Controller, Post, Body } from '@nestjs/common';
 
-/**
- * Nestjs Service
- */
 import { NewsFeedService } from '@/server/newsfeed/newsfeed.service';
+import { processStartTime, processEndTime } from '@/util/date';
+import logger, { getStartParams, getRequestId, getSuccessParams } from '@/util/log';
 
-/**
- * Container
- */
 @Controller('newsfeed')
 export class NewsFeedController {
   constructor(private newsFeedService: NewsFeedService) {}

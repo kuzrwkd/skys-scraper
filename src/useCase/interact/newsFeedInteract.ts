@@ -1,7 +1,5 @@
-/**
- * Lib
- */
 import { injectable, inject } from 'tsyringe';
+
 import { createRandomString } from '@/util/log';
 
 @injectable()

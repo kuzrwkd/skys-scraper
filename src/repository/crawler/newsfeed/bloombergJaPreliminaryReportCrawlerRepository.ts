@@ -1,13 +1,4 @@
-/**
- * Lib
- */
 import { injectable } from 'tsyringe';
-import puppeteer from 'puppeteer';
-
-/**
- * Utils
- */
-import { options } from '@/util/crawlerOptions';
 
 @injectable()
 export class BloombergJaPreliminaryReportCrawlerRepository {

@@ -1,31 +1,12 @@
 import { container as newsFeedUseCase } from 'tsyringe';
 
-/**
- * Entity
- */
 import { NewsFeedEntity } from '@/entity/newsFeedEntity';
-
-/**
- * UseCase
- */
-import { NewsFeedInteract } from '@/useCase/interact/newsFeedInteract';
-
-/**
- * Repository
- */
+import { BloombergJaPreliminaryReportCrawlerRepository } from '@/repository/crawler/newsfeed/bloombergJaPreliminaryReportCrawlerRepository';
 import { NewsFeedCrawlerIndex } from '@/repository/crawler/newsfeed/newsFeedCrawlerIndex';
 import { NikkeiPreliminaryReportCrawlerRepository } from '@/repository/crawler/newsfeed/nikkeiPreliminaryReportCrawlerRepository';
-import { BloombergJaPreliminaryReportCrawlerRepository } from '@/repository/crawler/newsfeed/bloombergJaPreliminaryReportCrawlerRepository';
 import { NewsFeedDB } from '@/repository/db/newsFeedDB';
+import { NewsFeedInteract } from '@/useCase/interact/newsFeedInteract';
 
-/**
- * Controller
- */
-import { NewsFeedController } from '@/controller/newsFeedController';
-
-/**
- * Inject
- */
 newsFeedUseCase.register<NewsFeedEntity>('NewsFeedEntity', { useClass: NewsFeedEntity });
 newsFeedUseCase.register<NewsFeedInteract>('NewsFeedInteract', { useClass: NewsFeedInteract });
 newsFeedUseCase.register<NewsFeedCrawlerIndex>('NewsFeedCrawlerIndex', { useClass: NewsFeedCrawlerIndex });
@@ -39,6 +20,5 @@ newsFeedUseCase.register<BloombergJaPreliminaryReportCrawlerRepository>(
   },
 );
 newsFeedUseCase.register<NewsFeedDB>('NewsFeedDB', { useClass: NewsFeedDB });
-newsFeedUseCase.register<NewsFeedController>('NewsFeedController', { useClass: NewsFeedController });
 
 export default newsFeedUseCase;

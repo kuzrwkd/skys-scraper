@@ -1,6 +1,3 @@
-/**
- * Lib
- */
 import VerEx from 'verbal-expressions';
 
 const urlRegExp = (): RegExp => {

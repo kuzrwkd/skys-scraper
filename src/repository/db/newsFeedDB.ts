@@ -1,6 +1,3 @@
-/**
- * Lib
- */
 import {
   GetItemCommand,
   GetItemCommandInput,
@@ -13,20 +10,12 @@ import {
 } from '@aws-sdk/client-dynamodb';
 import { injectable } from 'tsyringe';
 
-/**
- * Utils
- */
+import { processStartTime, processEndTime, getUtc } from '@/util/date';
 import { dynamodb } from '@/util/dynamoDBClient';
 import logger, { getStartDbIoParams, getSuccessDbIoParams, getFailedParams } from '@/util/log';
-import { processStartTime, processEndTime, getUtc } from '@/util/date';
 
 @injectable()
 export class NewsFeedDB {
-  /**
-   * 機関マスター検索
-   * @param id
-   * @param tracking_id
-   */
   async getOrganization(id: number, tracking_id: string) {
     try {
       logger.info('NewsFeedDB [MediaOrganization] レコード読み取り開始', getStartDbIoParams({ tracking_id }));
@@ -58,11 +47,6 @@ export class NewsFeedDB {
     }
   }
 
-  /**
-   * レコード作成
-   * @param payload
-   * @param tracking_id
-   */
   async create(payload: NewsFeed.Entity, tracking_id: string) {
     const { title, url, organization, article_created_at, article_updated_at } = payload;
     const organizationName = organization.name;
@@ -100,12 +84,6 @@ export class NewsFeedDB {
     }
   }
 
-  /**
-   * レコード読み取り
-   * @param url
-   * @param organization
-   * @param tracking_id
-   */
   async read(url: string, organization: NewsFeed.Organization, tracking_id: string) {
     const { name: organizationName } = organization;
 
@@ -158,11 +136,6 @@ export class NewsFeedDB {
     }
   }
 
-  /**
-   * レコード更新
-   * @param payload
-   * @param tracking_id
-   */
   async update(payload: NewsFeed.Entity & { created_at: string; updated_at?: string }, tracking_id: string) {
     const {
       id,

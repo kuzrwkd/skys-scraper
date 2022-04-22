@@ -36,10 +36,6 @@ declare namespace NewsFeed {
     handle(data: RequestDataParams[], tracking_id: string): Promise<boolean>;
   }
 
-  interface INewsFeedController {
-    handle(data: NewsFeed.RequestData): Promise<boolean>;
-  }
-
   interface INewsFeedDB {
     processLogging(): void;
     getOrganization(organization_id: number, tracking_id: string): Promise<NewsFeed.Organization>;

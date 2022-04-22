@@ -1,21 +1,7 @@
-/**
- * Nest
- */
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 
-/**
- * Middleware
- */
 import { UuidMiddleware } from '@/server/middleware/uuid.middleware';
-
-/**
- * Controller
- */
 import { NewsFeedController } from '@/server/newsfeed/newsfeed.controller';
-
-/**
- * Service
- */
 import { NewsFeedService } from '@/server/newsfeed/newsfeed.service';
 
 @Module({

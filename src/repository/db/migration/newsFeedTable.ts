@@ -1,18 +1,11 @@
-/**
- * Lib
- */
 import {
   CreateTableCommand,
   CreateTableCommandInput,
   DeleteTableCommand,
   DeleteTableCommandInput,
 } from '@aws-sdk/client-dynamodb';
-
 import { injectable } from 'tsyringe';
 
-/**
- * Util
- */
 import { dynamodb } from '@/util/dynamoDBClient';
 import logger from '@/util/log';
 

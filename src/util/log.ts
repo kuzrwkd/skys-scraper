@@ -1,17 +1,8 @@
-/**
- * Node
- */
 import os from 'os';
 
-/**
- * Lib
- */
 import { v4 as uuidv4 } from 'uuid';
 import { createLogger, format, transports } from 'winston';
 
-/**
- * Util
- */
 import { LOW_CASE_WITH_NUMBER_CHARACTERS, LOG_TYPE } from '@/types/logger';
 
 export const createRandomString = () => {
