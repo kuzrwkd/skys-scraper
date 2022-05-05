@@ -31,14 +31,14 @@
     "@nestjs/common": "^8.4.4",
     "@nestjs/core": "^8.4.4",
     "@nestjs/platform-express": "^8.4.4",
-    "dayjs": "^1.10.5",
+    "dayjs": "^1.11.1",
     "puppeteer": "^13.7.0",
     "rimraf": "^3.0.2",
     "rxjs": "^7.1.0",
-    "tsyringe": "^4.5.0",
+    "tsyringe": "^4.6.0",
     "uuid": "^8.3.2",
     "verbal-expressions": "^1.0.2",
-    "winston": "^3.3.3"
+    "winston": "^3.7.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.2.5",
@@ -49,7 +49,7 @@
     "@types/node": "^16.3.0",
     "@types/puppeteer": "^5.4.6",
     "@types/supertest": "^2.0.12",
-    "@types/uuid": "^8.3.1",
+    "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.22.0",
     "@typescript-eslint/parser": "^5.22.0",
     "eslint": "^8.14.0",
@@ -62,9 +62,9 @@
     "prettier": "^2.6.2",
     "supertest": "^6.2.3",
     "ts-jest": "^28.0.1",
-    "ts-loader": "^9.2.3",
-    "ts-node": "^10.0.0",
-    "tsconfig-paths": "^3.9.0",
-    "typescript": "^4.6.3"
+    "ts-loader": "^9.3.0",
+    "ts-node": "^10.7.0",
+    "tsconfig-paths": "^4.0.0",
+    "typescript": "^4.6.4"
   }
 }
