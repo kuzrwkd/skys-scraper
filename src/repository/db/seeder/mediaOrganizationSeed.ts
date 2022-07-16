@@ -1,37 +1,37 @@
-import { BatchWriteItemCommand, BatchWriteItemCommandInput } from '@aws-sdk/client-dynamodb';
+import { BatchWriteCommand, BatchWriteCommandInput } from '@aws-sdk/lib-dynamodb';
 import { injectable } from 'tsyringe';
 
-import { dynamodb } from '@/util/dynamoDBClient';
+import { dynamodbDocument } from '@/util/dynamoDBClient';
 import logger from '@/util/log';
 
 @injectable()
 class MediaOrganizationSeed {
   async install() {
     try {
-      const command: BatchWriteItemCommandInput = {
+      const command: BatchWriteCommandInput = {
         RequestItems: {
           MediaOrganization: [
             {
               PutRequest: {
                 Item: {
-                  id: { N: '1' },
-                  name: { S: '日本経済新聞' },
+                  id: 1,
+                  name: '日本経済新聞',
                 },
               },
             },
             {
               PutRequest: {
                 Item: {
-                  id: { N: '2' },
-                  name: { S: 'Reuters' },
+                  id: 2,
+                  name: 'Reuters',
                 },
               },
             },
             {
               PutRequest: {
                 Item: {
-                  id: { N: '3' },
-                  name: { S: 'Bloomberg' },
+                  id: 3,
+                  name: 'Bloomberg',
                 },
               },
             },
@@ -40,7 +40,7 @@ class MediaOrganizationSeed {
       };
 
       logger.info('MediaOrganizationTable レコード作成開始');
-      await dynamodb.send(new BatchWriteItemCommand(command));
+      await dynamodbDocument.send(new BatchWriteCommand(command));
       logger.info('MediaOrganizationTable レコード作成完了');
     } catch (e) {
       logger.error(e);

@@ -1,17 +1,17 @@
 import {
-  GetItemCommand,
-  GetItemCommandInput,
-  PutItemCommand,
-  PutItemCommandInput,
-  UpdateItemCommand,
-  UpdateItemCommandInput,
+  GetCommand,
+  GetCommandInput,
+  PutCommand,
+  PutCommandInput,
   QueryCommand,
   QueryCommandInput,
-} from '@aws-sdk/client-dynamodb';
+  UpdateCommand,
+  UpdateCommandInput,
+} from '@aws-sdk/lib-dynamodb';
 import { injectable } from 'tsyringe';
 
 import { processStartTime, processEndTime, getUtc } from '@/util/date';
-import { dynamodb } from '@/util/dynamoDBClient';
+import { dynamodbDocument } from '@/util/dynamoDBClient';
 import logger, { getStartDbIoParams, getSuccessDbIoParams, getFailedParams } from '@/util/log';
 
 @injectable()
@@ -21,14 +21,14 @@ export class NewsFeedDB {
       logger.info('NewsFeedDB [MediaOrganization] レコード読み取り開始', getStartDbIoParams({ tracking_id }));
       const startTime = processStartTime();
 
-      const command: GetItemCommandInput = {
+      const command: GetCommandInput = {
         TableName: process.env.MEDIA_ORGANIZATION_TABLE_NAME,
         Key: {
-          id: { N: id.toString() },
+          id,
         },
       };
 
-      const { Item } = await dynamodb.send(new GetItemCommand(command));
+      const { Item } = await dynamodbDocument.send(new GetCommand(command));
 
       const endTime = processEndTime(startTime);
       logger.info(
@@ -36,7 +36,7 @@ export class NewsFeedDB {
         getSuccessDbIoParams<typeof Item>({ tracking_id, time: endTime, result: Item }),
       );
 
-      return { id: Item?.id.N, name: Item?.name.S };
+      return { id: Item?.id, name: Item?.name };
     } catch (e) {
       if (e instanceof Error) {
         logger.error(
@@ -54,19 +54,19 @@ export class NewsFeedDB {
     try {
       logger.info(`NewsFeedDB [${organizationName}] レコード作成開始`, getStartDbIoParams({ tracking_id }));
       const startTime = processStartTime();
-      const command: PutItemCommandInput = {
+      const command: PutCommandInput = {
         TableName: process.env.NEWSFEED_TABLE_NAME,
         Item: {
-          id: { S: tracking_id },
-          title: { S: title },
-          url: { S: url },
-          organization_id: { N: organization.id.toString() },
-          article_created_at: { S: article_created_at },
-          article_updated_at: { S: article_updated_at ?? '' },
-          created_at: { S: getUtc() },
+          id: tracking_id,
+          title,
+          url,
+          organization_id: organization.id,
+          article_created_at,
+          article_updated_at: article_updated_at ?? '',
+          created_at: getUtc(),
         },
       };
-      const result = await dynamodb.send(new PutItemCommand(command));
+      const result = await dynamodbDocument.send(new PutCommand(command));
       const endTime = processEndTime(startTime);
 
       logger.info(
@@ -99,11 +99,11 @@ export class NewsFeedDB {
           '#url': 'url',
         },
         ExpressionAttributeValues: {
-          ':url': { S: url },
+          ':url': url,
         },
       };
 
-      const { Items } = await dynamodb.send(new QueryCommand(command));
+      const { Items } = await dynamodbDocument.send(new QueryCommand(command));
 
       const endTime = processEndTime(startTime);
       logger.info(
@@ -151,11 +151,11 @@ export class NewsFeedDB {
 
       const startTime = processStartTime();
 
-      const command: UpdateItemCommandInput = {
+      const command: UpdateCommandInput = {
         TableName: process.env.NEWSFEED_TABLE_NAME,
         Key: {
-          id: { S: id },
-          article_created_at: { S: article_created_at },
+          id,
+          article_created_at,
         },
         UpdateExpression: 'set #title = :title, #article_updated_at = :article_updated_at, #updated_at = :updated_at',
         ExpressionAttributeNames: {
@@ -164,14 +164,14 @@ export class NewsFeedDB {
           '#updated_at': 'updated_at',
         },
         ExpressionAttributeValues: {
-          ':title': { S: title },
-          ':article_updated_at': { S: article_updated_at },
-          ':updated_at': { S: getUtc() },
+          ':title': title,
+          ':article_updated_at': article_updated_at,
+          ':updated_at': getUtc(),
         },
         ReturnValues: 'ALL_NEW',
         ConditionExpression: 'attribute_exists(#article_updated_at)',
       };
-      const result = await dynamodb.send(new UpdateItemCommand(command));
+      const result = await dynamodbDocument.send(new UpdateCommand(command));
 
       const endTime = processEndTime(startTime);
 
