@@ -12,7 +12,7 @@ import { dynamodbDocument } from '@/util/dynamoDBClient';
 import logger from '@/util/log';
 
 @injectable()
-class MediaOrganizationTableMigration {
+class MediaTableMigration {
   async createTable() {
     const command: CreateTableCommandInput = {
       TableName: process.env.MEDIA_ORGANIZATION_TABLE_NAME,
@@ -23,18 +23,18 @@ class MediaOrganizationTableMigration {
         WriteCapacityUnits: 5,
       },
     };
-    logger.info('MediaOrganizationTable マイグレーション開始');
+    logger.info('MediaTable マイグレーション開始');
     const result = await dynamodbDocument.send(new CreateTableCommand(command));
-    logger.info('MediaOrganizationTable マイグレーション終了', result);
+    logger.info('MediaTable マイグレーション終了', result);
   }
 
   async deleteTable() {
     const command: DeleteTableCommandInput = {
       TableName: process.env.MEDIA_ORGANIZATION_TABLE_NAME,
     };
-    logger.info('MediaOrganizationTable テーブル削除開始');
+    logger.info('MediaTable テーブル削除開始');
     const result = await dynamodbDocument.send(new DeleteTableCommand(command));
-    logger.info('MediaOrganizationTable テーブル削除終了', result);
+    logger.info('MediaTable テーブル削除終了', result);
   }
 
   async up() {
@@ -63,4 +63,4 @@ class MediaOrganizationTableMigration {
   }
 }
 
-export default MediaOrganizationTableMigration;
+export default MediaTableMigration;

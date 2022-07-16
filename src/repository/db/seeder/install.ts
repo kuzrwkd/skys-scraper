@@ -2,6 +2,6 @@ import 'reflect-metadata';
 
 import seederUseCase from '@/useCase/seederUseCase';
 
-const mediaOrganizationSeed = seederUseCase.resolve<DB.ISeeder>('MediaOrganizationSeed');
+const mediaSeed = seederUseCase.resolve<DB.ISeeder>('MediaSeed');
 
-mediaOrganizationSeed.install();
+mediaSeed.install();

@@ -2,8 +2,8 @@ import 'reflect-metadata';
 
 import migrationUseCase from '@/useCase/migrationUseCase';
 
-const mediaOrganizationTableMigration = migrationUseCase.resolve<DB.IMigration>('MediaOrganizationTableMigration');
+const mediaTableMigration = migrationUseCase.resolve<DB.IMigration>('MediaTableMigration');
 const newsFeedTableMigration = migrationUseCase.resolve<DB.IMigration>('NewsFeedTableMigration');
 
-mediaOrganizationTableMigration.up();
+mediaTableMigration.up();
 newsFeedTableMigration.up();

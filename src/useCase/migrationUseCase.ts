@@ -1,10 +1,10 @@
 import { container as migrationUseCase } from 'tsyringe';
 
-import MediaOrganizationTableMigration from '@/repository/db/migration/mediaOrganizationTable';
+import MediaTableMigration from '@/repository/db/migration/mediaTable';
 import NewsFeedTableMigration from '@/repository/db/migration/newsFeedTable';
 
-migrationUseCase.register<MediaOrganizationTableMigration>('MediaOrganizationTableMigration', {
-  useClass: MediaOrganizationTableMigration,
+migrationUseCase.register<MediaTableMigration>('MediaTableMigration', {
+  useClass: MediaTableMigration,
 });
 
 migrationUseCase.register<NewsFeedTableMigration>('NewsFeedTableMigration', {

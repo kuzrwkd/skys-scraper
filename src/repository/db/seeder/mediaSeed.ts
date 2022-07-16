@@ -5,12 +5,12 @@ import { dynamodbDocument } from '@/util/dynamoDBClient';
 import logger from '@/util/log';
 
 @injectable()
-class MediaOrganizationSeed {
+class MediaSeed {
   async install() {
     try {
       const command: BatchWriteCommandInput = {
         RequestItems: {
-          MediaOrganization: [
+          Media: [
             {
               PutRequest: {
                 Item: {
@@ -39,13 +39,13 @@ class MediaOrganizationSeed {
         },
       };
 
-      logger.info('MediaOrganizationTable レコード作成開始');
+      logger.info('MediaTable レコード作成開始');
       await dynamodbDocument.send(new BatchWriteCommand(command));
-      logger.info('MediaOrganizationTable レコード作成完了');
+      logger.info('MediaTable レコード作成完了');
     } catch (e) {
       logger.error(e);
     }
   }
 }
 
-export default MediaOrganizationSeed;
+export default MediaSeed;

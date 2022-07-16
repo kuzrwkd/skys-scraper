@@ -18,7 +18,7 @@ import logger, { getStartDbIoParams, getSuccessDbIoParams, getFailedParams } fro
 export class NewsFeedDB {
   async getOrganization(id: number, tracking_id: string) {
     try {
-      logger.info('NewsFeedDB [MediaOrganization] レコード読み取り開始', getStartDbIoParams({ tracking_id }));
+      logger.info('NewsFeedDB [Media] レコード読み取り開始', getStartDbIoParams({ tracking_id }));
       const startTime = processStartTime();
 
       const command: GetCommandInput = {
@@ -32,7 +32,7 @@ export class NewsFeedDB {
 
       const endTime = processEndTime(startTime);
       logger.info(
-        'NewsFeedDB [MediaOrganization] レコード読み取り完了',
+        'NewsFeedDB [Media] レコード読み取り完了',
         getSuccessDbIoParams<typeof Item>({ tracking_id, time: endTime, result: Item }),
       );
 
@@ -40,7 +40,7 @@ export class NewsFeedDB {
     } catch (e) {
       if (e instanceof Error) {
         logger.error(
-          `NewsFeedDB [MediaOrganization] レコード読み取り失敗`,
+          `NewsFeedDB [Media] レコード読み取り失敗`,
           getFailedParams({ tracking_id, exception_class: e.name, stacktrace: e.stack as string }),
         );
       }
