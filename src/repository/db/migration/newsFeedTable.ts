@@ -57,7 +57,7 @@ class NewsFeedTableMigration {
 
   async up() {
     try {
-      const describeTableInput: DescribeTableInput = { TableName: process.env.MEDIA_ORGANIZATION_TABLE_NAME };
+      const describeTableInput: DescribeTableInput = { TableName: process.env.MEDIA_TABLE_NAME };
       await dynamodbDocument.send(new DescribeTableCommand(describeTableInput));
       await this.deleteTable();
     } catch (e) {
