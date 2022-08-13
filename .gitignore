@@ -37,4 +37,4 @@ lerna-debug.log*
 *.env
 
 # .npmrc
-/.npmrc
+.npmrc
