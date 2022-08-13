@@ -9,13 +9,13 @@ export class NewsFeedCrawlerIndex {
     private bloombergJaPreliminaryReportCrawlerRepository: NewsFeed.IBloombergJaPreliminaryReportCrawlerRepository,
   ) {}
 
-  async handle(url: string, organization: NewsFeed.Organization, tracking_id: string) {
-    const { id } = organization;
+  async handle(url: string, media: NewsFeed.Media, tracking_id: string) {
+    const { id } = media;
     switch (id) {
       case 1:
-        return await this.nikkeiPreliminaryReportCrawlerRepository.handle(url, organization, tracking_id);
+        return await this.nikkeiPreliminaryReportCrawlerRepository.handle(url, media, tracking_id);
       case 2:
-        return await this.bloombergJaPreliminaryReportCrawlerRepository.handle(url, organization, tracking_id);
+        return await this.bloombergJaPreliminaryReportCrawlerRepository.handle(url, media, tracking_id);
     }
   }
 }

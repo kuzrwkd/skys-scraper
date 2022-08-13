@@ -12,32 +12,32 @@ export class NewsFeedInteract {
 
   async handle(data: NewsFeed.RequestDataParams[], tracking_id: string) {
     try {
-      for (const { organizationId, url } of data) {
+      for (const { mediaId, url } of data) {
         const useCaseTrackingId = `${tracking_id}-i-${createRandomString()}`;
-        const { name: organizationName } = await this.NewsFeedDB.getOrganization(
-          organizationId,
+        const { name: mediaName } = await this.NewsFeedDB.getMedia(
+          mediaId,
           `${useCaseTrackingId}-db-${createRandomString()}`,
         );
 
-        const organization: NewsFeed.Organization = {
-          id: organizationId,
-          name: organizationName,
+        const media: NewsFeed.Media = {
+          id: mediaId,
+          name: mediaName,
         };
 
-        const crawler = this.newsFeedCrawlerIndex.handle(url, organization, useCaseTrackingId);
+        const crawler = this.newsFeedCrawlerIndex.handle(url, media, useCaseTrackingId);
 
         await crawler.then(async (crawlingData) => {
           if (crawlingData) {
             for (const item of crawlingData) {
               const { id: articleId, url: articleUrl, article_updated_at: articleUpdatedAt } = item;
               const dataBaseTrackingId = `${articleId}-db-${createRandomString()}`;
-              const existsRecord = await this.NewsFeedDB.read(articleUrl, organization, dataBaseTrackingId);
+              const existsRecord = await this.NewsFeedDB.read(articleUrl, media, dataBaseTrackingId);
 
               if (!existsRecord) {
                 await this.NewsFeedDB.create(
                   {
                     ...item,
-                    organization,
+                    media,
                   },
                   dataBaseTrackingId,
                 );
@@ -50,7 +50,7 @@ export class NewsFeedInteract {
                   await this.NewsFeedDB.update(
                     {
                       ...existsRecord,
-                      organization,
+                      media,
                     },
                     dataBaseTrackingId,
                   );

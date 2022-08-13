@@ -4,7 +4,7 @@ declare namespace NewsFeed {
   };
 
   type RequestDataParams = {
-    organizationId: number;
+    mediaId: number;
     url: string;
   };
 
@@ -12,12 +12,12 @@ declare namespace NewsFeed {
     id: string;
     title: string;
     url: string;
-    organization: Organization;
+    media: Media;
     article_created_at: string;
     article_updated_at?: string;
   };
 
-  type Organization = {
+  type Media = {
     id: number;
     name?: string;
   };
@@ -38,38 +38,22 @@ declare namespace NewsFeed {
 
   interface INewsFeedDB {
     processLogging(): void;
-    getOrganization(organization_id: number, tracking_id: string): Promise<NewsFeed.Organization>;
+    getMedia(media_id: number, tracking_id: string): Promise<NewsFeed.Media>;
     create(data: NewsFeed.Entity, tracking_id: string): Promise<void>;
-    read(
-      url: string,
-      organization: NewsFeed.Organization,
-      tracking_id: string,
-    ): Promise<NewsFeed.Entity & CreateAndUpdateColumn>;
+    read(url: string, media: NewsFeed.Media, tracking_id: string): Promise<NewsFeed.Entity & CreateAndUpdateColumn>;
     update(data: NewsFeed.Entity & CreateAndUpdateColumn, tracking_id: string): Promise<void>;
   }
 
   interface INikkeiPreliminaryReportCrawlerRepository {
-    handle(
-      url: string,
-      organization: NewsFeed.Organization,
-      tracking_id: string,
-    ): Promise<NewsFeedCrawlerResult[] | undefined>;
+    handle(url: string, media: NewsFeed.Media, tracking_id: string): Promise<NewsFeedCrawlerResult[] | undefined>;
   }
 
   interface IBloombergJaPreliminaryReportCrawlerRepository {
-    handle(
-      url: string,
-      organization: NewsFeed.Organization,
-      tracking_id: string,
-    ): Promise<NewsFeedCrawlerResult[] | undefined>;
+    handle(url: string, media: NewsFeed.Media, tracking_id: string): Promise<NewsFeedCrawlerResult[] | undefined>;
   }
 
   interface INewsFeedCrawlerIndex {
-    handle(
-      url: string,
-      organization: NewsFeed.Organization,
-      tracking_id: string,
-    ): Promise<NewsFeedCrawlerResult[] | undefined>;
+    handle(url: string, media: NewsFeed.Media, tracking_id: string): Promise<NewsFeedCrawlerResult[] | undefined>;
   }
 
   interface NewsFeedCrawlerResult {

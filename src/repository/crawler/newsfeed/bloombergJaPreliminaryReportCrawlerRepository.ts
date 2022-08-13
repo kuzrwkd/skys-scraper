@@ -2,11 +2,9 @@ import { injectable } from 'tsyringe';
 
 @injectable()
 export class BloombergJaPreliminaryReportCrawlerRepository {
-  async handle(url: string, organization: NewsFeed.Organization) {
-    const organizationName = organization.name;
-
+  async handle(url: string, media: NewsFeed.Media) {
     try {
-      console.log(url, organization);
+      console.log(url, media);
       return true;
     } catch (e) {
       return false;

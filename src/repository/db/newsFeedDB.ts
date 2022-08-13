@@ -16,7 +16,7 @@ import logger, { getStartDbIoParams, getSuccessDbIoParams, getFailedParams } fro
 
 @injectable()
 export class NewsFeedDB {
-  async getOrganization(id: number, tracking_id: string) {
+  async getMedia(id: number, tracking_id: string) {
     try {
       logger.info('NewsFeedDB [Media] レコード読み取り開始', getStartDbIoParams({ tracking_id }));
       const startTime = processStartTime();
@@ -48,11 +48,11 @@ export class NewsFeedDB {
   }
 
   async create(payload: NewsFeed.Entity, tracking_id: string) {
-    const { title, url, organization, article_created_at, article_updated_at } = payload;
-    const organizationName = organization.name;
+    const { title, url, media, article_created_at, article_updated_at } = payload;
+    const mediaName = media.name;
 
     try {
-      logger.info(`NewsFeedDB [${organizationName}] レコード作成開始`, getStartDbIoParams({ tracking_id }));
+      logger.info(`NewsFeedDB [${mediaName}] レコード作成開始`, getStartDbIoParams({ tracking_id }));
       const startTime = processStartTime();
       const command: PutCommandInput = {
         TableName: process.env.NEWSFEED_TABLE_NAME,
@@ -60,7 +60,7 @@ export class NewsFeedDB {
           id: tracking_id,
           title,
           url,
-          organization_id: organization.id,
+          media_id: media.id,
           article_created_at,
           article_updated_at: article_updated_at ?? '',
           created_at: getUtc(),
@@ -70,25 +70,25 @@ export class NewsFeedDB {
       const endTime = processEndTime(startTime);
 
       logger.info(
-        `NewsFeedDB [${organizationName}] レコード作成完了`,
+        `NewsFeedDB [${mediaName}] レコード作成完了`,
         getSuccessDbIoParams<typeof result>({ tracking_id, time: endTime, result }),
       );
       return result;
     } catch (e) {
       if (e instanceof Error) {
         logger.error(
-          `NewsFeedDB [${organizationName}] レコード作成失敗`,
+          `NewsFeedDB [${mediaName}] レコード作成失敗`,
           getFailedParams({ tracking_id, exception_class: e.name, stacktrace: e.stack as string }),
         );
       }
     }
   }
 
-  async read(url: string, organization: NewsFeed.Organization, tracking_id: string) {
-    const { name: organizationName } = organization;
+  async read(url: string, media: NewsFeed.Media, tracking_id: string) {
+    const { name: mediaName } = media;
 
     try {
-      logger.info(`NewsFeedDB [${organizationName}] レコード読み取り開始`, getStartDbIoParams({ tracking_id }));
+      logger.info(`NewsFeedDB [${mediaName}] レコード読み取り開始`, getStartDbIoParams({ tracking_id }));
       const startTime = processStartTime();
 
       const command: QueryCommandInput = {
@@ -107,7 +107,7 @@ export class NewsFeedDB {
 
       const endTime = processEndTime(startTime);
       logger.info(
-        `NewsFeedDB [${organizationName}] レコード読み取り完了`,
+        `NewsFeedDB [${mediaName}] レコード読み取り完了`,
         getSuccessDbIoParams<typeof Items>({ tracking_id, time: endTime, result: Items }),
       );
 
@@ -121,7 +121,7 @@ export class NewsFeedDB {
         id: result.id.S,
         title: result.title.S,
         url: result.url.S,
-        organization,
+        media,
         article_created_at: result.article_created_at.S,
         article_updated_at: result.article_updated_at.S,
         created_at: result.created_at.S,
@@ -129,7 +129,7 @@ export class NewsFeedDB {
     } catch (e) {
       if (e instanceof Error) {
         logger.error(
-          `NewsFeedDB [${organizationName}] レコード読み取り失敗`,
+          `NewsFeedDB [${mediaName}] レコード読み取り失敗`,
           getFailedParams({ tracking_id, exception_class: e.name, stacktrace: e.stack as string }),
         );
       }
@@ -140,14 +140,14 @@ export class NewsFeedDB {
     const {
       id,
       title,
-      organization: { name: organizationName },
+      media: { name: mediaName },
       article_created_at,
       article_updated_at,
     } = payload;
     if (!article_updated_at || !id) return;
 
     try {
-      logger.info(`NewsFeedDB [${organizationName}] レコード更新開始`, getStartDbIoParams({ tracking_id }));
+      logger.info(`NewsFeedDB [${mediaName}] レコード更新開始`, getStartDbIoParams({ tracking_id }));
 
       const startTime = processStartTime();
 
@@ -176,14 +176,14 @@ export class NewsFeedDB {
       const endTime = processEndTime(startTime);
 
       logger.info(
-        `NewsFeedDB [${organizationName}] レコード更新完了`,
+        `NewsFeedDB [${mediaName}] レコード更新完了`,
         getSuccessDbIoParams<typeof result>({ tracking_id, time: endTime, result }),
       );
       return result;
     } catch (e) {
       if (e instanceof Error) {
         logger.error(
-          `NewsFeedDB [${organizationName}] レコード更新失敗`,
+          `NewsFeedDB [${mediaName}] レコード更新失敗`,
           getFailedParams({ tracking_id, exception_class: e.name, stacktrace: e.stack as string }),
         );
       }

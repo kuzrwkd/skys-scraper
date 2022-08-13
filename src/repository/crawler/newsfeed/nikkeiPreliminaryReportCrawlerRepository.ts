@@ -13,8 +13,8 @@ import logger, {
 
 @injectable()
 export class NikkeiPreliminaryReportCrawlerRepository {
-  async handle(u: string, organization: NewsFeed.Organization, tracking_id: string) {
-    const { name: organizationName } = organization;
+  async handle(u: string, media: NewsFeed.Media, tracking_id: string) {
+    const { name: mediaName } = media;
     const listCrawlerTrackingId = `${tracking_id}-lc-${createRandomString()}`;
     const data: NewsFeed.NewsFeedCrawlerResult[] = [];
     const browser = await puppeteer.launch(options);
@@ -22,7 +22,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
     const preliminaryReportUrl: string[] = [];
 
     try {
-      logger.info(`[${organizationName}] クローリング開始`, getStartCrawlingParams({ tracking_id }));
+      logger.info(`[${mediaName}] クローリング開始`, getStartCrawlingParams({ tracking_id }));
 
       const startTime = processStartTime();
       await page.goto(u);
@@ -30,7 +30,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
       const preliminaryReportLinkList = await page.$$('.m-miM09_title > a');
 
       logger.info(
-        `[${organizationName}] クローリング実行`,
+        `[${mediaName}] クローリング実行`,
         getProcessCrawlingParams({ tracking_id: listCrawlerTrackingId, url: u }),
       );
 
@@ -44,7 +44,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
       }
 
       logger.info(
-        `[${organizationName}] クローリング完了`,
+        `[${mediaName}] クローリング完了`,
         getSuccessCrawlingParams<string[]>({
           tracking_id: listCrawlerTrackingId,
           time: endTime,
@@ -72,7 +72,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
             const individualCrawlerTrackingId = `${listCrawlerTrackingId}-ic-${createRandomString()}`;
             const page = await browser.newPage();
             logger.info(
-              `[${organizationName}] クローリング開始`,
+              `[${mediaName}] クローリング開始`,
               getStartCrawlingParams({ tracking_id: individualCrawlerTrackingId }),
             );
             const startTime = processStartTime();
@@ -85,7 +85,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
             const updateAt = await page.$('[class^="TimeStamp_"] > span > time');
 
             logger.info(
-              `[${organizationName}] クローリング実行`,
+              `[${mediaName}] クローリング実行`,
               getProcessCrawlingParams({ tracking_id: individualCrawlerTrackingId, url }),
             );
 
@@ -103,27 +103,27 @@ export class NikkeiPreliminaryReportCrawlerRepository {
 
             if (!result.title) {
               logger.info(
-                `[${organizationName}] 記事タイトルが見つかりませんでした`,
+                `[${mediaName}] 記事タイトルが見つかりませんでした`,
                 getProcessCrawlingParams({ tracking_id: individualCrawlerTrackingId, url }),
               );
             }
 
             if (!result.article_created_at) {
               logger.info(
-                `[${organizationName}] 記事投稿日時が見つかりませんでした`,
+                `[${mediaName}] 記事投稿日時が見つかりませんでした`,
                 getProcessCrawlingParams({ tracking_id: individualCrawlerTrackingId, url }),
               );
             }
 
             if (!result.article_updated_at) {
               logger.info(
-                `[${organizationName}] 記事更新日が見つかりませんでした`,
+                `[${mediaName}] 記事更新日が見つかりませんでした`,
                 getProcessCrawlingParams({ tracking_id: individualCrawlerTrackingId, url }),
               );
             }
 
             logger.info(
-              `[${organizationName}] クローリング完了`,
+              `[${mediaName}] クローリング完了`,
               getSuccessCrawlingParams<NewsFeed.NewsFeedCrawlerResult>({
                 tracking_id: individualCrawlerTrackingId,
                 time: endTime,
