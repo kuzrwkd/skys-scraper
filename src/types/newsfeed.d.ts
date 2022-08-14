@@ -33,27 +33,27 @@ declare namespace NewsFeed {
   }
 
   interface INewsFeedInteract {
-    handle(data: RequestDataParams[], tracking_id: string): Promise<boolean>;
+    handle(data: RequestDataParams[]): Promise<boolean>;
   }
 
   interface INewsFeedDB {
     processLogging(): void;
-    getMedia(media_id: number, tracking_id: string): Promise<NewsFeed.Media>;
-    create(data: NewsFeed.Entity, tracking_id: string): Promise<void>;
-    read(url: string, media: NewsFeed.Media, tracking_id: string): Promise<NewsFeed.Entity & CreateAndUpdateColumn>;
-    update(data: NewsFeed.Entity & CreateAndUpdateColumn, tracking_id: string): Promise<void>;
+    getMedia(media_id: number): Promise<NewsFeed.Media>;
+    create(data: NewsFeed.Entity): Promise<void>;
+    read(url: string, media: NewsFeed.Media): Promise<NewsFeed.Entity & CreateAndUpdateColumn>;
+    update(data: NewsFeed.Entity & CreateAndUpdateColumn): Promise<void>;
   }
 
   interface INikkeiPreliminaryReportCrawlerRepository {
-    handle(url: string, media: NewsFeed.Media, tracking_id: string): Promise<NewsFeedCrawlerResult[] | undefined>;
+    handle(url: string, media: NewsFeed.Media): Promise<NewsFeedCrawlerResult[] | undefined>;
   }
 
   interface IBloombergJaPreliminaryReportCrawlerRepository {
-    handle(url: string, media: NewsFeed.Media, tracking_id: string): Promise<NewsFeedCrawlerResult[] | undefined>;
+    handle(url: string, media: NewsFeed.Media): Promise<NewsFeedCrawlerResult[] | undefined>;
   }
 
   interface INewsFeedCrawlerIndex {
-    handle(url: string, media: NewsFeed.Media, tracking_id: string): Promise<NewsFeedCrawlerResult[] | undefined>;
+    handle(url: string, media: NewsFeed.Media): Promise<NewsFeedCrawlerResult[] | undefined>;
   }
 
   interface NewsFeedCrawlerResult {

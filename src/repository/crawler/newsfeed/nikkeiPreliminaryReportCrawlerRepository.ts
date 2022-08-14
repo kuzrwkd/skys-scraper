@@ -1,38 +1,29 @@
+import { processStartTime, processEndTime, formatDate } from '@kuzrwkd/skys-core/date';
+import logger, { startLogger, successLogger, processLogger, failedLogger } from '@kuzrwkd/skys-core/logger';
+import { createUuid } from '@kuzrwkd/skys-core/uuid';
 import puppeteer from 'puppeteer';
 import { injectable } from 'tsyringe';
 
 import { options } from '@/util/crawlerOptions';
-import { processStartTime, processEndTime, formatDate } from '@/util/date';
-import logger, {
-  createRandomString,
-  getStartCrawlingParams,
-  getProcessCrawlingParams,
-  getSuccessCrawlingParams,
-  getFailedParams,
-} from '@/util/log';
 
 @injectable()
 export class NikkeiPreliminaryReportCrawlerRepository {
-  async handle(u: string, media: NewsFeed.Media, tracking_id: string) {
+  async handle(u: string, media: NewsFeed.Media) {
     const { name: mediaName } = media;
-    const listCrawlerTrackingId = `${tracking_id}-lc-${createRandomString()}`;
     const data: NewsFeed.NewsFeedCrawlerResult[] = [];
     const browser = await puppeteer.launch(options);
     const page = await browser.newPage();
     const preliminaryReportUrl: string[] = [];
 
     try {
-      logger.info(`[${mediaName}] クローリング開始`, getStartCrawlingParams({ tracking_id }));
+      logger.info(`[${mediaName}] クローリング開始`, startLogger());
 
       const startTime = processStartTime();
       await page.goto(u);
       await page.waitForSelector('#CONTENTS_MAIN');
       const preliminaryReportLinkList = await page.$$('.m-miM09_title > a');
 
-      logger.info(
-        `[${mediaName}] クローリング実行`,
-        getProcessCrawlingParams({ tracking_id: listCrawlerTrackingId, url: u }),
-      );
+      logger.info(`[${mediaName}] クローリング実行`, processLogger({ url: u }));
 
       const endTime = processEndTime(startTime);
 
@@ -45,8 +36,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
 
       logger.info(
         `[${mediaName}] クローリング完了`,
-        getSuccessCrawlingParams<string[]>({
-          tracking_id: listCrawlerTrackingId,
+        successLogger({
           time: endTime,
           result: preliminaryReportUrl,
         }),
@@ -55,8 +45,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
       if (e instanceof Error) {
         logger.error(
           e.message,
-          getFailedParams({
-            tracking_id: tracking_id,
+          failedLogger({
             exception_class: e.name,
             stacktrace: e.stack as string,
           }),
@@ -69,12 +58,8 @@ export class NikkeiPreliminaryReportCrawlerRepository {
       const crawlingData = (
         await Promise.allSettled(
           preliminaryReportUrl.map(async (url: string) => {
-            const individualCrawlerTrackingId = `${listCrawlerTrackingId}-ic-${createRandomString()}`;
             const page = await browser.newPage();
-            logger.info(
-              `[${mediaName}] クローリング開始`,
-              getStartCrawlingParams({ tracking_id: individualCrawlerTrackingId }),
-            );
+            logger.info(`[${mediaName}] クローリング開始`, startLogger());
             const startTime = processStartTime();
 
             await page.goto(url, { timeout: 0 });
@@ -84,14 +69,11 @@ export class NikkeiPreliminaryReportCrawlerRepository {
             const createdAt = await page.$('[class^="TimeStamp_"] > time');
             const updateAt = await page.$('[class^="TimeStamp_"] > span > time');
 
-            logger.info(
-              `[${mediaName}] クローリング実行`,
-              getProcessCrawlingParams({ tracking_id: individualCrawlerTrackingId, url }),
-            );
+            logger.info(`[${mediaName}] クローリング実行`, processLogger({ url }));
 
             const endTime = processEndTime(startTime);
             const result: NewsFeed.NewsFeedCrawlerResult = {
-              id: individualCrawlerTrackingId,
+              id: createUuid(),
               title: (await (await title?.getProperty('textContent'))?.jsonValue()) as string,
               url,
               article_created_at: formatDate((await (await createdAt?.getProperty('dateTime'))?.jsonValue()) as string),
@@ -102,34 +84,18 @@ export class NikkeiPreliminaryReportCrawlerRepository {
             };
 
             if (!result.title) {
-              logger.info(
-                `[${mediaName}] 記事タイトルが見つかりませんでした`,
-                getProcessCrawlingParams({ tracking_id: individualCrawlerTrackingId, url }),
-              );
+              logger.info(`[${mediaName}] 記事タイトルが見つかりませんでした`, processLogger({ url }));
             }
 
             if (!result.article_created_at) {
-              logger.info(
-                `[${mediaName}] 記事投稿日時が見つかりませんでした`,
-                getProcessCrawlingParams({ tracking_id: individualCrawlerTrackingId, url }),
-              );
+              logger.info(`[${mediaName}] 記事投稿日時が見つかりませんでした`, processLogger({ url }));
             }
 
             if (!result.article_updated_at) {
-              logger.info(
-                `[${mediaName}] 記事更新日が見つかりませんでした`,
-                getProcessCrawlingParams({ tracking_id: individualCrawlerTrackingId, url }),
-              );
+              logger.info(`[${mediaName}] 記事更新日が見つかりませんでした`, processLogger({ url }));
             }
 
-            logger.info(
-              `[${mediaName}] クローリング完了`,
-              getSuccessCrawlingParams<NewsFeed.NewsFeedCrawlerResult>({
-                tracking_id: individualCrawlerTrackingId,
-                time: endTime,
-                result,
-              }),
-            );
+            logger.info(`[${mediaName}] クローリング完了`, successLogger({ time: endTime, result }));
             return result;
           }),
         )
@@ -153,8 +119,7 @@ export class NikkeiPreliminaryReportCrawlerRepository {
       if (e instanceof Error) {
         logger.error(
           e.message,
-          getFailedParams({
-            tracking_id: tracking_id,
+          failedLogger({
             exception_class: e.name,
             stacktrace: e.stack as string,
           }),

@@ -8,17 +8,18 @@ import {
   UpdateCommand,
   UpdateCommandInput,
 } from '@aws-sdk/lib-dynamodb';
+import { processStartTime, processEndTime, getUtc } from '@kuzrwkd/skys-core/date';
+import logger, { startLogger, successLogger, failedLogger } from '@kuzrwkd/skys-core/logger';
+import { createUuid } from '@kuzrwkd/skys-core/uuid';
 import { injectable } from 'tsyringe';
 
-import { processStartTime, processEndTime, getUtc } from '@/util/date';
 import { dynamodbDocument } from '@/util/dynamoDBClient';
-import logger, { getStartDbIoParams, getSuccessDbIoParams, getFailedParams } from '@/util/log';
 
 @injectable()
 export class NewsFeedDB {
-  async getMedia(id: number, tracking_id: string) {
+  async getMedia(id: number) {
     try {
-      logger.info('NewsFeedDB [Media] レコード読み取り開始', getStartDbIoParams({ tracking_id }));
+      logger.info('NewsFeedDB [Media] レコード読み取り開始', startLogger());
       const startTime = processStartTime();
 
       const command: GetCommandInput = {
@@ -31,33 +32,30 @@ export class NewsFeedDB {
       const { Item } = await dynamodbDocument.send(new GetCommand(command));
 
       const endTime = processEndTime(startTime);
-      logger.info(
-        'NewsFeedDB [Media] レコード読み取り完了',
-        getSuccessDbIoParams<typeof Item>({ tracking_id, time: endTime, result: Item }),
-      );
+      logger.info('NewsFeedDB [Media] レコード読み取り完了', successLogger({ time: endTime, result: Item }));
 
       return { id: Item?.id, name: Item?.name };
     } catch (e) {
       if (e instanceof Error) {
         logger.error(
           `NewsFeedDB [Media] レコード読み取り失敗`,
-          getFailedParams({ tracking_id, exception_class: e.name, stacktrace: e.stack as string }),
+          failedLogger({ exception_class: e.name, stacktrace: e.stack as string }),
         );
       }
     }
   }
 
-  async create(payload: NewsFeed.Entity, tracking_id: string) {
+  async create(payload: NewsFeed.Entity) {
     const { title, url, media, article_created_at, article_updated_at } = payload;
     const mediaName = media.name;
 
     try {
-      logger.info(`NewsFeedDB [${mediaName}] レコード作成開始`, getStartDbIoParams({ tracking_id }));
+      logger.info(`NewsFeedDB [${mediaName}] レコード作成開始`, startLogger());
       const startTime = processStartTime();
       const command: PutCommandInput = {
         TableName: process.env.NEWSFEED_TABLE_NAME,
         Item: {
-          id: tracking_id,
+          id: createUuid(),
           title,
           url,
           media_id: media.id,
@@ -69,26 +67,23 @@ export class NewsFeedDB {
       const result = await dynamodbDocument.send(new PutCommand(command));
       const endTime = processEndTime(startTime);
 
-      logger.info(
-        `NewsFeedDB [${mediaName}] レコード作成完了`,
-        getSuccessDbIoParams<typeof result>({ tracking_id, time: endTime, result }),
-      );
+      logger.info(`NewsFeedDB [${mediaName}] レコード作成完了`, successLogger({ time: endTime, result }));
       return result;
     } catch (e) {
       if (e instanceof Error) {
         logger.error(
           `NewsFeedDB [${mediaName}] レコード作成失敗`,
-          getFailedParams({ tracking_id, exception_class: e.name, stacktrace: e.stack as string }),
+          failedLogger({ exception_class: e.name, stacktrace: e.stack as string }),
         );
       }
     }
   }
 
-  async read(url: string, media: NewsFeed.Media, tracking_id: string) {
+  async read(url: string, media: NewsFeed.Media) {
     const { name: mediaName } = media;
 
     try {
-      logger.info(`NewsFeedDB [${mediaName}] レコード読み取り開始`, getStartDbIoParams({ tracking_id }));
+      logger.info(`NewsFeedDB [${mediaName}] レコード読み取り開始`, startLogger());
       const startTime = processStartTime();
 
       const command: QueryCommandInput = {
@@ -106,10 +101,7 @@ export class NewsFeedDB {
       const { Items } = await dynamodbDocument.send(new QueryCommand(command));
 
       const endTime = processEndTime(startTime);
-      logger.info(
-        `NewsFeedDB [${mediaName}] レコード読み取り完了`,
-        getSuccessDbIoParams<typeof Items>({ tracking_id, time: endTime, result: Items }),
-      );
+      logger.info(`NewsFeedDB [${mediaName}] レコード読み取り完了`, successLogger({ time: endTime, result: Items }));
 
       if (!Items || Items.length === 0) {
         return undefined;
@@ -130,13 +122,13 @@ export class NewsFeedDB {
       if (e instanceof Error) {
         logger.error(
           `NewsFeedDB [${mediaName}] レコード読み取り失敗`,
-          getFailedParams({ tracking_id, exception_class: e.name, stacktrace: e.stack as string }),
+          failedLogger({ exception_class: e.name, stacktrace: e.stack as string }),
         );
       }
     }
   }
 
-  async update(payload: NewsFeed.Entity & { created_at: string; updated_at?: string }, tracking_id: string) {
+  async update(payload: NewsFeed.Entity & { created_at: string; updated_at?: string }) {
     const {
       id,
       title,
@@ -147,7 +139,7 @@ export class NewsFeedDB {
     if (!article_updated_at || !id) return;
 
     try {
-      logger.info(`NewsFeedDB [${mediaName}] レコード更新開始`, getStartDbIoParams({ tracking_id }));
+      logger.info(`NewsFeedDB [${mediaName}] レコード更新開始`, startLogger());
 
       const startTime = processStartTime();
 
@@ -175,16 +167,13 @@ export class NewsFeedDB {
 
       const endTime = processEndTime(startTime);
 
-      logger.info(
-        `NewsFeedDB [${mediaName}] レコード更新完了`,
-        getSuccessDbIoParams<typeof result>({ tracking_id, time: endTime, result }),
-      );
+      logger.info(`NewsFeedDB [${mediaName}] レコード更新完了`, successLogger({ time: endTime, result }));
       return result;
     } catch (e) {
       if (e instanceof Error) {
         logger.error(
           `NewsFeedDB [${mediaName}] レコード更新失敗`,
-          getFailedParams({ tracking_id, exception_class: e.name, stacktrace: e.stack as string }),
+          failedLogger({ exception_class: e.name, stacktrace: e.stack as string }),
         );
       }
     }
