@@ -7,9 +7,9 @@ import {
 } from '@/crawler/newsfeed/NikkeiPreliminaryReportCrawlerRepository';
 import { NewsfeedInteract, INewsfeedInteract } from '@/useCase/interact/NewsfeedInteract';
 
-newsFeedUseCase.register<NewsfeedInteract>('NewsfeedInteract', { useClass: NewsfeedInteract });
-newsFeedUseCase.register<NewsfeedCrawlerIndex>('NewsfeedCrawlerIndex', { useClass: NewsfeedCrawlerIndex });
-newsFeedUseCase.register<NikkeiPreliminaryReportCrawlerRepository>('NikkeiPreliminaryReportCrawlerRepository', {
+newsFeedUseCase.register<INewsfeedInteract>('NewsfeedInteract', { useClass: NewsfeedInteract });
+newsFeedUseCase.register<INewsfeedCrawlerIndex>('NewsfeedCrawlerIndex', { useClass: NewsfeedCrawlerIndex });
+newsFeedUseCase.register<INikkeiPreliminaryReportCrawlerRepository>('NikkeiPreliminaryReportCrawlerRepository', {
   useClass: NikkeiPreliminaryReportCrawlerRepository,
 });
 

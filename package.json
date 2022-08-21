@@ -32,7 +32,8 @@
     "tsyringe": "^4.7.0",
     "uuid": "^8.3.2",
     "verbal-expressions": "^1.0.2",
-    "winston": "^3.8.1"
+    "winston": "^3.8.1",
+    "yargs": "^17.5.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
