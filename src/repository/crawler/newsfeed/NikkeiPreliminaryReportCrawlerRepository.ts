@@ -1,16 +1,30 @@
 import { processStartTime, processEndTime, formatDate } from '@kuzrwkd/skys-core/date';
+import { Media } from '@kuzrwkd/skys-core/entities';
 import logger, { startLogger, successLogger, processLogger, failedLogger } from '@kuzrwkd/skys-core/logger';
-import { createUuid } from '@kuzrwkd/skys-core/uuid';
+import { createUuid } from '@kuzrwkd/skys-core/v4uuid';
 import puppeteer from 'puppeteer';
 import { injectable } from 'tsyringe';
 
 import { options } from '@/util/crawlerOptions';
 
+type NewsfeedCrawlerResult = {
+  id: string;
+  title: string;
+  url: string;
+  media_id: number;
+  article_created_at: string;
+  article_updated_at?: string;
+};
+
+export interface INikkeiPreliminaryReportCrawlerRepository {
+  handle(url: string, media: Media): Promise<NewsfeedCrawlerResult[] | undefined>;
+}
+
 @injectable()
-export class NikkeiPreliminaryReportCrawlerRepository {
-  async handle(u: string, media: NewsFeed.Media) {
-    const { name: mediaName } = media;
-    const data: NewsFeed.NewsFeedCrawlerResult[] = [];
+export class NikkeiPreliminaryReportCrawlerRepository implements INikkeiPreliminaryReportCrawlerRepository {
+  async handle(url: string, media: Media) {
+    const { name: mediaName, id: mediaId } = media;
+    const data: NewsfeedCrawlerResult[] = [];
     const browser = await puppeteer.launch(options);
     const page = await browser.newPage();
     const preliminaryReportUrl: string[] = [];
@@ -19,11 +33,11 @@ export class NikkeiPreliminaryReportCrawlerRepository {
       logger.info(`[${mediaName}] クローリング開始`, startLogger());
 
       const startTime = processStartTime();
-      await page.goto(u);
+      await page.goto(url);
       await page.waitForSelector('#CONTENTS_MAIN');
       const preliminaryReportLinkList = await page.$$('.m-miM09_title > a');
 
-      logger.info(`[${mediaName}] クローリング実行`, processLogger({ url: u }));
+      logger.info(`[${mediaName}] クローリング実行`, processLogger({ url }));
 
       const endTime = processEndTime(startTime);
 
@@ -41,17 +55,17 @@ export class NikkeiPreliminaryReportCrawlerRepository {
           result: preliminaryReportUrl,
         }),
       );
-    } catch (e) {
-      if (e instanceof Error) {
+    } catch (error) {
+      if (error instanceof Error) {
         logger.error(
-          e.message,
+          error.message,
           failedLogger({
-            exception_class: e.name,
-            stacktrace: e.stack as string,
+            exception_class: error.name,
+            stacktrace: error.stack as string,
           }),
         );
       }
-      return null;
+      return;
     }
 
     try {
@@ -65,35 +79,33 @@ export class NikkeiPreliminaryReportCrawlerRepository {
             await page.goto(url, { timeout: 0 });
             await page.waitForSelector('div[class^="container_"] > main > article');
 
-            const title = await page.$('h1[class^="title_"]');
+            const title = await page.$eval('h1[class^="title_"]', (item) => item.textContent);
             const createdAt = await page.$('[class^="TimeStamp_"] > time');
             const updateAt = await page.$('[class^="TimeStamp_"] > span > time');
 
             logger.info(`[${mediaName}] クローリング実行`, processLogger({ url }));
 
-            const endTime = processEndTime(startTime);
-            const result: NewsFeed.NewsFeedCrawlerResult = {
-              id: createUuid(),
-              title: (await (await title?.getProperty('textContent'))?.jsonValue()) as string,
-              url,
-              article_created_at: formatDate((await (await createdAt?.getProperty('dateTime'))?.jsonValue()) as string),
-              article_updated_at:
-                !updateAt || typeof updateAt == 'undefined'
-                  ? undefined
-                  : formatDate((await (await updateAt?.getProperty('dateTime'))?.jsonValue()) as string),
-            };
-
-            if (!result.title) {
+            if (!title) {
               logger.info(`[${mediaName}] 記事タイトルが見つかりませんでした`, processLogger({ url }));
+              return;
             }
 
-            if (!result.article_created_at) {
+            if (!createdAt) {
               logger.info(`[${mediaName}] 記事投稿日時が見つかりませんでした`, processLogger({ url }));
+              return;
             }
 
-            if (!result.article_updated_at) {
-              logger.info(`[${mediaName}] 記事更新日が見つかりませんでした`, processLogger({ url }));
-            }
+            const endTime = processEndTime(startTime);
+            const result: NewsfeedCrawlerResult = {
+              id: createUuid(),
+              title,
+              url,
+              media_id: mediaId,
+              article_created_at: formatDate((await (await createdAt?.getProperty('dateTime'))?.jsonValue()) as string),
+              article_updated_at: !updateAt
+                ? undefined
+                : formatDate((await (await updateAt?.getProperty('dateTime'))?.jsonValue()) as string),
+            };
 
             logger.info(`[${mediaName}] クローリング完了`, successLogger({ time: endTime, result }));
             return result;
@@ -107,25 +119,25 @@ export class NikkeiPreliminaryReportCrawlerRepository {
           }
         });
 
+      await browser.close();
+
       for (const item of crawlingData) {
-        if (typeof item !== 'undefined') {
+        if (item) {
           data.push(item);
         }
       }
 
-      await browser.close();
       return data;
-    } catch (e) {
-      if (e instanceof Error) {
+    } catch (error) {
+      if (error instanceof Error) {
         logger.error(
-          e.message,
+          error.message,
           failedLogger({
-            exception_class: e.name,
-            stacktrace: e.stack as string,
+            exception_class: error.name,
+            stacktrace: error.stack as string,
           }),
         );
       }
-      return null;
     }
   }
 }
