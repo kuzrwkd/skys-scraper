@@ -1,29 +1,24 @@
-import dynamodbUseCase, {
-  NewsfeedTableUseCase,
-  MediaTableUseCase,
-  IMediaTableUseCase,
-  INewsfeedTableUseCase,
-} from '@kuzrwkd/skys-core/dynamodb';
+import dynamodbUseCase, { IMediaTableUseCase, INewsfeedTableUseCase } from '@kuzrwkd/skys-core/dynamodb';
 import logger, { failedLogger } from '@kuzrwkd/skys-core/logger';
 import { injectable, inject } from 'tsyringe';
 
-import { INewsfeedCrawlerIndex } from '@/crawler/newsfeed/NewsfeedCrawlerIndex';
+import { INewsfeedCrawlerIndex, RequestDataParams } from '@/useCase/NewsfeedUseCase';
 
 export interface INewsfeedInteract {
-  handle(data: Newsfeed.RequestDataParams[]): Promise<boolean>;
+  handle(data: RequestDataParams[]): Promise<boolean | undefined>;
 }
 
 @injectable()
-export class NewsfeedInteract {
+export class NewsfeedInteract implements INewsfeedInteract {
   private newsfeedTableUseCase: INewsfeedTableUseCase;
   private mediaTableUseCase: IMediaTableUseCase;
 
   constructor(@inject('NewsfeedCrawlerIndex') private newsFeedCrawlerIndex: INewsfeedCrawlerIndex) {
-    this.newsfeedTableUseCase = dynamodbUseCase.resolve<NewsfeedTableUseCase>('NewsfeedTableUseCase');
-    this.mediaTableUseCase = dynamodbUseCase.resolve<MediaTableUseCase>('MediaTableUseCase');
+    this.newsfeedTableUseCase = dynamodbUseCase.resolve<INewsfeedTableUseCase>('NewsfeedTableUseCase');
+    this.mediaTableUseCase = dynamodbUseCase.resolve<IMediaTableUseCase>('MediaTableUseCase');
   }
 
-  async handle(data: Newsfeed.RequestDataParams[]) {
+  async handle(data: RequestDataParams[]) {
     try {
       for (const { mediaId, url } of data) {
         const media = await this.mediaTableUseCase.getMediaById(mediaId);

@@ -1,10 +1,9 @@
-import { Media } from '@kuzrwkd/skys-core/entities';
+import { MediaSchema } from '@kuzrwkd/skys-core/entities';
 import { injectable, inject } from 'tsyringe';
 
-import { INikkeiPreliminaryReportCrawlerRepository } from '@/crawler/newsfeed/NikkeiPreliminaryReportCrawlerRepository';
-
+import { INikkeiPreliminaryReportCrawlerRepository, NewsfeedCrawlerResultItem } from '@/useCase/NewsfeedUseCase';
 export interface INewsfeedCrawlerIndex {
-  handle(url: string, media: Media): Promise<Newsfeed.NewsfeedCrawlerResult[] | undefined>;
+  handle(url: string, media: MediaSchema): Promise<NewsfeedCrawlerResultItem[] | undefined>;
 }
 
 @injectable()
@@ -14,7 +13,7 @@ export class NewsfeedCrawlerIndex implements INewsfeedCrawlerIndex {
     private nikkeiPreliminaryReportCrawlerRepository: INikkeiPreliminaryReportCrawlerRepository,
   ) {}
 
-  async handle(url: string, media: Media) {
+  async handle(url: string, media: MediaSchema) {
     const { id } = media;
     switch (id) {
       case 1:

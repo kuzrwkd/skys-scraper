@@ -21,7 +21,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
   },
   "dependencies": {
-    "@kuzrwkd/skys-core": "^1.0.48",
+    "@kuzrwkd/skys-core": "^1.0.50",
     "@nestjs/common": "^9.0.11",
     "@nestjs/core": "^9.0.11",
     "@nestjs/platform-express": "^9.0.11",

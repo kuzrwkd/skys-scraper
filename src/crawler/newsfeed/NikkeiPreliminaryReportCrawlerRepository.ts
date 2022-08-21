@@ -1,30 +1,22 @@
 import { processStartTime, processEndTime, formatDate } from '@kuzrwkd/skys-core/date';
-import { Media } from '@kuzrwkd/skys-core/entities';
+import { MediaSchema } from '@kuzrwkd/skys-core/entities';
 import logger, { startLogger, successLogger, processLogger, failedLogger } from '@kuzrwkd/skys-core/logger';
 import { createUuid } from '@kuzrwkd/skys-core/v4uuid';
 import puppeteer from 'puppeteer';
 import { injectable } from 'tsyringe';
 
+import { NewsfeedCrawlerResultItem } from '@/useCase/NewsfeedUseCase';
 import { options } from '@/util/crawlerOptions';
 
-type NewsfeedCrawlerResult = {
-  id: string;
-  title: string;
-  url: string;
-  media_id: number;
-  article_created_at: string;
-  article_updated_at?: string;
-};
-
 export interface INikkeiPreliminaryReportCrawlerRepository {
-  handle(url: string, media: Media): Promise<NewsfeedCrawlerResult[] | undefined>;
+  handle(url: string, media: MediaSchema): Promise<NewsfeedCrawlerResultItem[] | undefined>;
 }
 
 @injectable()
 export class NikkeiPreliminaryReportCrawlerRepository implements INikkeiPreliminaryReportCrawlerRepository {
-  async handle(url: string, media: Media) {
+  async handle(url: string, media: MediaSchema) {
     const { name: mediaName, id: mediaId } = media;
-    const data: NewsfeedCrawlerResult[] = [];
+    const data: NewsfeedCrawlerResultItem[] = [];
     const browser = await puppeteer.launch(options);
     const page = await browser.newPage();
     const preliminaryReportUrl: string[] = [];
@@ -96,7 +88,7 @@ export class NikkeiPreliminaryReportCrawlerRepository implements INikkeiPrelimin
             }
 
             const endTime = processEndTime(startTime);
-            const result: NewsfeedCrawlerResult = {
+            const result: NewsfeedCrawlerResultItem = {
               id: createUuid(),
               title,
               url,
