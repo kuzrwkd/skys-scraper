@@ -22,8 +22,6 @@
     "test:e2e": "node_modules/.bin/jest --config ./jest-e2e.json"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.154.0",
-    "@aws-sdk/lib-dynamodb": "^3.154.0",
     "@kuzrwkd/skys-core": "^1.0.48",
     "@nestjs/common": "^9.0.11",
     "@nestjs/core": "^9.0.11",
