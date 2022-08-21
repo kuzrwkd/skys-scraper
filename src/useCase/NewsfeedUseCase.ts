@@ -1,7 +1,7 @@
 import { container as newsFeedUseCase } from 'tsyringe';
 
-import { NewsfeedCrawlerIndex } from '@/repository/crawler/newsfeed/NewsfeedCrawlerIndex';
-import { NikkeiPreliminaryReportCrawlerRepository } from '@/repository/crawler/newsfeed/NikkeiPreliminaryReportCrawlerRepository';
+import { NewsfeedCrawlerIndex } from '@/crawler/newsfeed/NewsfeedCrawlerIndex';
+import { NikkeiPreliminaryReportCrawlerRepository } from '@/crawler/newsfeed/NikkeiPreliminaryReportCrawlerRepository';
 import { NewsfeedInteract } from '@/useCase/interact/NewsfeedInteract';
 
 newsFeedUseCase.register<NewsfeedInteract>('NewsfeedInteract', { useClass: NewsfeedInteract });

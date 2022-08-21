@@ -7,7 +7,7 @@ import dynamodbUseCase, {
 import logger, { failedLogger } from '@kuzrwkd/skys-core/logger';
 import { injectable, inject } from 'tsyringe';
 
-import { INewsfeedCrawlerIndex } from '@/repository/crawler/newsfeed/NewsfeedCrawlerIndex';
+import { INewsfeedCrawlerIndex } from '@/crawler/newsfeed/NewsfeedCrawlerIndex';
 
 export interface INewsfeedInteract {
   handle(data: Newsfeed.RequestDataParams[]): Promise<boolean>;

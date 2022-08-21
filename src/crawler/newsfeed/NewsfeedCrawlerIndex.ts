@@ -1,7 +1,7 @@
 import { Media } from '@kuzrwkd/skys-core/entities';
 import { injectable, inject } from 'tsyringe';
 
-import { INikkeiPreliminaryReportCrawlerRepository } from '@/repository/crawler/newsfeed/NikkeiPreliminaryReportCrawlerRepository';
+import { INikkeiPreliminaryReportCrawlerRepository } from '@/crawler/newsfeed/NikkeiPreliminaryReportCrawlerRepository';
 
 export interface INewsfeedCrawlerIndex {
   handle(url: string, media: Media): Promise<Newsfeed.NewsfeedCrawlerResult[] | undefined>;
