@@ -3,10 +3,8 @@
   "exclude": [
     "node_modules",
     "test",
-    "dist",
+    "bin",
     "prisma",
-    "**/*spec.ts",
-    "jest.setup.ts",
-    "jest.config.ts"
+    "**/*spec.ts"
   ]
 }

@@ -10,7 +10,7 @@
     "allowSyntheticDefaultImports": true,
     "target": "es2020",
     "sourceMap": true,
-    "outDir": "./dist",
+    "outDir": "./bin",
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"]

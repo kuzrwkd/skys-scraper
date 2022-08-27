@@ -5,15 +5,15 @@ import { createUuid } from '@kuzrwkd/skys-core/v4uuid';
 import puppeteer from 'puppeteer';
 import { injectable } from 'tsyringe';
 
-import { NewsfeedCrawlerResultItem } from '@/useCase/NewsfeedUseCase';
+import { NewsfeedCrawlerResultItem } from '@/useCase/NewsfeedCrawlerUseCase';
 import { options } from '@/util/crawlerOptions';
 
-export interface INikkeiPreliminaryReportCrawlerRepository {
+export interface INikkeiPreliminaryReportCrawler {
   handle(url: string, media: MediaSchema): Promise<NewsfeedCrawlerResultItem[] | undefined>;
 }
 
 @injectable()
-export class NikkeiPreliminaryReportCrawlerRepository implements INikkeiPreliminaryReportCrawlerRepository {
+export class NikkeiPreliminaryReportCrawler implements INikkeiPreliminaryReportCrawler {
   async handle(url: string, media: MediaSchema) {
     const { name: mediaName, id: mediaId } = media;
     const data: NewsfeedCrawlerResultItem[] = [];
