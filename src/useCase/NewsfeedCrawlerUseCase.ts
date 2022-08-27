@@ -10,7 +10,7 @@ import { NewsfeedCrawlerInteract, INewsfeedCrawlerInteract } from '@/useCase/int
 newsfeedCrawlerUseCase.register<INewsfeedCrawlerInteract>('NewsfeedCrawlerInteract', {
   useClass: NewsfeedCrawlerInteract,
 });
-newsfeedCrawlerUseCase.register<ICrawlerIndexForNewsfeed>('NewsfeedCrawlerIndex', {
+newsfeedCrawlerUseCase.register<ICrawlerIndexForNewsfeed>('CrawlerIndexForNewsfeed', {
   useClass: CrawlerIndexForNewsfeed,
 });
 newsfeedCrawlerUseCase.register<INikkeiPreliminaryReportCrawler>('NikkeiPreliminaryReportCrawler', {

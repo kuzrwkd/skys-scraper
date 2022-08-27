@@ -1,54 +1,57 @@
 import dynamodbUseCase, {
   IMediaTableUseCase,
   INewsfeedTableUseCase,
-  ICrawlerIndexTableUseCase,
+  INewsfeedIndexTableUseCase,
 } from '@kuzrwkd/skys-core/dynamodb';
 import logger, { failedLogger } from '@kuzrwkd/skys-core/logger';
-import { injectable, inject } from 'tsyringe';
+import { injectable } from 'tsyringe';
 
-import { ICrawlerIndexForNewsfeed } from '@/useCase/NewsfeedCrawlerUseCase';
+import newsfeedCrawlerUseCase, { ICrawlerIndexForNewsfeed } from '@/useCase/NewsfeedCrawlerUseCase';
 export interface INewsfeedCrawlerInteract {
-  handle(payload: number): Promise<boolean | undefined>;
+  handler(mediaId: number): Promise<boolean | undefined>;
 }
 
 @injectable()
 export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
   private newsfeedTableUseCase: INewsfeedTableUseCase;
   private mediaTableUseCase: IMediaTableUseCase;
-  private crawlerIndexTableUseCase: ICrawlerIndexTableUseCase;
+  private newsfeedIndexTableUseCase: INewsfeedIndexTableUseCase;
+  private crawlerIndexForNewsfeed: ICrawlerIndexForNewsfeed;
 
-  constructor(@inject('NewsfeedCrawlerIndex') private crawlerIndexForNewsfeed: ICrawlerIndexForNewsfeed) {
+  constructor() {
     this.newsfeedTableUseCase = dynamodbUseCase.resolve<INewsfeedTableUseCase>('NewsfeedTableUseCase');
     this.mediaTableUseCase = dynamodbUseCase.resolve<IMediaTableUseCase>('MediaTableUseCase');
-    this.crawlerIndexTableUseCase = dynamodbUseCase.resolve<ICrawlerIndexTableUseCase>('CrawlerIndexTableUseCase');
+    this.newsfeedIndexTableUseCase = dynamodbUseCase.resolve<INewsfeedIndexTableUseCase>('NewsfeedIndexTableUseCase');
+    this.crawlerIndexForNewsfeed = newsfeedCrawlerUseCase.resolve<ICrawlerIndexForNewsfeed>('CrawlerIndexForNewsfeed');
   }
 
-  async handle(payload: number) {
+  async handler(mediaId: number) {
     try {
-      const crawlerIndex = await this.crawlerIndexTableUseCase.queryCrawlerIndexByMediaId(payload);
+      const crawlerIndex = await this.newsfeedIndexTableUseCase.queryNewsfeedIndexByMediaId(mediaId);
 
       if (!crawlerIndex) {
+        logger.error('crawler index not found', failedLogger());
         return;
       }
 
-      for (const { media_id: mediaId, url } of crawlerIndex) {
-        const media = await this.mediaTableUseCase.getMediaById(mediaId);
+      const media = await this.mediaTableUseCase.getMediaById(mediaId);
 
-        if (!media) {
-          logger.error('media not found', failedLogger());
-          return;
-        }
+      if (!media) {
+        logger.error('media not found', failedLogger());
+        return;
+      }
 
-        const crawler = this.crawlerIndexForNewsfeed.handle(url, media);
+      for (const { media_id: mediaId, url, category } of crawlerIndex) {
+        const crawler = this.crawlerIndexForNewsfeed.builder(url, media);
 
         await crawler.then(async (crawlingData) => {
           if (crawlingData) {
-            for (const item of crawlingData) {
-              const { url: articleUrl, article_updated_at: articleUpdatedAt } = item;
+            for (const crawlerItem of crawlingData) {
+              const { url: articleUrl, article_updated_at: articleUpdatedAt } = crawlerItem;
               const existsRecord = await this.newsfeedTableUseCase.getNewsfeedByUrl(articleUrl);
 
               if (!existsRecord) {
-                await this.newsfeedTableUseCase.createNewsfeed({ ...item, media_id: mediaId });
+                await this.newsfeedTableUseCase.createNewsfeed({ ...crawlerItem, media_id: mediaId, category });
               }
 
               // レコードが存在する且つ、クローリングの結果、articleUpdateAtが存在する場合

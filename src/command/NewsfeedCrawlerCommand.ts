@@ -22,11 +22,11 @@ export default class NewsfeedCrawlerCommand implements yargs.CommandModule {
   async handler(args: yargs.Arguments) {
     try {
       if (args.nikkei) {
-        await newsfeedCrawlerInteract.handle(1);
+        await newsfeedCrawlerInteract.handler(1);
         return;
       }
       if (args.bloomberg) {
-        await newsfeedCrawlerInteract.handle(2);
+        await newsfeedCrawlerInteract.handler(2);
         return;
       }
     } catch (err) {
