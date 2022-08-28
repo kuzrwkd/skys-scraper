@@ -8,7 +8,7 @@ import { injectable } from 'tsyringe';
 
 import newsfeedCrawlerUseCase, { ICrawlerIndexForNewsfeed } from '@/useCase/NewsfeedCrawlerUseCase';
 export interface INewsfeedCrawlerInteract {
-  handler(mediaId: number): Promise<boolean | undefined>;
+  handler(mediaId: number): Promise<void>;
 }
 
 @injectable()
@@ -54,19 +54,15 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
                 await this.newsfeedTableUseCase.createNewsfeed({ ...crawlerItem, media_id: mediaId, category });
               }
 
-              // レコードが存在する且つ、クローリングの結果、articleUpdateAtが存在する場合
-              if (existsRecord && articleUpdatedAt) {
-                // レコードのarticleUpdatedAtとクローリング結果のarticleUpdatedAtが異なる場合はレコードを更新する
-                if (articleUpdatedAt !== existsRecord.article_updated_at) {
-                  await this.newsfeedTableUseCase.updateNewsfeed({ ...existsRecord });
-                }
+              // レコードが存在する且つ、クローリングの結果にarticleUpdateAtが存在する場合
+              // レコードのarticleUpdatedAtとクローリング結果のarticleUpdatedAtが異なる場合はレコードを更新する
+              if (existsRecord && articleUpdatedAt && articleUpdatedAt !== existsRecord.article_updated_at) {
+                await this.newsfeedTableUseCase.updateNewsfeed({ ...existsRecord });
               }
             }
           }
         });
       }
-
-      return true;
     } catch (error) {
       if (error instanceof Error) {
         logger.error(error.message, failedLogger());
