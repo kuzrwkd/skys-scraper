@@ -15,13 +15,13 @@ export interface INikkeiPreliminaryReportCrawler {
 @injectable()
 export class NikkeiPreliminaryReportCrawler implements INikkeiPreliminaryReportCrawler {
   async handle(url: string, media: MediaSchema) {
-    const { name: mediaName, id: mediaId } = media;
-    const data: NewsfeedCrawlerResultItem[] = [];
-    const browser = await puppeteer.launch(options);
-    const page = await browser.newPage();
-    const preliminaryReportUrl: string[] = [];
-
     try {
+      const { name: mediaName, id: mediaId } = media;
+      const newsfeedCrawlerResults: NewsfeedCrawlerResultItem[] = [];
+      const browser = await puppeteer.launch(options);
+      const page = await browser.newPage();
+      const preliminaryReportUrl: string[] = [];
+
       logger.info(`[${mediaName}] クローリング開始`, startLogger());
 
       const startTime = processStartTime();
@@ -34,7 +34,7 @@ export class NikkeiPreliminaryReportCrawler implements INikkeiPreliminaryReportC
       const endTime = processEndTime(startTime);
 
       for (const link of preliminaryReportLinkList) {
-        const url: string | undefined = await (await link.getProperty('href'))?.jsonValue();
+        const url = (await (await link.getProperty('href'))?.jsonValue()) as string | undefined;
         if (url) {
           preliminaryReportUrl.push(url);
         }
@@ -47,20 +47,7 @@ export class NikkeiPreliminaryReportCrawler implements INikkeiPreliminaryReportC
           result: preliminaryReportUrl,
         }),
       );
-    } catch (error) {
-      if (error instanceof Error) {
-        logger.error(
-          error.message,
-          failedLogger({
-            exception_class: error.name,
-            stacktrace: error.stack as string,
-          }),
-        );
-      }
-      return;
-    }
 
-    try {
       const crawlingData = (
         await Promise.allSettled(
           preliminaryReportUrl.map(async (url: string) => {
@@ -106,7 +93,7 @@ export class NikkeiPreliminaryReportCrawler implements INikkeiPreliminaryReportC
       )
         .filter((e) => e.status === 'fulfilled')
         .map((e) => {
-          if (e.status === 'fulfilled') {
+          if (e.status === 'fulfilled' && e.value) {
             return e.value;
           }
         });
@@ -115,11 +102,11 @@ export class NikkeiPreliminaryReportCrawler implements INikkeiPreliminaryReportC
 
       for (const item of crawlingData) {
         if (item) {
-          data.push(item);
+          newsfeedCrawlerResults.push(item);
         }
       }
 
-      return data;
+      return newsfeedCrawlerResults;
     } catch (error) {
       if (error instanceof Error) {
         logger.error(
@@ -130,6 +117,7 @@ export class NikkeiPreliminaryReportCrawler implements INikkeiPreliminaryReportC
           }),
         );
       }
+      return;
     }
   }
 }

@@ -52,11 +52,11 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
 
               if (!existsRecord) {
                 await this.newsfeedTableUseCase.createNewsfeed({ ...crawlerItem, media_id: mediaId, category });
+                return;
               }
 
-              // レコードが存在する且つ、クローリングの結果にarticleUpdateAtが存在する場合
               // レコードのarticleUpdatedAtとクローリング結果のarticleUpdatedAtが異なる場合はレコードを更新する
-              if (existsRecord && articleUpdatedAt && articleUpdatedAt !== existsRecord.article_updated_at) {
+              if (articleUpdatedAt && articleUpdatedAt !== existsRecord.article_updated_at) {
                 await this.newsfeedTableUseCase.updateNewsfeed({ ...existsRecord });
               }
             }

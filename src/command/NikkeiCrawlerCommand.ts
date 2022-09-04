@@ -4,29 +4,29 @@ import newsfeedCrawlerUseCase, { INewsfeedCrawlerInteract } from '@/useCase/News
 
 const newsfeedCrawlerInteract = newsfeedCrawlerUseCase.resolve<INewsfeedCrawlerInteract>('NewsfeedCrawlerInteract');
 
-export default class NewsfeedCrawlerCommand implements yargs.CommandModule {
-  command = 'crawler:newsfeed';
-  describe = 'use --<media name> option.';
+export default class NikkeiCrawlerCommand implements yargs.CommandModule {
+  command = 'crawler:newsfeed:nikkei';
+  describe = 'use start or stop option.';
 
   builder(args: yargs.Argv) {
     return args
-      .option('nikkei', {
-        describe: 'Crawling the Nikkei website',
+      .option('start', {
+        describe: 'Start Nikkei crawler batch',
       })
-      .option('bloomberg', {
-        describe: 'Crawling the Bloomberg website',
+      .option('stop', {
+        describe: 'Stop Nikkei crawler batch',
       })
-      .conflicts('nikkei', 'bloomberg');
+      .conflicts('start', 'stop');
   }
 
   async handler(args: yargs.Arguments) {
     try {
-      if (args.nikkei) {
+      if (args.start) {
         await newsfeedCrawlerInteract.handler(1);
         return;
       }
-      if (args.bloomberg) {
-        await newsfeedCrawlerInteract.handler(2);
+      if (args.stop) {
+        await newsfeedCrawlerInteract.handler(1);
         return;
       }
     } catch (err) {
