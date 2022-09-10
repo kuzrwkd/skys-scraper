@@ -34,8 +34,7 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
         return;
       }
 
-      const media = await this.mediaTableUseCase.getMediaById(mediaId);
-
+      const media = await this.mediaTableUseCase.queryMediaByMediaId(mediaId);
       if (!media) {
         logger.error('media not found', failedLogger());
         return;

@@ -16,7 +16,7 @@ export interface INikkeiPreliminaryReportCrawler {
 export class NikkeiPreliminaryReportCrawler implements INikkeiPreliminaryReportCrawler {
   async handle(url: string, media: MediaSchema) {
     try {
-      const { name: mediaName, id: mediaId } = media;
+      const { name: mediaName, media_id: mediaId } = media;
       const newsfeedCrawlerResults: NewsfeedCrawlerResultItem[] = [];
       const browser = await puppeteer.launch(options);
       const page = await browser.newPage();

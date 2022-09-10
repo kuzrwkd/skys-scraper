@@ -19,8 +19,8 @@ export class CrawlerIndexForNewsfeed implements ICrawlerIndexForNewsfeed {
   }
 
   async builder(url: string, media: MediaSchema) {
-    const { id } = media;
-    switch (id) {
+    const { media_id } = media;
+    switch (media_id) {
       case 1:
         return await this.nikkeiPreliminaryReportCrawler.handle(url, media);
     }

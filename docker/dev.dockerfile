@@ -26,13 +26,13 @@ RUN apt-get update \
     && unzip awscliv2.zip \
     && ./aws/install
 
-COPY docker/entrypoint.sh /usr/local/bin
+COPY docker/dev.entrypoint.sh /usr/local/bin
 
 COPY docker/wait-for-it.sh /usr/local/bin
 
-RUN chmod +x /usr/local/bin/entrypoint.sh \
+RUN chmod +x /usr/local/bin/dev.entrypoint.sh \
     && chmod +x /usr/local/bin/wait-for-it.sh \
     && npm install -g npm \
     && npm install -g npm-check-updates
 
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/dev.entrypoint.sh"]
