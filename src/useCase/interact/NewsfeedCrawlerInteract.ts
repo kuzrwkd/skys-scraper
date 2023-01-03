@@ -3,12 +3,17 @@ import dynamodbUseCase, {
   INewsfeedTableUseCase,
   INewsfeedIndexTableUseCase,
 } from '@kuzrwkd/skys-core/dynamodb';
+import { MediaSchema } from '@kuzrwkd/skys-core/entities';
 import logger, { failedLogger } from '@kuzrwkd/skys-core/logger';
 import { injectable } from 'tsyringe';
 
-import newsfeedCrawlerUseCase, { ICrawlerIndexForNewsfeed } from '@/useCase/NewsfeedCrawlerUseCase';
+import newsfeedCrawlerUseCase, {
+  INikkeiPreliminaryReportCrawler,
+  NewsfeedCrawlerResultItem,
+} from '@/useCase/NewsfeedCrawlerUseCase';
 export interface INewsfeedCrawlerInteract {
   handler(mediaId: number): Promise<void>;
+  selectCrawler(url: string, media: MediaSchema): Promise<NewsfeedCrawlerResultItem[] | undefined>;
 }
 
 @injectable()
@@ -16,13 +21,22 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
   private newsfeedTableUseCase: INewsfeedTableUseCase;
   private mediaTableUseCase: IMediaTableUseCase;
   private newsfeedIndexTableUseCase: INewsfeedIndexTableUseCase;
-  private crawlerIndexForNewsfeed: ICrawlerIndexForNewsfeed;
-
+  private nikkeiPreliminaryReportCrawler: INikkeiPreliminaryReportCrawler;
   constructor() {
     this.newsfeedTableUseCase = dynamodbUseCase.resolve<INewsfeedTableUseCase>('NewsfeedTableUseCase');
     this.mediaTableUseCase = dynamodbUseCase.resolve<IMediaTableUseCase>('MediaTableUseCase');
     this.newsfeedIndexTableUseCase = dynamodbUseCase.resolve<INewsfeedIndexTableUseCase>('NewsfeedIndexTableUseCase');
-    this.crawlerIndexForNewsfeed = newsfeedCrawlerUseCase.resolve<ICrawlerIndexForNewsfeed>('CrawlerIndexForNewsfeed');
+    this.nikkeiPreliminaryReportCrawler = newsfeedCrawlerUseCase.resolve<INikkeiPreliminaryReportCrawler>(
+      'NikkeiPreliminaryReportCrawler',
+    );
+  }
+
+  async selectCrawler(url: string, media: MediaSchema) {
+    const { media_id } = media;
+    switch (media_id) {
+      case 1:
+        return await this.nikkeiPreliminaryReportCrawler.handle(url, media);
+    }
   }
 
   async handler(mediaId: number) {
@@ -41,7 +55,7 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
       }
 
       for (const { media_id: mediaId, url, category } of crawlerIndex) {
-        const crawler = this.crawlerIndexForNewsfeed.builder(url, media);
+        const crawler = this.selectCrawler(url, media);
 
         await crawler.then(async (crawlingData) => {
           if (crawlingData) {

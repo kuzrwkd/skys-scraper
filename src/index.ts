@@ -3,12 +3,12 @@
 import 'reflect-metadata';
 import yargs from 'yargs';
 
-import NikkeiCrawlerCommand from '@/command/NikkeiCrawlerCommand';
+import CrawlerCommand from '@/command/CrawlerCommand';
 
 yargs
   .locale('en')
   .usage('Usage: $0 <command> [options]')
-  .command(new NikkeiCrawlerCommand())
+  .command(new CrawlerCommand())
   .recommendCommands()
   .demandCommand(1)
   .strict()

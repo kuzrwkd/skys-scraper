@@ -2,7 +2,7 @@ import { processStartTime, processEndTime, formatDate } from '@kuzrwkd/skys-core
 import { MediaSchema } from '@kuzrwkd/skys-core/entities';
 import logger, { startLogger, successLogger, processLogger, failedLogger } from '@kuzrwkd/skys-core/logger';
 import { createUuid } from '@kuzrwkd/skys-core/v4uuid';
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 import { injectable } from 'tsyringe';
 
 import { NewsfeedCrawlerResultItem } from '@/useCase/NewsfeedCrawlerUseCase';

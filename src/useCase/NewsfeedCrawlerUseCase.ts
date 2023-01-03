@@ -1,6 +1,5 @@
 import { container as newsfeedCrawlerUseCase } from 'tsyringe';
 
-import { CrawlerIndexForNewsfeed, ICrawlerIndexForNewsfeed } from '@/crawler/CrawlerIndexForNewsfeed';
 import {
   NikkeiPreliminaryReportCrawler,
   INikkeiPreliminaryReportCrawler,
@@ -19,12 +18,9 @@ export type NewsfeedCrawlerResultItem = {
 newsfeedCrawlerUseCase.register<INewsfeedCrawlerInteract>('NewsfeedCrawlerInteract', {
   useClass: NewsfeedCrawlerInteract,
 });
-newsfeedCrawlerUseCase.register<ICrawlerIndexForNewsfeed>('CrawlerIndexForNewsfeed', {
-  useClass: CrawlerIndexForNewsfeed,
-});
 newsfeedCrawlerUseCase.register<INikkeiPreliminaryReportCrawler>('NikkeiPreliminaryReportCrawler', {
   useClass: NikkeiPreliminaryReportCrawler,
 });
 
-export { ICrawlerIndexForNewsfeed, INikkeiPreliminaryReportCrawler, INewsfeedCrawlerInteract };
+export { INikkeiPreliminaryReportCrawler, INewsfeedCrawlerInteract };
 export default newsfeedCrawlerUseCase;
