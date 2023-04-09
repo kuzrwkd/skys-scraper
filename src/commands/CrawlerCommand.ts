@@ -1,18 +1,24 @@
 import { CronJob, CronJobParameters } from 'cron';
 import * as yargs from 'yargs';
 
-import newsfeedCrawlerUseCase, { INewsfeedCrawlerInteract } from '@/useCase/NewsfeedCrawlerUseCase';
+import { newsfeedCrawlerUseCase, INewsfeedCrawlerInteract } from '@/useCases/NewsfeedUseCase';
 
 const newsfeedCrawlerInteract = newsfeedCrawlerUseCase.resolve<INewsfeedCrawlerInteract>('NewsfeedCrawlerInteract');
 const jobOptions: CronJobParameters = {
   cronTime: '*/5 * * * *',
-  onTick: () => newsfeedCrawlerInteract.handler(1),
+  onTick: () => newsfeedCrawlerInteract.handler(),
   utcOffset: 0,
 };
 
 export default class CrawlerCommand implements yargs.CommandModule {
-  command = 'crawler';
-  describe = 'use start or stop option.';
+  command = 'crawlers';
+  describe = 'use start option.';
+
+  builder(args: yargs.Argv) {
+    return args.option('start', {
+      describe: 'crawling start',
+    });
+  }
 
   async handler() {
     try {

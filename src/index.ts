@@ -3,11 +3,11 @@
 import 'reflect-metadata';
 import yargs from 'yargs';
 
-import CrawlerCommand from '@/command/CrawlerCommand';
+import CrawlerCommand from '@/commands/CrawlerCommand';
 
 yargs
   .locale('en')
-  .usage('Usage: $0 <command> [options]')
+  .usage('Usage: $0 <commands> [options]')
   .command(new CrawlerCommand())
   .recommendCommands()
   .demandCommand(1)

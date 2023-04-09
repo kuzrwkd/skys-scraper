@@ -5,19 +5,16 @@ import { createUuid } from '@kuzrwkd/skys-core/v4uuid';
 import playwright from 'playwright-core';
 import { injectable } from 'tsyringe';
 
-import { NewsfeedCrawlerResultItem } from '@/useCase/NewsfeedCrawlerUseCase';
-import { options } from '@/util/crawlerOptions';
-
-export interface INikkeiPreliminaryReportCrawler {
-  handle(url: string, media: MediaSchema): Promise<NewsfeedCrawlerResultItem[] | undefined>;
-}
+import { ICrawler } from '@/crawlers';
+import { Newsfeed } from '@/entities/newsfeed';
+import { options } from '@/utils/crawlerOptions';
 
 @injectable()
-export class NikkeiPreliminaryReportCrawler implements INikkeiPreliminaryReportCrawler {
+export class NikkeiPreliminaryReportCrawler implements ICrawler {
   async handle(url: string, media: MediaSchema) {
     try {
       const { name: mediaName, media_id: mediaId } = media;
-      const newsfeedCrawlerResults: NewsfeedCrawlerResultItem[] = [];
+      const newsfeedCrawlerResults: Newsfeed[] = [];
       const browser = await playwright.chromium.launch(options);
       const page = await browser.newPage();
       const preliminaryReportUrl: string[] = [];
@@ -75,7 +72,7 @@ export class NikkeiPreliminaryReportCrawler implements INikkeiPreliminaryReportC
             }
 
             const endTime = processEndTime(startTime);
-            const result: NewsfeedCrawlerResultItem = {
+            const result: Newsfeed = {
               id: createUuid(),
               title,
               url,

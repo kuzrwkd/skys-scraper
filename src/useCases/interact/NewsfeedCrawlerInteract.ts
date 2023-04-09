@@ -3,17 +3,12 @@ import dynamodbUseCase, {
   INewsfeedTableUseCase,
   INewsfeedIndexTableUseCase,
 } from '@kuzrwkd/skys-core/dynamodb';
-import { MediaSchema } from '@kuzrwkd/skys-core/entities';
 import logger, { failedLogger } from '@kuzrwkd/skys-core/logger';
 import { injectable } from 'tsyringe';
 
-import newsfeedCrawlerUseCase, {
-  INikkeiPreliminaryReportCrawler,
-  NewsfeedCrawlerResultItem,
-} from '@/useCase/NewsfeedCrawlerUseCase';
+import { newsfeedCrawler, ICrawler } from '@/crawlers';
 export interface INewsfeedCrawlerInteract {
-  handler(mediaId: number): Promise<void>;
-  selectCrawler(url: string, media: MediaSchema): Promise<NewsfeedCrawlerResultItem[] | undefined>;
+  handler(): Promise<void>;
 }
 
 @injectable()
@@ -21,41 +16,33 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
   private newsfeedTableUseCase: INewsfeedTableUseCase;
   private mediaTableUseCase: IMediaTableUseCase;
   private newsfeedIndexTableUseCase: INewsfeedIndexTableUseCase;
-  private nikkeiPreliminaryReportCrawler: INikkeiPreliminaryReportCrawler;
+  private nikkeiPreliminaryReportCrawler: ICrawler;
+
   constructor() {
     this.newsfeedTableUseCase = dynamodbUseCase.resolve<INewsfeedTableUseCase>('NewsfeedTableUseCase');
     this.mediaTableUseCase = dynamodbUseCase.resolve<IMediaTableUseCase>('MediaTableUseCase');
     this.newsfeedIndexTableUseCase = dynamodbUseCase.resolve<INewsfeedIndexTableUseCase>('NewsfeedIndexTableUseCase');
-    this.nikkeiPreliminaryReportCrawler = newsfeedCrawlerUseCase.resolve<INikkeiPreliminaryReportCrawler>(
-      'NikkeiPreliminaryReportCrawler',
-    );
+    this.nikkeiPreliminaryReportCrawler = newsfeedCrawler.resolve<ICrawler>('NikkeiPreliminaryReportCrawler');
   }
 
-  async selectCrawler(url: string, media: MediaSchema) {
-    const { media_id } = media;
-    switch (media_id) {
-      case 1:
-        return await this.nikkeiPreliminaryReportCrawler.handle(url, media);
-    }
-  }
-
-  async handler(mediaId: number) {
+  async handler() {
     try {
-      const crawlerIndex = await this.newsfeedIndexTableUseCase.queryNewsfeedIndexByMediaId(mediaId);
+      const crawlerIndex = await this.newsfeedIndexTableUseCase.queryNewsfeedIndexByMediaId(1);
 
       if (!crawlerIndex) {
-        logger.error('crawler index not found', failedLogger());
+        logger.error('crawlers index not found', failedLogger());
         return;
       }
 
-      const media = await this.mediaTableUseCase.queryMediaByMediaId(mediaId);
+      const media = await this.mediaTableUseCase.queryMediaByMediaId(1);
       if (!media) {
         logger.error('media not found', failedLogger());
         return;
       }
 
-      for (const { media_id: mediaId, url, category } of crawlerIndex) {
-        const crawler = this.selectCrawler(url, media);
+      for (const crawlerIndexItem of crawlerIndex) {
+        const { media_id: mediaId, url, category } = crawlerIndexItem;
+        const crawler = this.nikkeiPreliminaryReportCrawler.handle(url, media);
 
         await crawler.then(async (crawlingData) => {
           if (crawlingData) {
@@ -68,7 +55,6 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
                 return;
               }
 
-              // レコードのarticleUpdatedAtとクローリング結果のarticleUpdatedAtが異なる場合はレコードを更新する
               if (articleUpdatedAt && articleUpdatedAt !== existsRecord.article_updated_at) {
                 await this.newsfeedTableUseCase.updateNewsfeed({ ...existsRecord });
               }
