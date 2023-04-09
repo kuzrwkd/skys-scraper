@@ -1,11 +1,12 @@
-import { MediaSchema } from '@kuzrwkd/skys-core/entities';
+import { MediaSchema, NewsfeedSchema } from '@kuzrwkd/skys-core/entities';
 import { container as newsfeedCrawler } from 'tsyringe';
 
 import { NikkeiPreliminaryReportCrawler } from '@/crawlers/newsfeed/NikkeiPreliminaryReportCrawler';
-import { Newsfeed } from '@/entities/newsfeed';
+
+export type CrawlerItem = Omit<NewsfeedSchema, 'category' | 'created_at' | 'updated_at'>;
 
 export interface ICrawler {
-  handle(url: string, media: MediaSchema): Promise<Newsfeed[] | undefined>;
+  handle(url: string, media: MediaSchema): Promise<CrawlerItem[] | undefined>;
 }
 
 newsfeedCrawler.register<ICrawler>('NikkeiPreliminaryReportCrawler', {
