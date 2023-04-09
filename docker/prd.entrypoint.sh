@@ -12,7 +12,6 @@ cd /var/www
 npm cache clean -f
 npm install
 npm run build
-npm link
-chmod +x /usr/local/lib/node_modules/skys-scraper
+npm run link
 
 while true; do sleep 86400; done
