@@ -1,60 +1,90 @@
-import { mediaTable, newsfeedTable, newsfeedIndexTable } from '@kuzrwkd/skys-core/dynamodb';
+import { mediaTable, newsfeedIndexTable, newsfeedTable } from '@kuzrwkd/skys-core/dynamodb';
+import { MEDIA_ID, MediaSchema, NewsfeedIndexCategories } from '@kuzrwkd/skys-core/entities';
 import logger, { failedLogger } from '@kuzrwkd/skys-core/logger';
-import { injectable } from 'tsyringe';
+import { injectable, inject } from 'tsyringe';
 
-import { newsfeedCrawler, ICrawler } from '@/crawlers';
+import { ICrawler, CrawlerItem } from '@/crawlers';
+
+type NewsfeedIndexAllItemsWithMedia = {
+  id: string;
+  media: MediaSchema;
+  url: string;
+  category: NewsfeedIndexCategories;
+  crawlerInstance: ICrawler;
+};
+
 export interface INewsfeedCrawlerInteract {
   handler(): Promise<void>;
 }
 
 @injectable()
 export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
-  private nikkeiPreliminaryReportCrawler: ICrawler;
-
-  constructor() {
-    this.nikkeiPreliminaryReportCrawler = newsfeedCrawler.resolve<ICrawler>('NikkeiPreliminaryReportCrawler');
-  }
+  constructor(@inject('NikkeiPreliminaryReportCrawler') private readonly nikkeiPreliminaryReportCrawler: ICrawler) {}
 
   async handler() {
-    try {
-      const crawlerIndex = await newsfeedIndexTable.getNewsfeedIndexItemsByMediaId(1);
+    const crawlerInstances = [this.nikkeiPreliminaryReportCrawler];
+    const newsfeedIndexAllItems = await newsfeedIndexTable.getNewsfeedIndexAllItems();
 
-      if (!crawlerIndex) {
-        logger.error('crawlers index not found', failedLogger());
-        return;
+    if (!newsfeedIndexAllItems) {
+      logger.error('newsfeed items not found', failedLogger());
+      return;
+    }
+
+    const mediaAllItems = await mediaTable.getMediaAllItems();
+
+    if (!mediaAllItems) {
+      logger.error('media items not found', failedLogger());
+      return;
+    }
+
+    const nikkei = mediaAllItems.find((_) => _.media_id === MEDIA_ID.nikkei);
+
+    if (!nikkei) {
+      logger.error('nikkei not found', failedLogger());
+      return;
+    }
+
+    const newsfeedIndexAllItemsWithMedia = newsfeedIndexAllItems.reduce((acc, item) => {
+      switch (item.media_id) {
+        case MEDIA_ID.nikkei:
+          return [
+            ...acc,
+            {
+              id: item.id,
+              media: nikkei,
+              category: item.category,
+              url: item.url,
+              crawlerInstance: this.nikkeiPreliminaryReportCrawler,
+            },
+          ];
+        default:
+          return acc;
+      }
+    }, [] as NewsfeedIndexAllItemsWithMedia[]);
+
+    const crawlerResult: CrawlerItem[] = [];
+
+    for (const item of newsfeedIndexAllItemsWithMedia) {
+      const { media, url, category, crawlerInstance } = item;
+      const crawlerParams = { url, media, category };
+      const result = await crawlerInstance.handle(crawlerParams);
+
+      if (result) {
+        crawlerResult.push(...result);
+      }
+    }
+
+    for (const crawlerItem of crawlerResult) {
+      const { url: articleUrl, article_updated_at: articleUpdatedAt } = crawlerItem;
+      const newsfeedItem = await newsfeedTable.getNewsfeedItemByUrl(articleUrl);
+
+      if (!newsfeedItem) {
+        await newsfeedTable.putNewsfeedItem(crawlerItem);
+        continue;
       }
 
-      const media = await mediaTable.getMediaItemByMediaId(1);
-      if (!media) {
-        logger.error('media not found', failedLogger());
-        return;
-      }
-
-      for (const crawlerIndexItem of crawlerIndex) {
-        const { media_id: mediaId, url, category } = crawlerIndexItem;
-        const crawler = this.nikkeiPreliminaryReportCrawler.handle(url, media);
-
-        await crawler.then(async (crawlingData) => {
-          if (crawlingData) {
-            for (const crawlerItem of crawlingData) {
-              const { url: articleUrl, article_updated_at: articleUpdatedAt } = crawlerItem;
-              const existsRecord = await newsfeedTable.getNewsfeedItemByUrl(articleUrl);
-
-              if (!existsRecord) {
-                await newsfeedTable.putNewsfeedItem({ ...crawlerItem, media_id: mediaId, category });
-                return;
-              }
-
-              if (articleUpdatedAt && articleUpdatedAt !== existsRecord.article_updated_at) {
-                await newsfeedTable.updateNewsfeedItem({ ...existsRecord });
-              }
-            }
-          }
-        });
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        logger.error(error.message, failedLogger());
+      if (articleUpdatedAt && articleUpdatedAt !== newsfeedItem.article_updated_at) {
+        await newsfeedTable.updateNewsfeedItem({ ...newsfeedItem });
       }
     }
   }

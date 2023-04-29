@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.32.2-focal
+FROM mcr.microsoft.com/playwright:v1.33.0-focal
 
 WORKDIR /var/www
 
@@ -19,7 +19,6 @@ RUN apt-get update \
 COPY docker/prd.entrypoint.sh /usr/local/bin
 
 RUN chmod +x /usr/local/bin/prd.entrypoint.sh \
-    && chmod +x /usr/local/bin/wait-for-it.sh \
-    && npm install -g npm@latest
+    && chmod +x /usr/local/bin/wait-for-it.sh
 
 ENTRYPOINT ["/usr/local/bin/prd.entrypoint.sh"]

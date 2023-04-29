@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.32.2-focal
+FROM mcr.microsoft.com/playwright:v1.33.0-focal
 
 WORKDIR /var/www
 
@@ -30,8 +30,6 @@ COPY docker/dev.entrypoint.sh /usr/local/bin
 COPY docker/wait-for-it.sh /usr/local/bin
 
 RUN chmod +x /usr/local/bin/dev.entrypoint.sh \
-    && chmod +x /usr/local/bin/wait-for-it.sh \
-    && npm install -g npm@latest \
-    && npm install -g npm-check-updates
+    && chmod +x /usr/local/bin/wait-for-it.sh
 
 ENTRYPOINT ["/usr/local/bin/dev.entrypoint.sh"]

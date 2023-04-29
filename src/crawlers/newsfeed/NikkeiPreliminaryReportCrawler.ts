@@ -1,16 +1,22 @@
-import { processStartTime, processEndTime, formatDate } from '@kuzrwkd/skys-core/date';
-import { MediaSchema } from '@kuzrwkd/skys-core/entities';
-import logger, { startLogger, successLogger, processLogger, failedLogger } from '@kuzrwkd/skys-core/logger';
+import { formatDate } from '@kuzrwkd/skys-core/date';
+import logger, {
+  startLogger,
+  successLogger,
+  processLogger,
+  failedLogger,
+  processStartTime,
+  processEndTime,
+} from '@kuzrwkd/skys-core/logger';
 import { createUuid } from '@kuzrwkd/skys-core/v4uuid';
 import playwright from 'playwright-core';
-import { injectable } from 'tsyringe';
 
-import { ICrawler, CrawlerItem } from '@/crawlers';
+import { ICrawler, CrawlerItem, CrawlerParams } from '@/crawlers';
 import { options } from '@/utils/crawlerOptions';
 
-@injectable()
 export class NikkeiPreliminaryReportCrawler implements ICrawler {
-  async handle(url: string, media: MediaSchema) {
+  async handle(params: CrawlerParams) {
+    const { media, url, category } = params;
+
     try {
       const { name: mediaName, media_id: mediaId } = media;
       const newsfeedCrawlerResults: CrawlerItem[] = [];
@@ -55,8 +61,8 @@ export class NikkeiPreliminaryReportCrawler implements ICrawler {
             await page.waitForSelector('div[class^="container_"] > main > article');
 
             const title = await page.$eval('h1[class^="title_"]', (item) => item.textContent);
-            const createdAt = await page.$('[class^="TimeStamp_"] > time');
-            const updateAt = await page.$('[class^="TimeStamp_"] > span > time');
+            const createdAt = await page.$('[class^="Timestamp_"] > time');
+            const updateAt = await page.$('[class^="Timestamp_"] > span > time');
 
             logger.info(`[${mediaName}] クローリング実行`, processLogger({ url }));
 
@@ -76,6 +82,7 @@ export class NikkeiPreliminaryReportCrawler implements ICrawler {
               title,
               url,
               media_id: mediaId,
+              category,
               article_created_at: formatDate((await (await createdAt?.getProperty('dateTime'))?.jsonValue()) as string),
               article_updated_at: !updateAt
                 ? undefined

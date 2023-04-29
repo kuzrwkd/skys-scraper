@@ -10,6 +10,7 @@ set -eux
 cd /var/www
 
 npm cache clean -f
+npm install -g npm@latest
 npm install
 npm run build
 npm run link
