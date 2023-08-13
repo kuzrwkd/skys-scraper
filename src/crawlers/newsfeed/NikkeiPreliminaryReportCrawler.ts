@@ -1,4 +1,4 @@
-import { formatDate } from '@kuzrwkd/skys-core/date';
+import {formatDate} from '@kuzrwkd/skys-core/date';
 import logger, {
   startLogger,
   successLogger,
@@ -7,18 +7,17 @@ import logger, {
   processStartTime,
   processEndTime,
 } from '@kuzrwkd/skys-core/logger';
-import { createUuid } from '@kuzrwkd/skys-core/v4uuid';
+import {createUuid} from '@kuzrwkd/skys-core/v4uuid';
 import playwright from 'playwright-core';
-
-import { ICrawler, CrawlerItem, CrawlerParams } from '@/crawlers';
-import { options } from '@/utils/crawlerOptions';
+import {ICrawler, CrawlerItem, CrawlerParams} from '@/crawlers';
+import {options} from '@/utils/crawlerOptions';
 
 export class NikkeiPreliminaryReportCrawler implements ICrawler {
   async handle(params: CrawlerParams) {
-    const { media, url, category } = params;
+    const {media, url, category} = params;
 
     try {
-      const { name: mediaName, media_id: mediaId } = media;
+      const {name: mediaName, media_id: mediaId} = media;
       const newsfeedCrawlerResults: CrawlerItem[] = [];
       const browser = await playwright.chromium.launch(options);
       const page = await browser.newPage();
@@ -31,7 +30,7 @@ export class NikkeiPreliminaryReportCrawler implements ICrawler {
       await page.waitForSelector('#CONTENTS_MAIN');
       const preliminaryReportLinkList = await page.$$('.m-miM09_title > a');
 
-      logger.info(`[${mediaName}] クローリング実行`, processLogger({ url }));
+      logger.info(`[${mediaName}] クローリング実行`, processLogger({url}));
 
       const endTime = processEndTime(startTime);
 
@@ -57,22 +56,22 @@ export class NikkeiPreliminaryReportCrawler implements ICrawler {
             logger.info(`[${mediaName}] クローリング開始`, startLogger());
             const startTime = processStartTime();
 
-            await page.goto(url, { timeout: 0 });
+            await page.goto(url, {timeout: 0});
             await page.waitForSelector('div[class^="container_"] > main > article');
 
-            const title = await page.$eval('h1[class^="title_"]', (item) => item.textContent);
+            const title = await page.$eval('h1[class^="title_"]', item => item.textContent);
             const createdAt = await page.$('[class^="Timestamp_"] > time');
             const updateAt = await page.$('[class^="Timestamp_"] > span > time');
 
-            logger.info(`[${mediaName}] クローリング実行`, processLogger({ url }));
+            logger.info(`[${mediaName}] クローリング実行`, processLogger({url}));
 
             if (!title) {
-              logger.info(`[${mediaName}] 記事タイトルが見つかりませんでした`, processLogger({ url }));
+              logger.info(`[${mediaName}] 記事タイトルが見つかりませんでした`, processLogger({url}));
               return;
             }
 
             if (!createdAt) {
-              logger.info(`[${mediaName}] 記事投稿日時が見つかりませんでした`, processLogger({ url }));
+              logger.info(`[${mediaName}] 記事投稿日時が見つかりませんでした`, processLogger({url}));
               return;
             }
 
@@ -89,13 +88,13 @@ export class NikkeiPreliminaryReportCrawler implements ICrawler {
                 : formatDate((await (await updateAt?.getProperty('dateTime'))?.jsonValue()) as string),
             };
 
-            logger.info(`[${mediaName}] クローリング完了`, successLogger({ time: endTime, result }));
+            logger.info(`[${mediaName}] クローリング完了`, successLogger({time: endTime, result}));
             return result;
           }),
         )
       )
-        .filter((e) => e.status === 'fulfilled')
-        .map((e) => {
+        .filter(e => e.status === 'fulfilled')
+        .map(e => {
           if (e.status === 'fulfilled' && e.value) {
             return e.value;
           }

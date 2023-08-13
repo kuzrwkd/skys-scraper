@@ -1,8 +1,7 @@
-import { container } from 'tsyringe';
-
-import { ICrawler } from '@/crawlers';
-import { NikkeiPreliminaryReportCrawler } from '@/crawlers/newsfeed/NikkeiPreliminaryReportCrawler';
-import { INewsfeedCrawlerInteract, NewsfeedCrawlerInteract } from '@/useCases/interact/NewsfeedCrawlerInteract';
+import {container} from 'tsyringe';
+import {ICrawler} from '@/crawlers';
+import {NikkeiPreliminaryReportCrawler} from '@/crawlers/newsfeed/NikkeiPreliminaryReportCrawler';
+import {INewsfeedCrawlerInteract, NewsfeedCrawlerInteract} from '@/useCases/interact/NewsfeedCrawlerInteract';
 
 /**
  * Crawlers
@@ -18,4 +17,4 @@ container.register<INewsfeedCrawlerInteract>('NewsfeedCrawlerInteract', {
   useClass: NewsfeedCrawlerInteract,
 });
 
-export { container };
+export {container};

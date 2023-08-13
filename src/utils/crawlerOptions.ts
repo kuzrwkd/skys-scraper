@@ -1,4 +1,4 @@
-import { LaunchOptions } from 'playwright-core';
+import {LaunchOptions} from 'playwright-core';
 
 export const options: LaunchOptions = {
   headless: true,

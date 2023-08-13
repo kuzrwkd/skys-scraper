@@ -2,7 +2,6 @@
 
 import 'reflect-metadata';
 import yargs from 'yargs';
-
 import CrawlerCommand from '@/commands/CrawlerCommand';
 
 yargs

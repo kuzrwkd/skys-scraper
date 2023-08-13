@@ -1,1 +1,1 @@
-export { INewsfeedCrawlerInteract } from '@/useCases/interact/NewsfeedCrawlerInteract';
+export {INewsfeedCrawlerInteract} from '@/useCases/interact/NewsfeedCrawlerInteract';

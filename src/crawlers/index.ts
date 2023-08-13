@@ -1,4 +1,4 @@
-import { MediaSchema, NewsfeedSchema, NewsfeedIndexCategories } from '@kuzrwkd/skys-core/entities';
+import {MediaSchema, NewsfeedSchema, NewsfeedIndexCategories} from '@kuzrwkd/skys-core/entities';
 
 export type CrawlerItem = Omit<NewsfeedSchema, 'created_at' | 'updated_at'>;
 

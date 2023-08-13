@@ -1,9 +1,8 @@
-import { mediaTable, newsfeedIndexTable, newsfeedTable } from '@kuzrwkd/skys-core/dynamodb';
-import { MEDIA_ID, MediaSchema, NewsfeedIndexCategories } from '@kuzrwkd/skys-core/entities';
-import logger, { failedLogger } from '@kuzrwkd/skys-core/logger';
-import { injectable, inject } from 'tsyringe';
-
-import { ICrawler, CrawlerItem } from '@/crawlers';
+import {mediaTable, newsfeedIndexTable, newsfeedTable} from '@kuzrwkd/skys-core/dynamodb';
+import {MEDIA_ID, MediaSchema, NewsfeedIndexCategories} from '@kuzrwkd/skys-core/entities';
+import logger, {failedLogger} from '@kuzrwkd/skys-core/logger';
+import {injectable, inject} from 'tsyringe';
+import {ICrawler, CrawlerItem} from '@/crawlers';
 
 type NewsfeedIndexAllItemsWithMedia = {
   id: string;
@@ -37,7 +36,7 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
       return;
     }
 
-    const nikkei = mediaAllItems.find((_) => _.media_id === MEDIA_ID.nikkei);
+    const nikkei = mediaAllItems.find(_ => _.media_id === MEDIA_ID.nikkei);
 
     if (!nikkei) {
       logger.error('nikkei not found', failedLogger());
@@ -65,8 +64,8 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
     const crawlerResult: CrawlerItem[] = [];
 
     for (const item of newsfeedIndexAllItemsWithMedia) {
-      const { media, url, category, crawlerInstance } = item;
-      const crawlerParams = { url, media, category };
+      const {media, url, category, crawlerInstance} = item;
+      const crawlerParams = {url, media, category};
       const result = await crawlerInstance.handle(crawlerParams);
 
       if (result) {
@@ -75,7 +74,7 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
     }
 
     for (const crawlerItem of crawlerResult) {
-      const { url: articleUrl, article_updated_at: articleUpdatedAt } = crawlerItem;
+      const {url: articleUrl, article_updated_at: articleUpdatedAt} = crawlerItem;
       const newsfeedItem = await newsfeedTable.getNewsfeedItemByUrl(articleUrl);
 
       if (!newsfeedItem) {
@@ -84,7 +83,7 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
       }
 
       if (articleUpdatedAt && articleUpdatedAt !== newsfeedItem.article_updated_at) {
-        await newsfeedTable.updateNewsfeedItem({ ...newsfeedItem });
+        await newsfeedTable.updateNewsfeedItem({...newsfeedItem});
       }
     }
   }

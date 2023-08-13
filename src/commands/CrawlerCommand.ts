@@ -1,8 +1,7 @@
-import { CronJobParameters, CronJob } from 'cron';
+import {CronJobParameters, CronJob} from 'cron';
 import * as yargs from 'yargs';
-
-import { INewsfeedCrawlerInteract } from '@/useCases';
-import { container } from '@/utils/yargsConfig';
+import {INewsfeedCrawlerInteract} from '@/useCases';
+import {container} from '@/utils/yargsConfig';
 
 const newsfeedCrawlerInteract = container.resolve<INewsfeedCrawlerInteract>('NewsfeedCrawlerInteract');
 
