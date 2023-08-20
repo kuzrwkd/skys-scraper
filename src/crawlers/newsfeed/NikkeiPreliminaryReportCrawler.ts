@@ -18,6 +18,7 @@ export class NikkeiPreliminaryReportCrawler implements ICrawler {
 
     try {
       const {name: mediaName, media_id: mediaId} = media;
+      const {category_id: categoryId} = category;
       const newsfeedCrawlerResults: CrawlerItem[] = [];
       const browser = await playwright.chromium.launch(options);
       const page = await browser.newPage();
@@ -81,7 +82,7 @@ export class NikkeiPreliminaryReportCrawler implements ICrawler {
               title,
               url,
               media_id: mediaId,
-              category,
+              category_id: String(categoryId),
               article_created_at: formatDate((await (await createdAt?.getProperty('dateTime'))?.jsonValue()) as string),
               article_updated_at: !updateAt
                 ? undefined
