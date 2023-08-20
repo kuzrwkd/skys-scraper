@@ -84,10 +84,6 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
         const targetCategoryIdRegExp = new RegExp(crawlerItem.category_id);
 
         if (!targetCategoryIdRegExp.test(newsfeedItem.category_id)) {
-          console.log('アップデート', {
-            ...newsfeedItem,
-            category_id: `${newsfeedItem.category_id},${crawlerItem.category_id}`,
-          });
           await newsfeedTable.updateNewsfeedItem({
             ...newsfeedItem,
             category_id: `${newsfeedItem.category_id},${crawlerItem.category_id}`,
