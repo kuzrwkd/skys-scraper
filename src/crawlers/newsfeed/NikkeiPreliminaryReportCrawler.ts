@@ -82,7 +82,7 @@ export class NikkeiPreliminaryReportCrawler implements ICrawler {
               title,
               url,
               media_id: mediaId,
-              category_id: String(categoryId),
+              category_id: categoryId,
               article_created_at: formatDate((await (await createdAt?.getProperty('dateTime'))?.jsonValue()) as string),
               article_updated_at: !updateAt
                 ? undefined

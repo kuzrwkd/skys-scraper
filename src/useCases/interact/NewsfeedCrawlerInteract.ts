@@ -70,23 +70,24 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
       }
 
       for (const crawlerItem of crawlerResult) {
-        const newsfeedItem = await newsfeedTable.getNewsfeedItemByUrl(crawlerItem.url);
+        const newsfeedItem = await newsfeedTable.getItemByUrl(crawlerItem.url);
 
         if (!newsfeedItem) {
-          await newsfeedTable.putNewsfeedItem(crawlerItem);
+          await newsfeedTable.putItem(crawlerItem);
           continue;
         }
 
         if (crawlerItem.article_updated_at && crawlerItem.article_updated_at !== newsfeedItem.article_updated_at) {
-          await newsfeedTable.updateNewsfeedItem({...newsfeedItem, article_updated_at: crawlerItem.article_updated_at});
+          await newsfeedTable.updateArticleUpdatedAtColumn({
+            ...newsfeedItem,
+            article_updated_at: crawlerItem.article_updated_at,
+          });
         }
 
-        const targetCategoryIdRegExp = new RegExp(crawlerItem.category_id);
-
-        if (!targetCategoryIdRegExp.test(newsfeedItem.category_id)) {
-          await newsfeedTable.updateNewsfeedItem({
+        if (!newsfeedItem.category_ids.includes(crawlerItem.category_id)) {
+          await newsfeedTable.updateCategoryIdsColumn({
             ...newsfeedItem,
-            category_id: `${newsfeedItem.category_id},${crawlerItem.category_id}`,
+            category_id: crawlerItem.category_id,
           });
         }
       }
