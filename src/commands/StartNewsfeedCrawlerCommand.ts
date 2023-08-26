@@ -11,14 +11,12 @@ const jobOptions: CronJobParameters = {
   utcOffset: 0,
 };
 
-export default class NewsfeedJobCommand implements yargs.CommandModule {
-  command = 'job:newsfeed';
-  describe = 'use start option.';
+export default class StartNewsfeedCrawlerCommand implements yargs.CommandModule {
+  command = 'start:newsfeed';
+  describe = 'no option.';
 
   builder(args: yargs.Argv) {
-    return args.option('start', {
-      describe: 'start newsfeed crawling.',
-    });
+    return args.default('value', 'true');
   }
 
   async handler() {
