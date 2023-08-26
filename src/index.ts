@@ -2,12 +2,12 @@
 
 import 'reflect-metadata';
 import yargs from 'yargs';
-import CrawlerCommand from '@/commands/CrawlerCommand';
+import NewsfeedJobCommand from '@/commands/NewsfeedJobCommand';
 
 yargs
   .locale('en')
   .usage('Usage: $0 <commands> [options]')
-  .command(new CrawlerCommand())
+  .command(new NewsfeedJobCommand())
   .recommendCommands()
   .demandCommand(1)
   .strict()
