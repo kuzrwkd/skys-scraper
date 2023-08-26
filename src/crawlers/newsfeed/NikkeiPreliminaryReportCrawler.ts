@@ -1,4 +1,4 @@
-import {formatDate} from '@kuzrwkd/skys-core/date';
+import {formatDate, getUtc} from '@kuzrwkd/skys-core/date';
 import logger, {
   startLogger,
   successLogger,
@@ -14,94 +14,107 @@ import {options} from '@/utils/crawlerOptions';
 
 export class NikkeiPreliminaryReportCrawler implements ICrawler {
   async handle(params: CrawlerParams) {
-    const {media, url, category} = params;
+    const {media, url: categoryUrl, category} = params;
 
     try {
       const {name: mediaName, media_id: mediaId} = media;
       const {category_id: categoryId} = category;
-      const newsfeedCrawlerResults: CrawlerItem[] = [];
       const browser = await playwright.chromium.launch(options);
       const page = await browser.newPage();
-      const preliminaryReportUrl: string[] = [];
+      const preliminaryReportUrlAndTitleList: Record<'articleUrl' | 'title', string>[] = [];
 
       logger.info(`[${mediaName}] クローリング開始`, startLogger());
 
       const startTime = processStartTime();
-      await page.goto(url);
+      await page.goto(categoryUrl);
       await page.waitForSelector('#CONTENTS_MAIN');
-      const preliminaryReportLinkList = await page.$$('.m-miM09_title > a');
+      const preliminaryReportLinkElements = await page.$$('.m-miM09_title > a');
 
-      logger.info(`[${mediaName}] クローリング実行`, processLogger({url}));
+      logger.info(`[${mediaName}] クローリング実行`, processLogger({categoryUrl}));
 
-      const endTime = processEndTime(startTime);
-
-      for (const link of preliminaryReportLinkList) {
-        const url = (await (await link.getProperty('href'))?.jsonValue()) as string | undefined;
-        if (url) {
-          preliminaryReportUrl.push(url);
+      for (const link of preliminaryReportLinkElements) {
+        const title = await link.innerText();
+        const articleUrl = (await (await link.getProperty('href'))?.jsonValue()) as string | undefined;
+        if (articleUrl && title) {
+          preliminaryReportUrlAndTitleList.push({articleUrl, title});
         }
       }
+
+      const endTime = processEndTime(startTime);
 
       logger.info(
         `[${mediaName}] クローリング完了`,
         successLogger({
           time: endTime,
-          result: preliminaryReportUrl,
+          result: preliminaryReportUrlAndTitleList,
         }),
       );
 
       const crawlingData = (
         await Promise.allSettled(
-          preliminaryReportUrl.map(async (url: string) => {
-            const page = await browser.newPage();
-            logger.info(`[${mediaName}] クローリング開始`, startLogger());
+          preliminaryReportUrlAndTitleList.map(async item => {
             const startTime = processStartTime();
+            logger.info(`[${mediaName}] クローリング開始`, startLogger());
 
-            await page.goto(url, {timeout: 0});
-            await page.waitForSelector('div[class^="container_"] > main > article');
+            const {articleUrl, title} = item;
 
-            const title = await page.$eval('h1[class^="title_"]', item => item.textContent);
-            const createdAt = await page.$('[class^="Timestamp_"] > time');
-            const updateAt = await page.$('[class^="Timestamp_"] > span > time');
+            try {
+              const page = await browser.newPage();
 
-            logger.info(`[${mediaName}] クローリング実行`, processLogger({url}));
+              await page.goto(articleUrl, {timeout: 0});
+              await page.waitForSelector('div[class^="container_"] > main > article');
 
-            if (!title) {
-              logger.info(`[${mediaName}] 記事タイトルが見つかりませんでした`, processLogger({url}));
-              return;
+              const createdAt = await page.$('[class^="Timestamp_"] > time');
+              const updateAt = await page.$('[class^="Timestamp_"] > span > time');
+
+              logger.info(`[${mediaName}] クローリング実行`, processLogger({articleUrl}));
+
+              if (!createdAt) {
+                logger.info(`[${mediaName}] 記事投稿日時が見つかりませんでした`, processLogger({articleUrl}));
+              }
+
+              const endTime = processEndTime(startTime);
+              const result: CrawlerItem = {
+                id: createUuid(),
+                title,
+                url: articleUrl,
+                media_id: mediaId,
+                category_id: categoryId,
+                article_created_at: formatDate(
+                  (await (await createdAt?.getProperty('dateTime'))?.jsonValue()) as string,
+                ),
+                article_updated_at: !updateAt
+                  ? undefined
+                  : formatDate((await (await updateAt?.getProperty('dateTime'))?.jsonValue()) as string),
+              };
+
+              logger.info(`[${mediaName}] クローリング完了`, successLogger({time: endTime, result}));
+              return Promise.resolve(result);
+            } catch (error) {
+              const endTime = processEndTime(startTime);
+              const result = {
+                id: createUuid(),
+                media_id: mediaId,
+                category_id: categoryId,
+                url: articleUrl,
+                article_created_at: getUtc(),
+                title,
+              };
+
+              logger.error(`[${mediaName}] クローリング失敗`, processLogger({time: endTime, result}));
+              return Promise.resolve(result);
             }
-
-            if (!createdAt) {
-              logger.info(`[${mediaName}] 記事投稿日時が見つかりませんでした`, processLogger({url}));
-              return;
-            }
-
-            const endTime = processEndTime(startTime);
-            const result: CrawlerItem = {
-              id: createUuid(),
-              title,
-              url,
-              media_id: mediaId,
-              category_id: categoryId,
-              article_created_at: formatDate((await (await createdAt?.getProperty('dateTime'))?.jsonValue()) as string),
-              article_updated_at: !updateAt
-                ? undefined
-                : formatDate((await (await updateAt?.getProperty('dateTime'))?.jsonValue()) as string),
-            };
-
-            logger.info(`[${mediaName}] クローリング完了`, successLogger({time: endTime, result}));
-            return result;
           }),
         )
-      )
-        .filter(e => e.status === 'fulfilled')
-        .map(e => {
-          if (e.status === 'fulfilled' && e.value) {
-            return e.value;
-          }
-        });
+      ).map(e => {
+        if (e.status === 'fulfilled' && e.value) {
+          return e.value;
+        }
+      });
 
       await browser.close();
+
+      const newsfeedCrawlerResults: CrawlerItem[] = [];
 
       for (const item of crawlingData) {
         if (item) {
