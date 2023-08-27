@@ -12,12 +12,12 @@ import playwright from 'playwright-core';
 import {ICrawler, CrawlerItem, CrawlerParams} from '@/crawlers';
 import {options} from '@/utils/crawlerOptions';
 
-export class NikkeiPreliminaryReportCrawler implements ICrawler {
+export class NikkeiNewsCrawler implements ICrawler {
   async handle(params: CrawlerParams) {
     const {media, url: categoryUrl, category} = params;
     const {name: mediaName, media_id: mediaId} = media;
     const {category_id: categoryId} = category;
-    const preliminaryReportUrlAndTitleList: Record<'articleUrl' | 'title', string>[] = [];
+    const newsUrlAndTitleList: Record<'articleUrl' | 'title', string>[] = [];
 
     const browser = await playwright.chromium.launch(options);
 
@@ -29,15 +29,15 @@ export class NikkeiPreliminaryReportCrawler implements ICrawler {
       const startTime = processStartTime();
       await page.goto(categoryUrl);
       await page.waitForSelector('#CONTENTS_MAIN');
-      const preliminaryReportLinkElements = await page.$$('.m-miM09_title > a');
+      const newsLinkElements = await page.$$('.m-miM09_title > a');
 
       logger.info(`[${mediaName}] クローリング実行`, processLogger({categoryUrl}));
 
-      for (const link of preliminaryReportLinkElements) {
+      for (const link of newsLinkElements) {
         const title = await link.innerText();
         const articleUrl = (await (await link.getProperty('href'))?.jsonValue()) as string | undefined;
         if (articleUrl && title) {
-          preliminaryReportUrlAndTitleList.push({articleUrl, title});
+          newsUrlAndTitleList.push({articleUrl, title});
         }
       }
 
@@ -47,7 +47,7 @@ export class NikkeiPreliminaryReportCrawler implements ICrawler {
         `[${mediaName}] クローリング完了`,
         successLogger({
           time: endTime,
-          result: preliminaryReportUrlAndTitleList,
+          result: newsUrlAndTitleList,
         }),
       );
     } catch (error) {
@@ -64,7 +64,7 @@ export class NikkeiPreliminaryReportCrawler implements ICrawler {
 
     const crawlingData = (
       await Promise.allSettled(
-        preliminaryReportUrlAndTitleList.map(async item => {
+        newsUrlAndTitleList.map(async item => {
           const startTime = processStartTime();
           logger.info(`[${mediaName}] クローリング開始`, startLogger());
 

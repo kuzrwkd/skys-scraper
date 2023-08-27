@@ -1,13 +1,13 @@
 import {container} from 'tsyringe';
 import {ICrawler} from '@/crawlers';
-import {NikkeiPreliminaryReportCrawler} from '@/crawlers/newsfeed/NikkeiPreliminaryReportCrawler';
+import {NikkeiNewsCrawler} from '@/crawlers/newsfeed/NikkeiNewsCrawler';
 import {INewsfeedCrawlerInteract, NewsfeedCrawlerInteract} from '@/useCases/interact/NewsfeedCrawlerInteract';
 
 /**
  * Crawlers
  */
 container.register<ICrawler>('NikkeiPreliminaryReportCrawler', {
-  useClass: NikkeiPreliminaryReportCrawler,
+  useClass: NikkeiNewsCrawler,
 });
 
 /**

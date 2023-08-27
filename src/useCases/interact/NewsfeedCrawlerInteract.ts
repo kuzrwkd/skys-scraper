@@ -17,7 +17,7 @@ export interface INewsfeedCrawlerInteract {
 
 @injectable()
 export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
-  constructor(@inject('NikkeiPreliminaryReportCrawler') private readonly nikkeiPreliminaryReportCrawler: ICrawler) {}
+  constructor(@inject('NikkeiPreliminaryReportCrawler') private readonly nikkeiNewsCrawler: ICrawler) {}
 
   async handler() {
     try {
@@ -49,7 +49,7 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
                 media: masterData.mediaAllItems.find(_ => _.media_id === MEDIA_ID.nikkei)!,
                 category: masterData.categoryAllItems.find(_ => _.category_id === item.category_id)!,
                 url: item.url,
-                crawlerInstance: this.nikkeiPreliminaryReportCrawler,
+                crawlerInstance: this.nikkeiNewsCrawler,
               },
             ];
           default:
