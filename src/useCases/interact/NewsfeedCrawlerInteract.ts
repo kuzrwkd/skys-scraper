@@ -22,9 +22,9 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
   async handler() {
     try {
       const masterData = await Promise.all([
-        newsfeedIndexTable.getNewsfeedIndexAllItems(),
-        mediaTable.getMediaAllItems(),
-        categoryTable.getCategoryAllItems(),
+        newsfeedIndexTable.getAllItems(),
+        mediaTable.getAllItems(),
+        categoryTable.getAllItems(),
       ])
         .then(result => {
           const [newsfeedIndexAllItems, mediaAllItems, categoryAllItems] = result;
