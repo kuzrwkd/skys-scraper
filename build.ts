@@ -5,7 +5,7 @@ build({
   entryPoints: ['src/index.ts'],
   bundle: true,
   platform: 'node',
-  target: 'node14',
+  target: 'node20',
   outfile: 'bin/index.js',
   plugins: [TsconfigPathsPlugin({tsconfig: './tsconfig.build.json'})],
 }).catch(error => {
