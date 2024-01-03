@@ -76,8 +76,8 @@ export class NikkeiNewsCrawler implements ICrawler {
             await page.goto(articleUrl, {timeout: 0});
             await page.waitForSelector('div[class^="container_"] > main > article');
 
-            const createdAt = await page.$('[class^="Timestamp_"] > time');
-            const updateAt = await page.$('[class^="Timestamp_"] > span > time');
+            const createdAt = await page.$('[class^="timeStampOverride_"] > time');
+            const updateAt = await page.$('[class^="timeStampOverride_"] > span > time');
 
             logger.info(`[${mediaName}] クローリング実行`, processLogger({articleUrl}));
 
