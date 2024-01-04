@@ -6,7 +6,7 @@ import {container} from '@/utils/yargsConfig';
 const newsfeedCrawlerInteract = container.resolve<INewsfeedCrawlerInteract>('NewsfeedCrawlerInteract');
 
 const jobOptions: CronJobParameters = {
-  cronTime: '*/5 * * * *',
+  cronTime: '*/60 * * * *',
   onTick: () => newsfeedCrawlerInteract.handler(),
   utcOffset: 0,
 };

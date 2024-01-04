@@ -8,10 +8,4 @@
 set -eux
 
 cd /var/www
-
-npm cache clean -f
-npm install
-npm run build
-npm run link
-
-while true; do sleep 86400; done
+node index.js start:newsfeed

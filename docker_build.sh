@@ -17,6 +17,6 @@ ECR_REPO_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${EC
 echo "ECR_REPO_URI: ${ECR_REPO_URI}"
 
 aws ecr get-login-password --region ${AWS_DEFAULT_REGION} --profile ${AWS_PROFILE} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
-cd .. && docker build --no-cache --platform linux/amd64 -f ./docker/prd.dockerfile -t ${ECR_REPO_NAME} .
+docker build --no-cache --platform linux/amd64 -f ./docker/prd.dockerfile -t ${ECR_REPO_NAME} .
 docker tag ${ECR_REPO_NAME}:latest ${ECR_REPO_URI}:latest
 docker push ${ECR_REPO_URI}:latest

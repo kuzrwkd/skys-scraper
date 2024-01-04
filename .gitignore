@@ -1,5 +1,5 @@
 # compiled output
-/bin
+/app/bin
 /node_modules
 
 # Logs
