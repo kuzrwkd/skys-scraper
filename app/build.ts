@@ -5,6 +5,7 @@ build({
   entryPoints: ['src/index.ts'],
   bundle: true,
   minify: true,
+  sourcemap: false,
   platform: 'node',
   target: 'node20',
   outfile: 'bin/index.js',
