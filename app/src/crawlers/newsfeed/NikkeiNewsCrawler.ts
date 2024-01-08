@@ -22,16 +22,13 @@ export class NikkeiNewsCrawler implements ICrawler {
     const browser = await playwright.chromium.launch(options);
 
     try {
+      logger.info(`[${mediaName}] クローリング開始`, startLogger({categoryUrl}));
       const page = await browser.newPage();
 
-      logger.info(`[${mediaName}] クローリング開始`, startLogger());
-
       const startTime = processStartTime();
-      await page.goto(categoryUrl);
+      await page.goto(categoryUrl, {timeout: 0});
       await page.waitForSelector('#CONTENTS_MAIN');
       const newsLinkElements = await page.$$('.m-miM09_title > a');
-
-      logger.info(`[${mediaName}] クローリング実行`, processLogger({categoryUrl}));
 
       for (const link of newsLinkElements) {
         const title = await link.innerText();
@@ -66,11 +63,11 @@ export class NikkeiNewsCrawler implements ICrawler {
       await Promise.allSettled(
         newsUrlAndTitleList.map(async item => {
           const startTime = processStartTime();
-          logger.info(`[${mediaName}] クローリング開始`, startLogger());
 
           const {articleUrl, title} = item;
 
           try {
+            logger.info(`[${mediaName}] クローリング開始`, startLogger({articleUrl}));
             const page = await browser.newPage();
 
             await page.goto(articleUrl, {timeout: 0});
@@ -78,8 +75,6 @@ export class NikkeiNewsCrawler implements ICrawler {
 
             const createdAt = await page.$('[class^="timeStampOverride_"] > time');
             const updateAt = await page.$('[class^="timeStampOverride_"] > span > time');
-
-            logger.info(`[${mediaName}] クローリング実行`, processLogger({articleUrl}));
 
             if (!createdAt) {
               logger.info(`[${mediaName}] 記事投稿日時が見つかりませんでした`, processLogger({articleUrl}));
@@ -99,7 +94,7 @@ export class NikkeiNewsCrawler implements ICrawler {
             };
 
             logger.info(`[${mediaName}] クローリング完了`, successLogger({time: endTime, result}));
-            return Promise.resolve(result);
+            return result;
           } catch (error) {
             if (error instanceof Error) {
               logger.error(
@@ -122,7 +117,7 @@ export class NikkeiNewsCrawler implements ICrawler {
             };
 
             logger.info(`[${mediaName}] リカバリー`, processLogger({time: endTime, result}));
-            return Promise.resolve(result);
+            return result;
           }
         }),
       )
