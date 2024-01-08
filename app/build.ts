@@ -4,7 +4,8 @@ import {build} from 'esbuild';
 build({
   entryPoints: ['src/index.ts'],
   bundle: true,
-  minify: true,
+  // minifyすると上手く動かなくなる
+  minify: false,
   sourcemap: false,
   platform: 'node',
   target: 'node20',
