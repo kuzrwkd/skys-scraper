@@ -59,17 +59,23 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
 
       const crawlerResult: CrawlerItem[] = [];
 
-      for (const item of newsfeedIndexAllItemsWithMediaAndCategory) {
-        const {media, url, category, crawlerInstance} = item;
-        const crawlerParams = {url, media, category};
-        const result = await crawlerInstance.handle(crawlerParams);
+      await Promise.allSettled(
+        newsfeedIndexAllItemsWithMediaAndCategory.map(async item => {
+          const {media, url, category, crawlerInstance} = item;
+          const crawlerParams = {url, media, category};
+          const result = await crawlerInstance.handle(crawlerParams);
 
-        if (result) {
-          crawlerResult.push(...result);
-        }
-      }
+          if (result) {
+            crawlerResult.push(...result);
+          }
+        }),
+      );
 
       for (const crawlerItem of crawlerResult) {
+        if (!crawlerItem.url) {
+          throw new Error('');
+        }
+
         const newsfeedItem = await newsfeedTable.getItemByUrl(crawlerItem.url);
 
         if (!newsfeedItem) {
@@ -77,20 +83,22 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
           continue;
         }
 
-        if (crawlerItem.article_updated_at && crawlerItem.article_updated_at !== newsfeedItem.article_updated_at) {
-          await newsfeedTable.updateArticleUpdatedAtColumn({
+        if (crawlerItem.last_post_date && crawlerItem.last_post_date !== newsfeedItem.last_post_date) {
+          await newsfeedTable.updateLastPostDate({
             ...newsfeedItem,
-            article_updated_at: crawlerItem.article_updated_at,
+            last_post_date: crawlerItem.last_post_date,
           });
         }
 
         if (!newsfeedItem.category_ids.includes(crawlerItem.category_id)) {
-          await newsfeedTable.updateCategoryIdsColumn({
+          await newsfeedTable.updateCategoryIds({
             ...newsfeedItem,
             category_id: crawlerItem.category_id,
           });
         }
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error({error});
+    }
   }
 }
