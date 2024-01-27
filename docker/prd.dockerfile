@@ -16,19 +16,9 @@ RUN apt-get update \
     fonts-ipafont-gothic \
     fonts-ipafont-mincho
 
-RUN apt-get update \
-    && apt-get install -y \
-    cron \
-    vim \
-    && systemctl enable cron
-
 COPY docker/prd.entrypoint.sh /usr/local/bin
-
-COPY docker/wait-for-it.sh /usr/local/bin
+RUN chmod +x /usr/local/bin/prd.entrypoint.sh
 
 COPY app/bin/index.js /var/www/
-
-RUN chmod +x /usr/local/bin/prd.entrypoint.sh \
-    && chmod +x /usr/local/bin/wait-for-it.sh
 
 ENTRYPOINT ["/usr/local/bin/prd.entrypoint.sh"]

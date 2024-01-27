@@ -9,4 +9,4 @@ set -eux
 
 cd /var/www
 
-while true; do sleep 86400; done
+node index.js start:newsfeed
