@@ -15,7 +15,7 @@ import {options} from '@/utils/crawlerOptions';
 export class NikkeiNewsCrawler implements ICrawler {
   async handle(params: CrawlerParams) {
     const {media, url: categoryUrl, category} = params;
-    const {name: mediaName, media_id: mediaId} = media;
+    const {name: mediaName, media_id: mediaId, domain} = media;
     const {category_id: categoryId} = category;
 
     const startTime = processStartTime();
@@ -33,7 +33,8 @@ export class NikkeiNewsCrawler implements ICrawler {
           try {
             const link = item.locator('div[class^="textArea_"] > a');
             const title = (await link?.innerText()) ?? undefined;
-            const url = (await link?.getAttribute('href')) ?? undefined;
+            const articlePath = await link?.getAttribute('href');
+            const url = articlePath ? `${domain}${articlePath}` : undefined;
             const date = item.locator('div[class^="dateContainer_"] time');
             const lastPostDate = (await date?.getAttribute('datetime')) ?? undefined;
 
