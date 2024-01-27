@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.40.1-focal
+FROM mcr.microsoft.com/playwright:v1.41.1-focal
 
 WORKDIR /var/www
 
@@ -15,6 +15,12 @@ RUN apt-get update \
     && apt-get install -y \
     fonts-ipafont-gothic \
     fonts-ipafont-mincho
+
+RUN apt-get update \
+    && apt-get install -y \
+    cron \
+    vim \
+    && systemctl enable cron
 
 # Install AWS CLI
 
