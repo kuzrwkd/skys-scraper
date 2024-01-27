@@ -17,83 +17,36 @@ export class NikkeiNewsCrawler implements ICrawler {
     const {media, url: categoryUrl, category} = params;
     const {name: mediaName, media_id: mediaId} = media;
     const {category_id: categoryId} = category;
-    const newsUrlAndTitleList: Record<'articleUrl' | 'title', string>[] = [];
+
+    const startTime = processStartTime();
+    logger.info(`[${mediaName}] Start crawling`, startLogger({categoryUrl}));
 
     const browser = await playwright.chromium.launch(options);
-
-    try {
-      logger.info(`[${mediaName}] クローリング開始`, startLogger({categoryUrl}));
-      const page = await browser.newPage();
-
-      const startTime = processStartTime();
-      await page.goto(categoryUrl, {timeout: 0});
-      await page.waitForSelector('#CONTENTS_MAIN');
-      const newsLinkElements = await page.$$('.m-miM09_title > a');
-
-      for (const link of newsLinkElements) {
-        const title = await link.innerText();
-        const articleUrl = (await (await link.getProperty('href'))?.jsonValue()) as string | undefined;
-        if (articleUrl && title) {
-          newsUrlAndTitleList.push({articleUrl, title});
-        }
-      }
-
-      const endTime = processEndTime(startTime);
-
-      logger.info(
-        `[${mediaName}] クローリング完了`,
-        successLogger({
-          time: endTime,
-          result: newsUrlAndTitleList,
-        }),
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        logger.error(
-          error.message,
-          failedLogger({
-            exception_class: error.name,
-            stacktrace: error.stack as string,
-          }),
-        );
-      }
-    }
+    const page = await browser.newPage();
+    await page.goto(categoryUrl, {timeout: 0});
+    await page.waitForSelector('main[class^="main_"]');
+    const articles = await page.locator('article[class^="sokuhoCard_"]').all();
 
     const crawlingData = (
       await Promise.allSettled(
-        newsUrlAndTitleList.map(async item => {
-          const startTime = processStartTime();
-
-          const {articleUrl, title} = item;
-
+        articles.map(async item => {
           try {
-            logger.info(`[${mediaName}] クローリング開始`, startLogger({articleUrl}));
-            const page = await browser.newPage();
+            const link = item.locator('div[class^="textArea_"] > a');
+            const title = (await link?.innerText()) ?? undefined;
+            const url = (await link?.getAttribute('href')) ?? undefined;
+            const date = item.locator('div[class^="dateContainer_"] time');
+            const lastPostDate = (await date?.getAttribute('datetime')) ?? undefined;
 
-            await page.goto(articleUrl, {timeout: 0});
-            await page.waitForSelector('div[class^="container_"] > main > article');
-
-            const createdAt = await page.$('[class^="timeStampOverride_"] > time');
-            const updateAt = await page.$('[class^="timeStampOverride_"] > span > time');
-
-            if (!createdAt) {
-              logger.info(`[${mediaName}] 記事投稿日時が見つかりませんでした`, processLogger({articleUrl}));
-            }
-
-            const endTime = processEndTime(startTime);
             const result: CrawlerItem = {
               id: createUuid(),
               title,
-              url: articleUrl,
+              url,
               media_id: mediaId,
               category_id: categoryId,
-              article_created_at: formatDate((await (await createdAt?.getProperty('dateTime'))?.jsonValue()) as string),
-              article_updated_at: !updateAt
-                ? undefined
-                : formatDate((await (await updateAt?.getProperty('dateTime'))?.jsonValue()) as string),
+              last_post_date: lastPostDate ? formatDate(lastPostDate) : lastPostDate,
             };
 
-            logger.info(`[${mediaName}] クローリング完了`, successLogger({time: endTime, result}));
+            logger.info(`[${mediaName}] Process crawling`, processLogger({result}));
             return result;
           } catch (error) {
             if (error instanceof Error) {
@@ -105,19 +58,6 @@ export class NikkeiNewsCrawler implements ICrawler {
                 }),
               );
             }
-
-            const endTime = processEndTime(startTime);
-            const result = {
-              id: createUuid(),
-              media_id: mediaId,
-              category_id: categoryId,
-              url: articleUrl,
-              article_created_at: getUtc(),
-              title,
-            };
-
-            logger.info(`[${mediaName}] リカバリー`, processLogger({time: endTime, result}));
-            return result;
           }
         }),
       )
@@ -128,6 +68,9 @@ export class NikkeiNewsCrawler implements ICrawler {
     });
 
     await browser.close();
+
+    const endTime = processEndTime(startTime);
+    logger.info(`[${mediaName}] End crawling`, successLogger({time: endTime}));
 
     const newsfeedCrawlerResults: CrawlerItem[] = [];
 
