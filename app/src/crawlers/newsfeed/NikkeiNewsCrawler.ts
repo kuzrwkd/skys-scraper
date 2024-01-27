@@ -1,4 +1,4 @@
-import {formatDate, getUtc} from '@kuzrwkd/skys-core/date';
+import {formatDate} from '@kuzrwkd/skys-core/date';
 import logger, {
   startLogger,
   successLogger,
