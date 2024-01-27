@@ -1,5 +1,5 @@
 import {categoryTable, mediaTable, newsfeedIndexTable, newsfeedTable} from '@kuzrwkd/skys-core/dynamodb';
-import {MEDIA_ID, MediaSchema, CategorySchema} from '@kuzrwkd/skys-core/entities';
+import {MediaId, MediaSchema, CategorySchema} from '@kuzrwkd/skys-core/entities';
 import {injectable, inject} from 'tsyringe';
 import {ICrawler, CrawlerItem} from '@/crawlers';
 
@@ -41,12 +41,12 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
 
       const newsfeedIndexAllItemsWithMediaAndCategory = masterData.newsfeedIndexAllItems.reduce((acc, item) => {
         switch (item.media_id) {
-          case MEDIA_ID.nikkei:
+          case MediaId.NIKKEI:
             return [
               ...acc,
               {
                 id: item.id,
-                media: masterData.mediaAllItems.find(_ => _.media_id === MEDIA_ID.nikkei)!,
+                media: masterData.mediaAllItems.find(_ => _.media_id === MediaId.NIKKEI)!,
                 category: masterData.categoryAllItems.find(_ => _.category_id === item.category_id)!,
                 url: item.url,
                 crawlerInstance: this.nikkeiNewsCrawler,
