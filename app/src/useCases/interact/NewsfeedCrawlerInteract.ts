@@ -73,7 +73,7 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
 
       for (const crawlerItem of crawlerResult) {
         if (!crawlerItem.url) {
-          throw new Error('');
+          throw new Error('crawler url not found');
         }
 
         const newsfeedItem = await newsfeedTable.getItemByUrl(crawlerItem.url);

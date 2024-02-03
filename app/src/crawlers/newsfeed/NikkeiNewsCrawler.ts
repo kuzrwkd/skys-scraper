@@ -1,4 +1,4 @@
-import {formatDate} from '@kuzrwkd/skys-core/date';
+import {convertISO8601ToUnix} from '@kuzrwkd/skys-core/date';
 import logger, {
   startLogger,
   successLogger,
@@ -44,7 +44,7 @@ export class NikkeiNewsCrawler implements ICrawler {
               url,
               media_id: mediaId,
               category_id: categoryId,
-              last_post_date: lastPostDate ? formatDate(lastPostDate) : lastPostDate,
+              last_post_date: lastPostDate ? convertISO8601ToUnix(lastPostDate) : undefined,
             };
 
             logger.info(`[${mediaName}] Process crawling`, processLogger({result}));
