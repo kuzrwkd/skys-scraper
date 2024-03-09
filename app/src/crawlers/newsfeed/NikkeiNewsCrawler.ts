@@ -31,12 +31,20 @@ export class NikkeiNewsCrawler implements ICrawler {
       await Promise.allSettled(
         articles.map(async item => {
           try {
-            const link = item.locator('div[class^="textArea_"] > a');
-            const title = (await link?.innerText()) ?? undefined;
-            const articlePath = await link?.getAttribute('href');
+            const linkElement = item.locator('div[class^="textArea_"] > a');
+            const timeElement = item.locator('div[class^="dateContainer_"] time');
+            const title = await linkElement.innerText();
+            const articlePath = (await linkElement.getAttribute('href')) ?? undefined;
             const url = articlePath ? `${domain}${articlePath}` : undefined;
-            const date = item.locator('div[class^="dateContainer_"] time');
-            const lastPostDate = (await date?.getAttribute('datetime')) ?? undefined;
+            const lastUpdateDate = (await timeElement.getAttribute('datetime')) ?? undefined;
+
+            if (!lastUpdateDate) {
+              throw new Error('lastUpdateDate is undefined');
+            }
+
+            if (!url) {
+              throw new Error('url is undefined');
+            }
 
             const result: CrawlerItem = {
               id: createUuid(),
@@ -44,7 +52,7 @@ export class NikkeiNewsCrawler implements ICrawler {
               url,
               media_id: mediaId,
               category_id: categoryId,
-              last_post_date: lastPostDate ? convertISO8601ToUnix(lastPostDate) : undefined,
+              last_update_date: convertISO8601ToUnix(lastUpdateDate),
             };
 
             logger.info(`[${mediaName}] Process crawling`, processLogger({result}));

@@ -83,10 +83,10 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
           continue;
         }
 
-        if (crawlerItem.last_post_date && crawlerItem.last_post_date !== newsfeedItem.last_post_date) {
+        if (crawlerItem.last_update_date && crawlerItem.last_update_date !== newsfeedItem.last_update_date) {
           await newsfeedTable.updateLastPostDate({
             ...newsfeedItem,
-            last_post_date: crawlerItem.last_post_date,
+            last_update_date: crawlerItem.last_update_date,
           });
         }
 

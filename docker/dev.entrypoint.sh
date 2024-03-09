@@ -14,4 +14,4 @@ npm install
 npm run build
 npm run link
 
-while true; do sleep 86400; done
+crawler start:newsfeed
