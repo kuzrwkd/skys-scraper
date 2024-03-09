@@ -1,25 +1,26 @@
 import {categoryTable, mediaTable, newsfeedIndexTable, newsfeedTable} from '@kuzrwkd/skys-core/dynamodb';
 import {MediaId, MediaSchema, CategorySchema} from '@kuzrwkd/skys-core/entities';
+import {failedLogger} from '@kuzrwkd/skys-core/logger';
 import {injectable, inject} from 'tsyringe';
 import {ICrawler, CrawlerItem} from '@/crawlers';
 
-type NewsfeedIndexAllItemsWithMediaAndCategory = {
+type NikkeiCrawlerIndex = {
   id: string;
   media: MediaSchema;
   url: string;
   category: CategorySchema;
-  crawlerInstance: ICrawler;
 };
 
-export interface INewsfeedCrawlerInteract {
+export interface INikkeiNewsCrawlerInteract {
   handler(): Promise<void>;
+  getCrawlerIndex(): Promise<NikkeiCrawlerIndex[] | undefined>;
 }
 
 @injectable()
-export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
+export class NikkeiNewsCrawlerInteract implements INikkeiNewsCrawlerInteract {
   constructor(@inject('NikkeiPreliminaryReportCrawler') private readonly nikkeiNewsCrawler: ICrawler) {}
 
-  async handler() {
+  async getCrawlerIndex() {
     try {
       const masterData = await Promise.all([
         newsfeedIndexTable.getAllItems(),
@@ -28,7 +29,6 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
       ])
         .then(result => {
           const [newsfeedIndexAllItems, mediaAllItems, categoryAllItems] = result;
-
           return {
             newsfeedIndexAllItems: newsfeedIndexAllItems ?? [],
             mediaAllItems: mediaAllItems ?? [],
@@ -38,58 +38,55 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
         .catch(error => {
           throw new Error(error.message);
         });
-
-      const newsfeedIndexAllItemsWithMediaAndCategory = masterData.newsfeedIndexAllItems.reduce((acc, item) => {
-        switch (item.media_id) {
-          case MediaId.NIKKEI:
-            return [
-              ...acc,
-              {
-                id: item.id,
-                media: masterData.mediaAllItems.find(_ => _.media_id === MediaId.NIKKEI)!,
-                category: masterData.categoryAllItems.find(_ => _.category_id === item.category_id)!,
-                url: item.url,
-                crawlerInstance: this.nikkeiNewsCrawler,
-              },
-            ];
-          default:
-            return acc;
+      return masterData.newsfeedIndexAllItems.reduce((acc, item) => {
+        if (item.media_id === MediaId.NIKKEI) {
+          return [
+            ...acc,
+            {
+              id: item.id,
+              media: masterData.mediaAllItems.find(_ => _.media_id === MediaId.NIKKEI) as MediaSchema,
+              category: masterData.categoryAllItems.find(_ => _.category_id === item.category_id) as CategorySchema,
+              url: item.url,
+            },
+          ];
         }
-      }, [] as NewsfeedIndexAllItemsWithMediaAndCategory[]);
+        return acc;
+      }, [] as NikkeiCrawlerIndex[]);
+    } catch (error) {}
+  }
 
+  async handler() {
+    try {
+      const nikkeiCrawlerIndex = await this.getCrawlerIndex();
+      if (!nikkeiCrawlerIndex) {
+        throw new Error('');
+      }
       const crawlerResult: CrawlerItem[] = [];
-
       await Promise.allSettled(
-        newsfeedIndexAllItemsWithMediaAndCategory.map(async item => {
-          const {media, url, category, crawlerInstance} = item;
+        nikkeiCrawlerIndex.map(async item => {
+          const {media, url, category} = item;
           const crawlerParams = {url, media, category};
-          const result = await crawlerInstance.handle(crawlerParams);
-
+          const result = await this.nikkeiNewsCrawler.handle(crawlerParams);
           if (result) {
             crawlerResult.push(...result);
           }
         }),
       );
-
       for (const crawlerItem of crawlerResult) {
         if (!crawlerItem.url) {
           throw new Error('crawler url not found');
         }
-
         const newsfeedItem = await newsfeedTable.getItemByUrl(crawlerItem.url);
-
         if (!newsfeedItem) {
           await newsfeedTable.putItem(crawlerItem);
           continue;
         }
-
         if (crawlerItem.last_update_date && crawlerItem.last_update_date !== newsfeedItem.last_update_date) {
           await newsfeedTable.updateLastPostDate({
             ...newsfeedItem,
             last_update_date: crawlerItem.last_update_date,
           });
         }
-
         if (!newsfeedItem.category_ids.includes(crawlerItem.category_id)) {
           await newsfeedTable.updateCategoryIds({
             ...newsfeedItem,
@@ -98,7 +95,12 @@ export class NewsfeedCrawlerInteract implements INewsfeedCrawlerInteract {
         }
       }
     } catch (error) {
-      console.error({error});
+      if (error instanceof Error) {
+        failedLogger({
+          exception_class: error.name,
+          stacktrace: error.stack,
+        });
+      }
     }
   }
 }

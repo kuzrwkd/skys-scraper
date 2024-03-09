@@ -17,16 +17,13 @@ export class NikkeiNewsCrawler implements ICrawler {
     const {media, url: categoryUrl, category} = params;
     const {name: mediaName, media_id: mediaId, domain} = media;
     const {category_id: categoryId} = category;
-
     const startTime = processStartTime();
     logger.info(`[${mediaName}] Start crawling`, startLogger({categoryUrl}));
-
     const browser = await playwright.chromium.launch(options);
     const page = await browser.newPage();
     await page.goto(categoryUrl, {timeout: 0});
     await page.waitForSelector('main[class^="main_"]');
     const articles = await page.locator('article[class^="sokuhoCard_"]').all();
-
     const crawlingData = (
       await Promise.allSettled(
         articles.map(async item => {
@@ -37,15 +34,12 @@ export class NikkeiNewsCrawler implements ICrawler {
             const articlePath = (await linkElement.getAttribute('href')) ?? undefined;
             const url = articlePath ? `${domain}${articlePath}` : undefined;
             const lastUpdateDate = (await timeElement.getAttribute('datetime')) ?? undefined;
-
             if (!lastUpdateDate) {
               throw new Error('lastUpdateDate is undefined');
             }
-
             if (!url) {
               throw new Error('url is undefined');
             }
-
             const result: CrawlerItem = {
               id: createUuid(),
               title,
@@ -54,7 +48,6 @@ export class NikkeiNewsCrawler implements ICrawler {
               category_id: categoryId,
               last_update_date: convertISO8601ToUnix(lastUpdateDate),
             };
-
             logger.info(`[${mediaName}] Process crawling`, processLogger({result}));
             return result;
           } catch (error) {
@@ -63,7 +56,7 @@ export class NikkeiNewsCrawler implements ICrawler {
                 error.message,
                 failedLogger({
                   exception_class: error.name,
-                  stacktrace: error.stack as string,
+                  stacktrace: error.stack,
                 }),
               );
             }
@@ -75,14 +68,10 @@ export class NikkeiNewsCrawler implements ICrawler {
         return e.value;
       }
     });
-
     await browser.close();
-
     const endTime = processEndTime(startTime);
     logger.info(`[${mediaName}] End crawling`, successLogger({time: endTime}));
-
     const newsfeedCrawlerResults: CrawlerItem[] = [];
-
     for (const item of crawlingData) {
       if (item) {
         newsfeedCrawlerResults.push(item);

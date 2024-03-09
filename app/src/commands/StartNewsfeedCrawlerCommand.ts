@@ -1,8 +1,8 @@
 import * as yargs from 'yargs';
-import {INewsfeedCrawlerInteract} from '@/useCases';
+import {INikkeiNewsCrawlerInteract} from '@/useCases';
 import {container} from '@/utils/yargsConfig';
 
-const newsfeedCrawlerInteract = container.resolve<INewsfeedCrawlerInteract>('NewsfeedCrawlerInteract');
+const newsfeedCrawlerInteract = container.resolve<INikkeiNewsCrawlerInteract>('NewsfeedCrawlerInteract');
 
 export default class StartNewsfeedCrawlerCommand implements yargs.CommandModule {
   command = 'start:newsfeed';
