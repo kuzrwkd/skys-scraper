@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.41.1-focal
+FROM mcr.microsoft.com/playwright:v1.43.1-focal
 
 WORKDIR /var/www
 
