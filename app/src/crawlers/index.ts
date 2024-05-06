@@ -1,6 +1,6 @@
 import {MediaSchema, NewsfeedSchema, CategorySchema, CategoryIds} from '@kuzrwkd/skys-core/entities';
 
-export type CrawlerItem = Omit<NewsfeedSchema, 'created_at' | 'updated_at' | 'category_ids'> & {
+export type CrawlerItem = Omit<NewsfeedSchema, 'id' | 'created_at' | 'updated_at' | 'category_ids'> & {
   category_id: CategoryIds;
 };
 
