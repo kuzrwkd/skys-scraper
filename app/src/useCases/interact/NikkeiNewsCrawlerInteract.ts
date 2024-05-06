@@ -71,7 +71,7 @@ export class NikkeiNewsCrawlerInteract implements INikkeiNewsCrawlerInteract {
           await newsfeedTable.putItem(item);
           continue;
         }
-        if (item.last_publish_date && item.last_publish_date !== newsfeedItem.last_publish_date) {
+        if (item.last_publish_date !== newsfeedItem.last_publish_date) {
           await newsfeedTable.updateLastPublishDate({
             ...newsfeedItem,
             last_publish_date: item.last_publish_date,
