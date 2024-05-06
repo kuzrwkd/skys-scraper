@@ -9,7 +9,7 @@ import logger, {
 } from '@kuzrwkd/skys-core/logger';
 import playwright from 'playwright-core';
 import {ICrawler, CrawlerItem, CrawlerParams} from '@/crawlers';
-import {options} from '@/utils/crawlerOptions';
+import {playwrightOptions} from '@/crawlers/playwrightOptions';
 
 export class NikkeiNewsCrawler implements ICrawler {
   async handle(params: CrawlerParams) {
@@ -20,7 +20,7 @@ export class NikkeiNewsCrawler implements ICrawler {
     logger.info(`Start nikkei ${category.name} category crawling.`, startLogger());
 
     try {
-      const browser = await playwright.chromium.launch(options);
+      const browser = await playwright.chromium.launch(playwrightOptions);
       const page = await browser.newPage();
       await page.goto(categoryUrl);
       const newsItems = await page.locator('article[class^="sokuhoCard_"]').all();

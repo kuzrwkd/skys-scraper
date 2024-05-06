@@ -1,4 +1,3 @@
-import * as process from 'node:process';
 import {master, newsfeedTable} from '@kuzrwkd/skys-core/dynamodb';
 import {CategorySchema, MediaId, MediaSchema} from '@kuzrwkd/skys-core/entities';
 import logger, {failedLogger, startLogger} from '@kuzrwkd/skys-core/logger';

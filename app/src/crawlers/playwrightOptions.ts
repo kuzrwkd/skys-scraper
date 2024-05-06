@@ -1,6 +1,6 @@
 import {LaunchOptions} from 'playwright-core';
 
-export const options: LaunchOptions = {
+export const playwrightOptions: LaunchOptions = {
   headless: true,
   slowMo: 500,
 };
