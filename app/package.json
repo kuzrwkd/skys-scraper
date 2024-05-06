@@ -16,7 +16,7 @@
     "format": "prettier --write ./src && eslint '{src,apps,libs,test}/**/*.ts' --fix"
   },
   "dependencies": {
-    "@kuzrwkd/skys-core": "^1.1.74",
+    "@kuzrwkd/skys-core": "^1.1.75",
     "playwright-core": "^1.43.1",
     "reflect-metadata": "^0.2.2",
     "rimraf": "^5.0.5",
