@@ -3,14 +3,14 @@
 import 'reflect-metadata';
 import yargs from 'yargs';
 import {hideBin} from 'yargs/helpers';
-import StartNewsfeedCrawlerCommand from '@/commands/StartNewsfeedCrawlerCommand';
+import StartNikkeiCrawlingCommand from '@/commands/StartNikkeiCrawlingCommand';
 
 const y = yargs(hideBin(process.argv));
 
 y
   .locale('en')
   .usage('Usage: $0 <commands> [options]')
-  .command(new StartNewsfeedCrawlerCommand())
+  .command(new StartNikkeiCrawlingCommand())
   .recommendCommands()
   .demandCommand(1)
   .strict()

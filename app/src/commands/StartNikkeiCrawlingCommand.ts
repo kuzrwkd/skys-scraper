@@ -1,10 +1,11 @@
+import logger, {failedLogger} from '@kuzrwkd/skys-core/logger';
 import * as yargs from 'yargs';
 import {INikkeiNewsCrawlerInteract, container} from '@/useCases';
 
 const newsfeedCrawlerInteract = container.resolve<INikkeiNewsCrawlerInteract>('NikkeiNewsCrawlerInteract');
 
-export default class StartNewsfeedCrawlerCommand implements yargs.CommandModule {
-  command = 'start:newsfeed';
+export default class StartNikkeiCrawlingCommand implements yargs.CommandModule {
+  command = 'start:nikkei:crawling';
   describe = 'no option.';
 
   builder(args: yargs.Argv) {
@@ -15,7 +16,9 @@ export default class StartNewsfeedCrawlerCommand implements yargs.CommandModule 
     try {
       await newsfeedCrawlerInteract.handler();
     } catch (error) {
-      console.error(error);
+      if (error instanceof Error) {
+        logger.error('Failed to start:nikkei:crawling', failedLogger({result: error}));
+      }
       process.exit(1);
     }
   }
