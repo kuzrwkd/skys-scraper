@@ -9,4 +9,4 @@ set -eux
 
 cd /var/www
 
-node index.js start:newsfeed
+node index.js start:nikkei:crawling

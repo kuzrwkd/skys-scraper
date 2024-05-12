@@ -13,4 +13,4 @@ npm install
 npm run build
 npm run link
 
-crawler start:newsfeed
+crawler start:nikkei:crawling
