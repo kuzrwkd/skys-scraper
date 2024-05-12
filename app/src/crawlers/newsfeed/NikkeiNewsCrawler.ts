@@ -24,7 +24,7 @@ export class NikkeiNewsCrawler implements ICrawler {
       const page = await browser.newPage();
       await page.goto(categoryUrl);
       const newsItems = await page.locator('article[class^="sokuhoCard_"]').all();
-      const makeNewsLinks = newsItems.map(async item => {
+      const makeScrapers = newsItems.map(async item => {
         const linkElement = item.locator('div[class^="textArea_"] > a');
         const timeElement = item.locator('div[class^="dateContainer_"] time');
         const lastUpdateDate =
@@ -45,14 +45,11 @@ export class NikkeiNewsCrawler implements ICrawler {
         logger.info(`Processing nikkei ${category.name} category crawling.`, processLogger());
         return result;
       });
-      const newsLinks = await Promise.all(makeNewsLinks);
+      const result = await Promise.all(makeScrapers);
       await browser.close();
       const endTime = processEndTime(startTime);
-      logger.info(
-        `Successfully nikkei ${category.name} category crawling.`,
-        successLogger({result: newsLinks, time: endTime}),
-      );
-      return newsLinks;
+      logger.info(`Successfully nikkei ${category.name} category crawling.`, successLogger({result, time: endTime}));
+      return result;
     } catch (error) {
       if (error instanceof Error) {
         logger.error(`Failed to nikkei ${category.name} category crawling.`, failedLogger({result: error}));
